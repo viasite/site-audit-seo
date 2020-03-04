@@ -1,0 +1,14 @@
+{
+  "name": "sites-scraper",
+  "version": "1.0.0",
+  "description": "Generate CSV with pages and docs for site list with puppeteer",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Stanislav Popov",
+  "license": "ISC",
+  "dependencies": {
+    "headless-chrome-crawler": "^1.8.0"
+  }
+}
