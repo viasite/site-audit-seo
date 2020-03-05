@@ -12,8 +12,9 @@ const IGNORE_CSS = true;
 const IGNORE_JS = true;
 
 // поля описаны в API по ссылке выше
-const fields = ['response.url', 'depth']; // стандартный комплект
-// const fields = ['response.url', 'depth', 'response.status', 'result.title', 'result.description', 'result.keywords', 'result.canonical', 'result.og_title', 'result.og_image']; // полный комплект
+// TODO: presets
+// const fields = ['response.url', 'depth']; // стандартный комплект
+const fields = ['response.url', 'depth', 'response.status', 'result.request_time', 'result.title', 'result.h1', 'result.description', 'result.keywords', 'result.canonical', 'result.og_title', 'result.og_image', 'result.h1_count', 'result.h2_count', 'result.h3_count', 'result.h4_count', 'result.dom_count']; // полный комплект
 // const fields = ['response.url', 'depth', 'response.headers.content-type', 'response.headers.', 'response.headers.x-bitrix-composite', 'response.headers.x-page-speed', 'response.headers.x-cached-by', 'response.headers.x-drupal-cache']; // http заголовки
 
 let currentUrl = ''; // для хака с документами
@@ -47,11 +48,18 @@ module.exports = async (baseUrl, options) => {
       return true;
     },
 
+    // сюда можно дописывать сборщики данных со страницы
+    // поля надо добавить в fields выше
     evaluatePage: () => ({
-      // сюда можно дописывать сборщики данных со страницы
-      // поля надо добавить в fields выше
+      request_time: window.performance.timing.responseEnd - window.performance.timing.requestStart,
       title: $('title').text(),
-      description: $('meta[name="description"]').attr('content'),
+      h1: $('h1').text(),
+      h1_count: $('h1').length,
+      h2_count: $('h2').length,
+      h3_count: $('h3').length,
+      h4_count: $('h4').length,
+      dom_count: document.getElementsByTagName("*").length,
+      description: $('meta[name="description"]').attr('content').split('\n').join(' '),
       keywords: $('meta[name="keywords"]').attr('content'),
       canonical: $('link[rel="canonical"]').attr('href'),
       og_title: $('meta[property="og:title"]').attr('content'),
