@@ -6,6 +6,11 @@ const url = require('url');
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 const docs = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip']; // можно дополнять
 
+// запреты браузеру на подгрузку статики, ускоряет
+const IGNORE_IMAGES = true;
+const IGNORE_CSS = true;
+const IGNORE_JS = true;
+
 // поля описаны в API по ссылке выше
 const fields = ['response.url', 'depth']; // стандартный комплект
 // const fields = ['response.url', 'depth', 'response.status', 'result.title', 'result.description', 'result.keywords', 'result.canonical', 'result.og_title', 'result.og_image']; // полный комплект
@@ -65,8 +70,12 @@ module.exports = async (baseUrl, options) => {
       page.on('request', request => {
         //console.log('request.url(): ', request.url());
 
-        // don't request image
-        if (request.resourceType() == 'image') {
+        // don't request static
+        if (IGNORE_IMAGES && request.resourceType() == 'image') {
+          request.abort();
+        } else if (IGNORE_CSS && request.resourceType() == 'stylesheet') {
+          request.abort();
+        } else if (IGNORE_JS && request.resourceType() == 'script') {
           request.abort();
         } else {
           request.continue();
