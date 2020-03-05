@@ -12,16 +12,46 @@ const IGNORE_CSS = true;
 const IGNORE_JS = true;
 
 // поля описаны в API по ссылке выше
-// TODO: presets
-// const fields = ['response.url', 'depth']; // стандартный комплект
-const fields = ['response.url', 'depth', 'response.status', 'result.request_time', 'result.title', 'result.h1', 'result.description', 'result.keywords', 'result.canonical', 'result.og_title', 'result.og_image', 'result.h1_count', 'result.h2_count', 'result.h3_count', 'result.h4_count', 'result.dom_count']; // полный комплект
-// const fields = ['response.url', 'depth', 'response.headers.content-type', 'response.headers.', 'response.headers.x-bitrix-composite', 'response.headers.x-page-speed', 'response.headers.x-cached-by', 'response.headers.x-drupal-cache']; // http заголовки
+const fields_presets = {
+  default: ['response.url', 'depth'],
+  minimal: ['response.url'],
+  seo: [
+    'response.url',
+    'depth',
+    'response.status',
+    'result.request_time',
+    'result.title',
+    'result.h1',
+    'result.description',
+    'result.keywords',
+    'result.canonical',
+    'result.og_title',
+    'result.og_image',
+    'result.h1_count',
+    'result.h2_count',
+    'result.h3_count',
+    'result.h4_count',
+    'result.dom_count'
+  ],
+  headers: [
+    'response.url',
+    'depth',
+    'response.headers.content-type',
+    'response.headers.',
+    'response.headers.x-bitrix-composite',
+    'response.headers.x-page-speed',
+    'response.headers.x-cached-by',
+    'response.headers.x-drupal-cache'
+  ]
+};
 
-
-module.exports = async (baseUrl, options) => {
+module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const FILE = `./data/${domain}.csv`; // файл вывода
   let currentUrl = ''; // для хака с документами
+
+  if (!options.fields_preset || !fields_presets[options.fields_preset]) options.fields_preset = 'default';
+  const fields = fields_presets[options.fields_preset];
 
   const exporter = new CSVExporter({
     file: FILE,
@@ -32,7 +62,7 @@ module.exports = async (baseUrl, options) => {
     allowedDomains: [domain], // закомментить, если надо не только этот домен (лучше дописать)
     maxDepth: 10, // макс. глубина
     maxConcurrency: 2, // параллельные потоки
-    // maxRequest: 20, // для тестов
+    // maxRequest: 10, // для тестов
     depthPriority: false, // без этой опции сканирует криво, многое не видит
     // followSitemapXml: true, // чтобы найти больше страниц
     args: ['--no-sandbox'], // без этого puppeteer зависает
@@ -62,8 +92,11 @@ module.exports = async (baseUrl, options) => {
       h2_count: $('h2').length,
       h3_count: $('h3').length,
       h4_count: $('h4').length,
-      dom_count: document.getElementsByTagName("*").length,
-      description: $('meta[name="description"]').attr('content').split('\n').join(' '),
+      dom_count: document.getElementsByTagName('*').length,
+      description: $('meta[name="description"]')
+        .attr('content')
+        .split('\n')
+        .join(' '),
       keywords: $('meta[name="keywords"]').attr('content'),
       canonical: $('link[rel="canonical"]').attr('href'),
       og_title: $('meta[property="og:title"]').attr('content'),
@@ -138,7 +171,7 @@ module.exports = async (baseUrl, options) => {
   await crawler.onIdle();
 
   const t = Math.round((Date.now() - start) / 1000);
-  const perPage = Math.round(t / pagesCount * 100) / 100;
+  const perPage = Math.round((t / pagesCount) * 100) / 100;
   console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 };
