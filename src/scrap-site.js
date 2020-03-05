@@ -126,14 +126,17 @@ module.exports = async (baseUrl, options) => {
   console.log(`Scrapping ${baseUrl}...`);
 
   const crawler = await HCCrawler.launch(crawlerOptions);
+  let pagesCount = 1;
   crawler.on('requeststarted', options => {
     currentUrl = options.url;
-    if (DEBUG) console.log(`request ${options.url}`);
+    if (DEBUG) console.log(`${pagesCount} ${options.url}`);
+    pagesCount++;
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
 
   const t = Math.round((Date.now() - start) / 1000);
-  console.log(`Finish: ${t} sec`);
+  const perPage = Math.round(t / pagesCount * 100) / 100;
+  console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 };
