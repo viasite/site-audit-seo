@@ -17,11 +17,11 @@ const IGNORE_JS = true;
 const fields = ['response.url', 'depth', 'response.status', 'result.request_time', 'result.title', 'result.h1', 'result.description', 'result.keywords', 'result.canonical', 'result.og_title', 'result.og_image', 'result.h1_count', 'result.h2_count', 'result.h3_count', 'result.h4_count', 'result.dom_count']; // полный комплект
 // const fields = ['response.url', 'depth', 'response.headers.content-type', 'response.headers.', 'response.headers.x-bitrix-composite', 'response.headers.x-page-speed', 'response.headers.x-cached-by', 'response.headers.x-drupal-cache']; // http заголовки
 
-let currentUrl = ''; // для хака с документами
 
 module.exports = async (baseUrl, options) => {
   const domain = url.parse(baseUrl).hostname;
   const FILE = `./data/${domain}.csv`; // файл вывода
+  let currentUrl = ''; // для хака с документами
 
   const exporter = new CSVExporter({
     file: FILE,
@@ -32,9 +32,11 @@ module.exports = async (baseUrl, options) => {
     allowedDomains: [domain], // закомментить, если надо не только этот домен (лучше дописать)
     maxDepth: 10, // макс. глубина
     maxConcurrency: 2, // параллельные потоки
-    // maxRequest: 10, // для тестов
+    // maxRequest: 20, // для тестов
     depthPriority: false, // без этой опции сканирует криво, многое не видит
+    // followSitemapXml: true, // чтобы найти больше страниц
     args: ['--no-sandbox'], // без этого puppeteer зависает
+    // headless: false, // для тестов
     exporter,
 
     // сюда дописывать правила игнора url
@@ -69,9 +71,9 @@ module.exports = async (baseUrl, options) => {
     }),
 
     /* onSuccess: (result => {
-          if (!result.result) return; // Dont show result when evaluatePage's result is null
-          console.log(`${result.result.title} ${result.options.url}.`);
-        }), */
+      if (!result.result) return; // Dont show result when evaluatePage's result is null
+      console.log(`${result.result.title} ${result.options.url}.`);
+    }), */
 
     customCrawl: async (page, crawl) => {
       // You can access the page object before requests
