@@ -7,9 +7,9 @@ const DEBUG = true; // выключить, если не нужны console.log 
 const docs = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip']; // можно дополнять
 
 // запреты браузеру на подгрузку статики, ускоряет
-const IGNORE_IMAGES = true;
-const IGNORE_CSS = true;
-const IGNORE_JS = true;
+const SKIP_IMAGES = true;
+const SKIP_CSS = true;
+const SKIP_JS = true;
 
 // поля описаны в API по ссылке выше
 const fields_presets = {
@@ -118,11 +118,11 @@ module.exports = async (baseUrl, options = {}) => {
         //console.log('request.url(): ', request.url());
 
         // don't request static
-        if (IGNORE_IMAGES && request.resourceType() == 'image') {
+        if (SKIP_IMAGES && request.resourceType() == 'image') {
           request.abort();
-        } else if (IGNORE_CSS && request.resourceType() == 'stylesheet') {
+        } else if (SKIP_CSS && request.resourceType() == 'stylesheet') {
           request.abort();
-        } else if (IGNORE_JS && request.resourceType() == 'script') {
+        } else if (SKIP_JS && request.resourceType() == 'script') {
           request.abort();
         } else {
           request.continue();
