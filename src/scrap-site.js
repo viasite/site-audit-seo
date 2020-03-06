@@ -62,6 +62,7 @@ module.exports = async (baseUrl, options = {}) => {
     allowedDomains: [domain], // закомментить, если надо не только этот домен (лучше дописать)
     maxDepth: 10, // макс. глубина
     maxConcurrency: 2, // параллельные потоки
+    skipRequestedRedirect: true, // все редиректы помечаются как посещённые
     // maxRequest: 10, // для тестов
     depthPriority: false, // без этой опции сканирует криво, многое не видит
     // followSitemapXml: true, // чтобы найти больше страниц
