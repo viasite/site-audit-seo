@@ -17,6 +17,7 @@ const fields_presets = {
   minimal: ['response.url'],
   seo: [
     'response.url',
+    'result.canonical',
     'previousUrl',
     'depth',
     'response.status',
@@ -25,7 +26,6 @@ const fields_presets = {
     'result.h1',
     'result.description',
     'result.keywords',
-    'result.canonical',
     'result.og_title',
     'result.og_image',
     'result.h1_count',
