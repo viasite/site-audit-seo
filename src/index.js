@@ -9,8 +9,10 @@ const sites = [
     await scrap_site(site, {
       fields_preset: 'seo',   // варианты: default, seo, headers, minimal
       maxConcurrency: 2,      // параллельно открываемые вкладки
-      maxDepth: 10,           // глубина сканирования
-      followSitemapXml: false // берёт адреса из /sitemap.xml
-    });
+      maxDepth: 10            // глубина сканирования
+      // ,followSitemapXml: true // чтобы найти больше страниц
+      // ,maxRequest: 10         // для тестов
+      // ,headless: false        // на десктопе открывает браузер визуально
+  });
   }
 })();
