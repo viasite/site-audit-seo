@@ -76,6 +76,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.match(/\?width=\d+&height=\d+/)) return false; // визитки, сотрудники
       if (options.url.includes('?vi=y')) return false; // версия для слабовидящих
       if (options.url.includes('gallery/?page=detail')) return false; // Битрикс Галерея 2.0
+      if (options.url.includes('/?display=')) return false; // Аспро: вид списка
       if (options.url.includes('redirect.php')) return false; // bitrix redirect
       if (options.url.includes('rk.php')) return false; // bitrix rk
 
