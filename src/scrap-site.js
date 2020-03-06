@@ -32,7 +32,8 @@ const fields_presets = {
     'result.h2_count',
     'result.h3_count',
     'result.h4_count',
-    'result.dom_count'
+    'result.dom_size',
+    'result.html_size'
   ],
   headers: [
     'response.url',
@@ -83,29 +84,45 @@ module.exports = async (baseUrl, options = {}) => {
 
     // сюда можно дописывать сборщики данных со страницы
     // поля надо добавить в fields выше
-    evaluatePage: () => ({
-      request_time: window.performance.timing.responseEnd - window.performance.timing.requestStart,
-      title: $('title').text(),
-      h1: $('h1').text(),
-      h1_count: $('h1').length,
-      h2_count: $('h2').length,
-      h3_count: $('h3').length,
-      h4_count: $('h4').length,
-      dom_count: document.getElementsByTagName('*').length,
-      description: $('meta[name="description"]')
-        .attr('content')
-        .split('\n')
-        .join(' '),
-      keywords: $('meta[name="keywords"]').attr('content'),
-      canonical: $('link[rel="canonical"]').attr('href'),
-      og_title: $('meta[property="og:title"]').attr('content'),
-      og_image: $('meta[property="og:image"]').attr('content')
-    }),
+    evaluatePage: () => {
+      try {
+        return {
+          request_time:
+            window.performance.timing.responseEnd - window.performance.timing.requestStart,
+          title: $('title').text(),
+          h1: $('h1').text(),
+          h1_count: $('h1').length,
+          h2_count: $('h2').length,
+          h3_count: $('h3').length,
+          h4_count: $('h4').length,
+          dom_size: document.getElementsByTagName('*').length,
+          head_size: document.head.innerHTML.length,
+          body_size: document.body.innerHTML.length,
+          html_size: document.head.innerHTML.length + document.body.innerHTML.length,
+          description:
+            ($('meta[name="description"]').attr('content') &&
+              $('meta[name="description"]')
+                .attr('content')
+                .split('\n')
+                .join(' ')) ||
+            '',
+          keywords: $('meta[name="keywords"]').attr('content'),
+          canonical: $('link[rel="canonical"]').attr('href'),
+          og_title: $('meta[property="og:title"]').attr('content'),
+          og_image: $('meta[property="og:image"]').attr('content')
+        };
+      } catch (e) {
+        return {
+          error: JSON.stringify(e)
+        };
+      }
+    },
 
-    /* onSuccess: (result => {
-      if (!result.result) return; // Dont show result when evaluatePage's result is null
-      console.log(`${result.result.title} ${result.options.url}.`);
-    }), */
+    onSuccess: result => {
+      if (!result.result) return;
+      if (result.result.error) console.error('Error collect page data:', result.result.error);
+      // console.log(`html_size: ${result.result.html_size}`);
+    },
 
     customCrawl: async (page, crawl) => {
       // You can access the page object before requests
