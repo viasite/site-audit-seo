@@ -17,6 +17,7 @@ const fields_presets = {
   minimal: ['response.url'],
   seo: [
     'response.url',
+    'previousUrl',
     'depth',
     'response.status',
     'result.request_time',
