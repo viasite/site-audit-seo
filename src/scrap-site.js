@@ -52,7 +52,9 @@ module.exports = async (baseUrl, options = {}) => {
   const FILE = `./data/${domain}.csv`; // файл вывода
   let currentUrl = ''; // для хака с документами
 
-  if (!options.fields_preset || !fields_presets[options.fields_preset]) options.fields_preset = 'default';
+  if (!options.fields_preset || !fields_presets[options.fields_preset]){
+    options.fields_preset = 'default';
+  }
   const fields = fields_presets[options.fields_preset];
 
   const exporter = new CSVExporter({
