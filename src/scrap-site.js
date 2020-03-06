@@ -158,19 +158,26 @@ module.exports = async (baseUrl, options = {}) => {
   const start = Date.now();
 
   console.log(`Scrapping ${baseUrl}...`);
+  let requestedCount = 0;
 
   const crawler = await HCCrawler.launch(crawlerOptions);
-  let pagesCount = 1;
-  crawler.on('requeststarted', options => {
+  crawler.on('requeststarted', async options => {
     currentUrl = options.url;
-    if (DEBUG) console.log(`${pagesCount} ${options.url}`);
-    pagesCount++;
+    const queueCount = await crawler.queueSize();
+    requestedCount = crawler.requestedCount() + 1;
+    if (DEBUG) console.log(`${requestedCount} ${options.url} (${queueCount})`);
+  });
+  crawler.on('requestfailed', error => {
+    console.error(`Failed: ${error.options.url}`);
+  });
+  crawler.on('maxdepthreached', options => {
+    console.log(`Max depth reached`);
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
 
   const t = Math.round((Date.now() - start) / 1000);
-  const perPage = Math.round((t / pagesCount) * 100) / 100;
+  const perPage = Math.round((t / requestedCount) * 100) / 100;
   console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 };
