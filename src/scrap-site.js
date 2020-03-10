@@ -93,7 +93,7 @@ module.exports = async (baseUrl, options = {}) => {
           request_time:
             window.performance.timing.responseEnd - window.performance.timing.requestStart,
           title: $('title').text(),
-          h1: $('h1').text(),
+          h1: $('h1').text().trim(),
           h1_count: $('h1').length,
           h2_count: $('h2').length,
           h3_count: $('h3').length,
