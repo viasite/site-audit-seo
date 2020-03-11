@@ -1,4 +1,6 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
+const fs = require('fs');
+const iconv = require('iconv-lite');
 const HCCrawler = require('headless-chrome-crawler');
 const CSVExporter = require('headless-chrome-crawler/exporter/csv');
 const url = require('url');
@@ -64,7 +66,8 @@ module.exports = async (baseUrl, options = {}) => {
 
   const exporter = new CSVExporter({
     file: FILE,
-    fields: fields
+    fields: fields,
+    separator: ';'
   });
 
   const defaultOptions = {
@@ -206,4 +209,7 @@ module.exports = async (baseUrl, options = {}) => {
   const perPage = Math.round((t / requestedCount) * 100) / 100;
   console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
+
+  const csvRaw = fs.readFileSync(FILE, 'UTF-8');
+  fs.writeFileSync(FILE, iconv.encode(csvRaw, 'win1251'));
 };

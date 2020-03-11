@@ -9,6 +9,7 @@
   "author": "Stanislav Popov",
   "license": "ISC",
   "dependencies": {
-    "headless-chrome-crawler": "^1.8.0"
+    "headless-chrome-crawler": "^1.8.0",
+    "iconv-lite": "^0.5.1"
   }
 }
