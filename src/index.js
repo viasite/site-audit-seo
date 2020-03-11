@@ -13,6 +13,7 @@ async function start() {
       // ,followSitemapXml: true // чтобы найти больше страниц
       // ,maxRequest: 10         // для тестов
       // ,headless: false        // на десктопе открывает браузер визуально
+      ,encoding: 'win1251'       // для Excel
     });
   }
 }

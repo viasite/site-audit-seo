@@ -78,6 +78,7 @@ module.exports = async (baseUrl, options = {}) => {
     depthPriority: false, // без этой опции сканирует криво, многое не видит
     args: ['--no-sandbox'], // без этого puppeteer зависает
     exporter,
+    encoding: 'utf-8',
 
     // сюда дописывать правила игнора url
     preRequest: options => {
@@ -210,6 +211,8 @@ module.exports = async (baseUrl, options = {}) => {
   console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 
-  const csvRaw = fs.readFileSync(FILE, 'UTF-8');
-  fs.writeFileSync(FILE, iconv.encode(csvRaw, 'win1251'));
+  if (crawlerOptions.encoding.toLowerCase() != 'utf-8') {
+    const csvRaw = fs.readFileSync(FILE, 'utf-8');
+    fs.writeFileSync(FILE, iconv.encode(csvRaw, crawlerOptions.encoding));
+  }
 };
