@@ -18,6 +18,7 @@ const fields_presets = {
   seo: [
     'response.url',
     'result.canonical',
+    'result.is_canonical',
     'previousUrl',
     'depth',
     'response.status',
@@ -111,6 +112,7 @@ module.exports = async (baseUrl, options = {}) => {
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
           canonical: $('link[rel="canonical"]').attr('href'),
+          is_canonical: $('link[rel="canonical"]').attr('href') == window.location.href ? 1 : 0,
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content')
         };
