@@ -74,7 +74,7 @@ module.exports = async (baseUrl, options = {}) => {
     // сюда дописывать правила игнора url
     preRequest: options => {
       // console.log(options.url);
-      if (options.url.match(/\.(jpg|jpeg|png|gif)/)) return false; // картинки
+      if (options.url.match(/\.(jpg|jpeg|png|gif)/i)) return false; // картинки
       if (options.url.match(/\?width=\d+&height=\d+/)) return false; // визитки, сотрудники
       if (options.url.includes('?vi=y')) return false; // версия для слабовидящих
       if (options.url.includes('gallery/?page=detail')) return false; // Битрикс Галерея 2.0
@@ -182,7 +182,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   const crawler = await HCCrawler.launch(crawlerOptions);
   crawler.on('requeststarted', async options => {
-    currentUrl = options.url;
+    currentUrl = options.url.toLowerCase();
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
     if (DEBUG) console.log(`${requestedCount} ${options.url} (${queueCount})`);
