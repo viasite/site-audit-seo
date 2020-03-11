@@ -1,10 +1,14 @@
 {
   "name": "sites-scraper",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Generate CSV with pages and docs for site list with puppeteer",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "version": "npm run changelog && git add CHANGELOG.md",
+    "postversion": "git push && npm run release",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "release": "conventional-github-releaser -p angular"
   },
   "author": "Stanislav Popov",
   "license": "ISC",
