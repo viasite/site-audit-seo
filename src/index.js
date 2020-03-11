@@ -9,6 +9,7 @@ async function start() {
       fields_preset: 'seo',      // варианты: default, seo, headers, minimal
       maxConcurrency: 2,         // параллельно открываемые вкладки
       maxDepth: 10               // глубина сканирования
+      // ,skip_static: false     // не пропускать подгрузку браузером статики (картинки, css, js)
       // ,followSitemapXml: true // чтобы найти больше страниц
       // ,maxRequest: 10         // для тестов
       // ,headless: false        // на десктопе открывает браузер визуально

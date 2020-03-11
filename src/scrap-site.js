@@ -7,9 +7,9 @@ const DEBUG = true; // выключить, если не нужны console.log 
 const docs = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip']; // можно дополнять
 
 // запреты браузеру на подгрузку статики, ускоряет
-const SKIP_IMAGES = true;
-const SKIP_CSS = true;
-const SKIP_JS = true;
+let SKIP_IMAGES = true;
+let SKIP_CSS = true;
+let SKIP_JS = true;
 
 // поля описаны в API по ссылке выше
 const fields_presets = {
@@ -57,6 +57,10 @@ module.exports = async (baseUrl, options = {}) => {
     options.fields_preset = 'default';
   }
   const fields = fields_presets[options.fields_preset];
+
+  if (options.skip_static !== undefined) {
+    SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skip_static;
+  }
 
   const exporter = new CSVExporter({
     file: FILE,
