@@ -22,6 +22,7 @@ const fields_presets = {
     'result.canonical',
     'result.is_canonical',
     'previousUrl',
+    'result.mixed_content_url',
     'depth',
     'response.status',
     'result.request_time',
@@ -52,6 +53,7 @@ const fields_presets = {
 
 module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
+  const protocol = url.parse(baseUrl).protocol;
   const FILE = `./data/${domain}.csv`; // файл вывода
   let currentUrl = ''; // для хака с документами
 
@@ -140,11 +142,21 @@ module.exports = async (baseUrl, options = {}) => {
     customCrawl: async (page, crawl) => {
       // You can access the page object before requests
       await page.setRequestInterception(true);
+      await page.setBypassCSP(true);
+
+      let mixedContentUrl = '';
+
       // это событие срабатывает, когда chrome подгружает статику на странице (и саму страницу)
       page.on('request', request => {
         //console.log('request.url(): ', request.url());
 
-        // don't request static
+        // check for mixed content, thanks to https://github.com/busterc/mixed-content-crawler/
+        if (protocol == 'https:' && ['image', 'stylesheet', 'script'].includes(request.resourceType()) && request.url().match(/^http:/)) {
+          request.notHTTPS = true;
+          mixedContentUrl = request.url();
+          return request.abort();
+        }
+
         if (SKIP_IMAGES && request.resourceType() == 'image') {
           request.abort();
         } else if (SKIP_CSS && request.resourceType() == 'stylesheet') {
@@ -153,6 +165,12 @@ module.exports = async (baseUrl, options = {}) => {
           request.abort();
         } else {
           request.continue();
+        }
+      });
+
+      page.on('requestfailed',  request => {
+        if (request.notHTTPS) {
+          console.error('mixed content: ', request.url());
         }
       });
 
@@ -177,13 +195,15 @@ module.exports = async (baseUrl, options = {}) => {
       }
       // The result contains options, links, cookies and etc.
       const result = await crawl();
+
+      result.result.mixed_content_url = mixedContentUrl;
       // You can access the page object after requests
       result.content = await page.content();
       // You need to extend and return the crawled result
       return result;
     }
   };
-  crawlerOptions = { ...defaultOptions, ...options };
+  const crawlerOptions = { ...defaultOptions, ...options };
 
   const start = Date.now();
 
