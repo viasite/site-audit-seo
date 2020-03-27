@@ -200,6 +200,9 @@ module.exports = async (baseUrl, options = {}) => {
   crawler.on('requestfailed', error => {
     console.error(`Failed: ${error.options.url}`);
   });
+  crawler.on('requestdisallowed', options => {
+    console.error(`Disallowed in robots.txt: ${options.url}`);
+  });
   crawler.on('maxdepthreached', options => {
     console.log(`Max depth reached`);
   });
