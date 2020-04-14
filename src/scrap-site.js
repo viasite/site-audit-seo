@@ -38,6 +38,10 @@ const fields_presets = {
     'result.h4_count',
     'result.images',
     'result.images_without_alt',
+    'result.links',
+    'result.links_inner',
+    'result.links_outer',
+    'result.text_ratio_percent',
     'result.dom_size',
     'result.html_size'
   ],
@@ -102,6 +106,8 @@ module.exports = async (baseUrl, options = {}) => {
     // поля надо добавить в fields выше
     evaluatePage: () => {
       try {
+        let domainParts = location.host.split('.');
+        const domain2level = domainParts.slice(domainParts.length-2).join('.');
         return {
           request_time:
             window.performance.timing.responseEnd - window.performance.timing.requestStart,
@@ -115,8 +121,13 @@ module.exports = async (baseUrl, options = {}) => {
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
           html_size: document.head.innerHTML.length + document.body.innerHTML.length,
+          text_ratio_percent: Math.round(document.body.innerText.length / document.body.innerHTML.length * 100),
           images: $('img').length,
           images_without_alt: $('img:not([alt]').length,
+          links: $('a[href]:not([href^="javascript"]):not([href^="#"])').length,
+          links_inner: $('a[href^="/"], a[href*="'+domain2level+'"]').length,
+          links_outer: $('a[href]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="'+domain2level+'"])').length,
+          // links_absolute: $('').length,
           description:
             ($('meta[name="description"]').attr('content') &&
               $('meta[name="description"]')

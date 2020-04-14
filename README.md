@@ -48,3 +48,4 @@ npm start
 
 ## TODO:
 - Не учитывать страницы ?page= , но сканировать
+- Unique links
