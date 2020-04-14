@@ -36,6 +36,8 @@ const fields_presets = {
     'result.h2_count',
     'result.h3_count',
     'result.h4_count',
+    'result.images',
+    'result.images_without_alt',
     'result.dom_size',
     'result.html_size'
   ],
@@ -113,6 +115,8 @@ module.exports = async (baseUrl, options = {}) => {
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
           html_size: document.head.innerHTML.length + document.body.innerHTML.length,
+          images: $('img').length,
+          images_without_alt: $('img:not([alt]').length,
           description:
             ($('meta[name="description"]').attr('content') &&
               $('meta[name="description"]')
