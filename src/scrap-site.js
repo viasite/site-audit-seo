@@ -61,7 +61,7 @@ const fields_presets = {
 module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
-  const FILE = `./data/${domain}.csv`; // файл вывода
+  const csvPath = `${options.outDir}/${domain}.csv`; // файл вывода
   let currentUrl = ''; // для хака с документами
 
   if (!options.fields_preset || !fields_presets[options.fields_preset]){
@@ -74,7 +74,7 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   const exporter = new CSVExporter({
-    file: FILE,
+    file: csvPath,
     fields: fields,
     separator: ';'
   });
@@ -258,7 +258,7 @@ module.exports = async (baseUrl, options = {}) => {
   await crawler.close();
 
   if (crawlerOptions.encoding.toLowerCase() != 'utf-8') {
-    const csvRaw = fs.readFileSync(FILE, 'utf-8');
-    fs.writeFileSync(FILE, iconv.encode(csvRaw, crawlerOptions.encoding));
+    const csvRaw = fs.readFileSync(csvPath, 'utf-8');
+    fs.writeFileSync(csvPath, iconv.encode(csvRaw, crawlerOptions.encoding));
   }
 };

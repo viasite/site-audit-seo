@@ -8,11 +8,15 @@
     "version": "npm run changelog && git add CHANGELOG.md",
     "postversion": "git push && npm run release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "release": "conventional-github-releaser -p angular"
+    "release": "conventional-github-releaser -p angular && npm publish"
+  },
+  "bin": {
+    "sites-scraper": "./src/index.js"
   },
   "author": "Stanislav Popov",
   "license": "ISC",
   "dependencies": {
+    "commander": "^5.0.0",
     "headless-chrome-crawler": "^1.8.0",
     "iconv-lite": "^0.5.1"
   }

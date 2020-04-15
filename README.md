@@ -1,6 +1,4 @@
-Скрипт в `src/index.js` умеет парсить один или несколько сайтов в файлы csv в папке data.
-
-Все детали зашиты в `src/scrap-site.js`.
+Сканирование одного или несколько сайтов в файлы csv.
 
 ## Особенности:
 - Обходит весь сайт, собирает ссылки на страницы и документы
@@ -16,6 +14,11 @@
 
 ## Установка:
 ```
+npm install -g sites-scraper
+```
+
+#### Локальная установка
+```
 git clone https://github.com/viasite/sites-scraper
 
 cd sites-scraper
@@ -24,22 +27,30 @@ npm start
 ```
 
 ## Использование:
-1. Открыть `data/sites.conf` (расширение выбрано исключительно ради подсветки и закомменчивания в vscode)
-2. Вписать нужные сайты, по одному на строку (можно комментить ненужные сейчас через `#`, `//` или `;`)
-3. Запустить: `npm start`
+```
+$ sites-scraper --help
+Usage: sites-scraper -u https://example.com
+
+Options:
+  -u --urls <urls>         Comma separated url list for scan
+  -p, --preset <preset>    Table preset (default: "seo")
+  -d, --max-depth <depth>  Max scan depth (default: 10)
+  -c, --concurrenty        Threads number
+  --no-skip-static         Scan static files
+  --follow-xml-sitemap     Follow sitemap.xml
+  --max-requests <num>     Limit max pages scan (default: 0)
+  --no-headless            Show browser GUI while scan
+  --encoding <enc>         Result csv encoding (default: "win1251")
+  --out-dir <dir>          Output directory (default: ".")
+  -V, --version            output the version number
+  -h, --help               display help for command
+```
 
 ## Как посчитать контент по csv
 1. Открыть в блокноте
 2. Документы посчитать поиском `,0`
 3. Листалки исключить поиском `?`
 4. Вычесть 1 (шапка)
-
-## Настройка
-Основные настройки вынесены в `src/index.js`.
-
-Главная настройка: `fields_preset`, определяет, какие колонки будут в CSV.
-
-Все настройки делаются в `src/scrap-site.js`, комментарии там же.
 
 ## Баги
 Иногда пишет в csv одинаковые страницы. Это бывает в 2 случаях: 
