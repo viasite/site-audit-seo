@@ -1,4 +1,24 @@
-# 1.0.0 (2020-03-11)
+# [2.0.0](https://github.com/viasite/sites-scraper/compare/v1.0.0...v2.0.0) (2020-04-15)
+
+
+### Bug Fixes
+
+* add filters /?catalog_view=, /?SORT=, /filter/clear/apply/ ([802635f](https://github.com/viasite/sites-scraper/commit/802635f))
+* ignore http scan while first page was https ([be62808](https://github.com/viasite/sites-scraper/commit/be62808))
+
+
+### Features
+
+* command line interface ([5b62d72](https://github.com/viasite/sites-scraper/commit/5b62d72))
+* images_alt_empty ([f953b96](https://github.com/viasite/sites-scraper/commit/f953b96))
+* images, images_without_alt ([2431b53](https://github.com/viasite/sites-scraper/commit/2431b53))
+* links, links_inner, links_outer, text_ratio_percent ([14cb3fa](https://github.com/viasite/sites-scraper/commit/14cb3fa))
+* log robots.txt disallow to console ([4ef6a8e](https://github.com/viasite/sites-scraper/commit/4ef6a8e))
+* mixed_content_url ([e058452](https://github.com/viasite/sites-scraper/commit/e058452))
+
+
+
+# [1.0.0](https://github.com/viasite/sites-scraper/compare/de18f1e...v1.0.0) (2020-03-11)
 
 
 ### Bug Fixes
