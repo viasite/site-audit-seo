@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/viasite/sites-scraper/compare/v2.0.0...v2.0.1) (2020-04-15)
+
+
+### Features
+
+* console colors ([a78d9cb](https://github.com/viasite/sites-scraper/commit/a78d9cb))
+
+
+
 # [2.0.0](https://github.com/viasite/sites-scraper/compare/v1.0.0...v2.0.0) (2020-04-15)
 
 
