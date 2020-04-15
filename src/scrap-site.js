@@ -98,6 +98,9 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.includes('/?display=')) return false; // Аспро: вид списка
       if (options.url.includes('redirect.php')) return false; // bitrix redirect
       if (options.url.includes('rk.php')) return false; // bitrix rk
+      if (options.url.includes('/?catalog_view=')) return false; // bitrix display
+      if (options.url.includes('/?SORT=')) return false; // bitrix sort
+      if (options.url.includes('/filter/clear/apply/')) return false; // bitrix filter
 
       return true;
     },
