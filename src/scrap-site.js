@@ -8,6 +8,13 @@ const url = require('url');
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 const docs = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip']; // можно дополнять
 
+const color = {
+  reset: '\x1b[0m',
+  white: '\x1b[37m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m'
+};
+
 // запреты браузеру на подгрузку статики, ускоряет
 let SKIP_IMAGES = true;
 let SKIP_CSS = true;
@@ -63,6 +70,8 @@ module.exports = async (baseUrl, options = {}) => {
   const protocol = url.parse(baseUrl).protocol;
   const csvPath = `${options.outDir}/${domain}.csv`; // файл вывода
   let currentUrl = ''; // для хака с документами
+
+  if(!options.color) color.white = color.red = color.reset = color.yellow = '';
 
   if (!options.fields_preset || !fields_presets[options.fields_preset]){
     options.fields_preset = 'default';
@@ -158,7 +167,7 @@ module.exports = async (baseUrl, options = {}) => {
 
     onSuccess: result => {
       if (!result.result) return;
-      if (result.result.error) console.error('Error collect page data:', result.result.error);
+      if (result.result.error) console.error(`${color.red}Error collect page data: result.result.error${color.reset}`);
       // console.log(`html_size: ${result.result.html_size}`);
     },
 
@@ -193,7 +202,7 @@ module.exports = async (baseUrl, options = {}) => {
 
       page.on('requestfailed',  request => {
         if (request.notHTTPS) {
-          console.error('mixed content: ', request.url());
+          console.error(`${color.red}mixed content: ${request.url()}${color.reset}`);
         }
       });
 
@@ -230,7 +239,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   const start = Date.now();
 
-  console.log(`Scrapping ${baseUrl}...`);
+  console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
   const crawler = await HCCrawler.launch(crawlerOptions);
@@ -241,19 +250,20 @@ module.exports = async (baseUrl, options = {}) => {
     if (DEBUG) console.log(`${requestedCount} ${options.url} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
-    console.error(`Failed: ${error.options.url}`);
+    console.error(`${color.red}Failed: ${error.options.url}${color.reset}`);
   });
   crawler.on('requestdisallowed', options => {
-    console.error(`Disallowed in robots.txt: ${options.url}`);
+    console.error(`${color.yellow}Disallowed in robots.txt: ${options.url}${color.reset}`);
   });
   crawler.on('maxdepthreached', options => {
-    console.log(`Max depth reached`);
+    console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
 
   const t = Math.round((Date.now() - start) / 1000);
   const perPage = Math.round((t / requestedCount) * 100) / 100;
+  console.log(`${color.yellow}Saved to ${csvPath}${color.reset}`);
   console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 

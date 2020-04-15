@@ -42,6 +42,7 @@ Options:
   --no-headless            Show browser GUI while scan
   --encoding <enc>         Result csv encoding (default: "win1251")
   --out-dir <dir>          Output directory (default: ".")
+  --no-color               No console colors
   -V, --version            output the version number
   -h, --help               display help for command
 ```

@@ -20,6 +20,7 @@ program
   .option('--no-headless', `Show browser GUI while scan`)
   .option('--encoding <enc>', `Result csv encoding`, 'win1251')
   .option('--out-dir <dir>', `Output directory`, '.')
+  .option('--no-color', `No console colors`)
   .name("sites-scraper")
   .version(packageJson.version)
   .usage("-u https://example.com")
@@ -39,13 +40,14 @@ async function start() {
     await scrap_site(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
       maxDepth: program.maxDepth,                 // глубина сканирования
-      maxConcurrency: 2                           // параллельно открываемые вкладки
-      ,skip_static: program.scipStatic            // не пропускать подгрузку браузером статики (картинки, css, js)
-      ,followSitemapXml: program.followXmlSitemap // чтобы найти больше страниц
-      ,maxRequest: program.maxRequests            // для тестов
-      ,headless: program.headless                 // на десктопе открывает браузер визуально
-      ,encoding: program.encoding                 // для Excel
-      ,outDir: program.outDir                     // папка, куда сохраняются csv
+      maxConcurrency: 2,                          // параллельно открываемые вкладки
+      skip_static: program.scipStatic,            // не пропускать подгрузку браузером статики (картинки, css, js)
+      followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
+      maxRequest: program.maxRequests,            // для тестов
+      headless: program.headless,                 // на десктопе открывает браузер визуально
+      encoding: program.encoding,                 // для Excel
+      outDir: program.outDir,                     // папка, куда сохраняются csv
+      color: program.color                        // раскрашивать консоль
     });
   }
 }
