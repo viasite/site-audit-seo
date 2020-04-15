@@ -102,6 +102,9 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.includes('/?SORT=')) return false; // bitrix sort
       if (options.url.includes('/filter/clear/apply/')) return false; // bitrix filter
 
+      // http scan while first page was https
+      if(url.parse(options.url).protocol != protocol) return false;
+
       return true;
     },
 
