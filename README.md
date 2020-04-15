@@ -17,6 +17,19 @@
 npm install -g sites-scraper
 ```
 
+#### Если у вас Ubuntu
+```
+npm install -g sites-scraper --unsafe-perm=true
+```
+
+После установки на Ubuntu может понадобиться поменять владельца папки с Chrome с root на пользователя:
+```
+chown -R 1000:1000 /usr/lib/node_modules/sites-scraper/node_modules/puppeteer/.local-chromium/
+# or
+chown -R 1000:1000 /usr/local/lib/node_modules/sites-scraper/node_modules/puppeteer/.local-chromium/
+```
+Подробности ошибки [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
+
 #### Локальная установка
 ```
 git clone https://github.com/viasite/sites-scraper
