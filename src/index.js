@@ -11,7 +11,7 @@ const list = val => {
 
 program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
-  .option('-p, --preset <preset>', 'Table preset', 'seo')
+  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrenty', 'Threads number', 2)
   .option('--no-skip-static', `Scan static files`)

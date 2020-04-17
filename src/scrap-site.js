@@ -62,6 +62,13 @@ const fields_presets = {
     'response.headers.x-page-speed',
     'response.headers.x-cached-by',
     'response.headers.x-drupal-cache'
+  ],
+  parse: [
+    'response.url',
+    'result.title',
+    'result.h1',
+    'result.description',
+    'result.keywords',
   ]
 };
 
