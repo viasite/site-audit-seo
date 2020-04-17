@@ -175,7 +175,7 @@ module.exports = async (baseUrl, options = {}) => {
           is_canonical: $('link[rel="canonical"]').attr('href') == window.location.href ? 1 : 0,
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
-          schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace('http://schema.org/', ''))).toArray().join(', ')
+          schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', ')
         };
 
         for(let name in customFields) {
