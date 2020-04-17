@@ -1,3 +1,20 @@
+# [2.1.0](https://github.com/viasite/sites-scraper/compare/v2.0.1...v2.1.0) (2020-04-17)
+
+
+### Bug Fixes
+
+* https schema.org replace ([3c643b6](https://github.com/viasite/sites-scraper/commit/3c643b6))
+
+
+### Features
+
+* custom fields in command ([c0c42cd](https://github.com/viasite/sites-scraper/commit/c0c42cd))
+* export to xlsx ([21406fb](https://github.com/viasite/sites-scraper/commit/21406fb))
+* parse preset ([3330a60](https://github.com/viasite/sites-scraper/commit/3330a60))
+* schema_types (schema.org) ([bdde095](https://github.com/viasite/sites-scraper/commit/bdde095))
+
+
+
 ## [2.0.1](https://github.com/viasite/sites-scraper/compare/v2.0.0...v2.0.1) (2020-04-15)
 
 
