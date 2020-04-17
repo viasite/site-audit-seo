@@ -14,6 +14,7 @@ program
   .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrenty', 'Threads number', 2)
+  .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
   .option('--max-requests <num>', `Limit max pages scan`, 0)
@@ -47,7 +48,8 @@ async function start() {
       headless: program.headless,                 // на десктопе открывает браузер визуально
       encoding: program.encoding,                 // для Excel
       outDir: program.outDir,                     // папка, куда сохраняются csv
-      color: program.color                        // раскрашивать консоль
+      color: program.color,                       // раскрашивать консоль
+      fields: program.fields                      // дополнительные поля
     });
   }
 }

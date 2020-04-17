@@ -83,7 +83,12 @@ module.exports = async (baseUrl, options = {}) => {
   if (!options.fields_preset || !fields_presets[options.fields_preset]){
     options.fields_preset = 'default';
   }
-  const fields = fields_presets[options.fields_preset];
+  let fields = fields_presets[options.fields_preset];
+
+  if(options.fields) {
+    //console.log('options.fields: ', options.fields);
+    fields = [...Object.keys(options.fields).map(f => 'result.' + f), ...fields];
+  }
 
   if (options.skip_static !== undefined) {
     SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skip_static;
@@ -127,11 +132,14 @@ module.exports = async (baseUrl, options = {}) => {
 
     // сюда можно дописывать сборщики данных со страницы
     // поля надо добавить в fields выше
-    evaluatePage: () => {
+    evaluatePage: async () => {
       try {
+        const customFields = await window.__customFields();
+        // console.log('window.__customFields(): ', JSON.stringify(customFields));
+
         let domainParts = location.host.split('.');
         const domain2level = domainParts.slice(domainParts.length-2).join('.');
-        return {
+        const result = {
           request_time:
             window.performance.timing.responseEnd - window.performance.timing.requestStart,
           title: $('title').text(),
@@ -165,6 +173,13 @@ module.exports = async (baseUrl, options = {}) => {
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content')
         };
+
+        for(let name in customFields) {
+          result[name] = eval(customFields[name].replace(/`/g, "'"));
+          // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
+        }
+
+        return result;
       } catch (e) {
         return {
           error: JSON.stringify(e)
@@ -182,6 +197,11 @@ module.exports = async (baseUrl, options = {}) => {
       // You can access the page object before requests
       await page.setRequestInterception(true);
       await page.setBypassCSP(true);
+
+      //page.on('console', msg => console.log(msg.text()));
+      await page.exposeFunction('__customFields', () => {
+        return options.fields;
+      });
 
       let mixedContentUrl = '';
 
