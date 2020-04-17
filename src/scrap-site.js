@@ -39,6 +39,7 @@ const fields_presets = {
     'result.keywords',
     'result.og_title',
     'result.og_image',
+    'result.schema_types',
     'result.h1_count',
     'result.h2_count',
     'result.h3_count',
@@ -171,7 +172,8 @@ module.exports = async (baseUrl, options = {}) => {
           canonical: $('link[rel="canonical"]').attr('href'),
           is_canonical: $('link[rel="canonical"]').attr('href') == window.location.href ? 1 : 0,
           og_title: $('meta[property="og:title"]').attr('content'),
-          og_image: $('meta[property="og:image"]').attr('content')
+          og_image: $('meta[property="og:image"]').attr('content'),
+          schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace('http://schema.org/', ''))).toArray().join(', ')
         };
 
         for(let name in customFields) {
