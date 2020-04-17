@@ -2,4 +2,5 @@ node_modules/
 data/*
 !/**/.gitkeep
 *.csv
+*.xlsx
 .~*

@@ -1,4 +1,4 @@
-Сканирование одного или несколько сайтов в файлы csv.
+Сканирование одного или несколько сайтов в файлы csv и xlsx.
 
 ## Особенности:
 - Обходит весь сайт, собирает ссылки на страницы и документы
@@ -46,14 +46,15 @@ Usage: sites-scraper -u https://example.com
 
 Options:
   -u --urls <urls>         Comma separated url list for scan
-  -p, --preset <preset>    Table preset (default: "seo")
+  -p, --preset <preset>    Table preset (minimal, seo, headers, parse) (default: "seo")
   -d, --max-depth <depth>  Max scan depth (default: 10)
   -c, --concurrenty        Threads number
+  -f, --fields <json>      JSON with custom fields
   --no-skip-static         Scan static files
   --follow-xml-sitemap     Follow sitemap.xml
   --max-requests <num>     Limit max pages scan (default: 0)
   --no-headless            Show browser GUI while scan
-  --encoding <enc>         Result csv encoding (default: "win1251")
+  --no-remove-csv          No delete csv after xlsx generate
   --out-dir <dir>          Output directory (default: ".")
   --no-color               No console colors
   -V, --version            output the version number

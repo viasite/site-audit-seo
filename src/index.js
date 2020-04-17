@@ -19,7 +19,7 @@ program
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
   .option('--max-requests <num>', `Limit max pages scan`, 0)
   .option('--no-headless', `Show browser GUI while scan`)
-  .option('--encoding <enc>', `Result csv encoding`, 'win1251')
+  .option('--no-remove-csv', `No delete csv after xlsx generate`)
   .option('--out-dir <dir>', `Output directory`, '.')
   .option('--no-color', `No console colors`)
   .name("sites-scraper")
@@ -49,7 +49,8 @@ async function start() {
       encoding: program.encoding,                 // для Excel
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
-      fields: program.fields                      // дополнительные поля
+      fields: program.fields,                     // дополнительные поля
+      removeCsv: program.removeCsv                // удалять csv после генерации xlsx
     });
   }
 }

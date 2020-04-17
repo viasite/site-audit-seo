@@ -1,6 +1,6 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
-const iconv = require('iconv-lite');
+const xlsx = require('xlsx');
 const HCCrawler = require('headless-chrome-crawler');
 const CSVExporter = require('headless-chrome-crawler/exporter/csv');
 const url = require('url');
@@ -26,10 +26,10 @@ const fields_presets = {
   minimal: ['response.url'],
   seo: [
     'response.url',
+    'result.mixed_content_url',
     'result.canonical',
     'result.is_canonical',
     'previousUrl',
-    'result.mixed_content_url',
     'depth',
     'response.status',
     'result.request_time',
@@ -77,6 +77,7 @@ module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
   const csvPath = `${options.outDir}/${domain}.csv`; // файл вывода
+  const xlsxPath = `${options.outDir}/${domain}.xlsx`; // файл вывода
   let currentUrl = ''; // для хака с документами
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
@@ -124,6 +125,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.includes('/?catalog_view=')) return false; // bitrix display
       if (options.url.includes('/?SORT=')) return false; // bitrix sort
       if (options.url.includes('/filter/clear/apply/')) return false; // bitrix filter
+      // if (options.url.match(/\?(category|age|usage|madein|season|brand)=/)) return false; // bitrix filter
 
       // http scan while first page was https
       if(url.parse(options.url).protocol != protocol) return false;
@@ -254,6 +256,7 @@ module.exports = async (baseUrl, options = {}) => {
           links: []
         };
       }
+
       // The result contains options, links, cookies and etc.
       const result = await crawl();
 
@@ -264,6 +267,7 @@ module.exports = async (baseUrl, options = {}) => {
       return result;
     }
   };
+
   const crawlerOptions = { ...defaultOptions, ...options };
 
   const start = Date.now();
@@ -292,12 +296,64 @@ module.exports = async (baseUrl, options = {}) => {
 
   const t = Math.round((Date.now() - start) / 1000);
   const perPage = Math.round((t / requestedCount) * 100) / 100;
-  console.log(`${color.yellow}Saved to ${csvPath}${color.reset}`);
-  console.log(`Finish: ${t} sec (${perPage} per page)`);
   await crawler.close();
 
-  if (crawlerOptions.encoding.toLowerCase() != 'utf-8') {
+  const saveAsXlsx = () => {
+    // limit max column width
+    const widths = {
+      url: 60,
+      h1: 100,
+      title: 100,
+      description: 100,
+      keywords: 100,
+      og_title: 100,
+    }
+
+    // read csv to workbook
     const csvRaw = fs.readFileSync(csvPath, 'utf-8');
-    fs.writeFileSync(csvPath, iconv.encode(csvRaw, crawlerOptions.encoding));
+    const wb = xlsx.read(csvRaw, {type: 'string'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+
+    const range = xlsx.utils.decode_range(ws['!ref']);
+    const cols = [];
+    const colsFixed = {};
+
+    for(let r = 0; r <= range.e.r; r++){
+
+      for(let c = 0; c <= range.e.c; c++) {
+        const addr = xlsx.utils.encode_cell({r:r, c:c});
+        if(!ws[addr]) continue;
+
+        // header
+        if(r == 0) {
+          const val = ws[addr].v.replace('result.', '').replace('response.', '');
+          ws[addr].v = val
+          if(val) {
+            cols[c] = val;
+            colsFixed[c] = widths[val];
+          }
+        }
+
+        // columns width
+        const length = Object.values(ws[addr].v).length;
+        if(!cols[c]) cols[c] = length;
+        else cols[c] = Math.max(cols[c], length);
+        if(colsFixed[c]) cols[c] = Math.min(colsFixed[c], cols[c]);
+      }
+    }
+    const colsObj = cols.map(length => { return {width: length} });
+    ws['!cols'] = colsObj;
+
+    ws['!autofilter'] = { ref: ws['!ref'] };
+
+    xlsx.writeFile(wb, xlsxPath);
+    if(options.removeCsv) {
+      fs.unlinkSync(csvPath);
+    }
   }
+
+  saveAsXlsx();
+
+  console.log(`${color.yellow}Saved to ${xlsxPath}${color.reset}`);
+  console.log(`Finish: ${t} sec (${perPage} per page)`);
 };
