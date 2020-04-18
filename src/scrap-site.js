@@ -75,8 +75,8 @@ const fields_presets = {
 module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
-  const csvPath = `${options.outDir}/${domain}.csv`; // файл вывода
-  const xlsxPath = `${options.outDir}/${domain}.xlsx`; // файл вывода
+  const csvPath = `${options.outDir}/${domain}.csv`;
+  const xlsxPath = `${options.outDir}/${domain}.xlsx`;
   let currentUrl = ''; // для хака с документами
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
@@ -102,13 +102,13 @@ module.exports = async (baseUrl, options = {}) => {
   });
 
   const defaultOptions = {
-    allowedDomains: options.limitDomain ? [domain] : undefined, // закомментить, если надо не только этот домен (лучше дописать)
-    skipRequestedRedirect: true, // все редиректы помечаются как посещённые
-    depthPriority: false, // без этой опции сканирует криво, многое не видит
+    allowedDomains: options.limitDomain ? [domain] : undefined,
+    skipRequestedRedirect: true, // all redirects marks as visited
+    depthPriority: false, // without it find not all pages
     args: ['--no-sandbox'], // puppeteer freezes without it
     exporter,
 
-    // сюда дописывать правила игнора url
+    // url ignore rules
     preRequest: options => {
       // console.log(options.url);
       if (options.url.match(/\.(jpg|jpeg|png|gif)/i)) return false; // картинки

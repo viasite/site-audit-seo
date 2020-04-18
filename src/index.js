@@ -17,7 +17,7 @@ program
   .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
   .option('--no-limit-domain', `Scan not only current domain`)
-  .option('--docs-extensions', `Docs extensions (comma-separated) that will be add to table, default:doc,docx,xls,xlsx,pdf,rar,zip`, list)
+  .option('--docs-extensions', `Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,pdf,rar,zip`, list)
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
   .option('--max-requests <num>', `Limit max pages scan`, 0)
   .option('--no-headless', `Show browser GUI while scan`)
