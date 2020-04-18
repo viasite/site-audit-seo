@@ -304,12 +304,29 @@ module.exports = async (baseUrl, options = {}) => {
   const perPage = Math.round((t / requestedCount) * 100) / 100;
   await crawler.close();
 
-  saveAsXlsx(csvPath, xlsxPath);
+  const finishScan = () => {
+    if(options.removeCsv) {
+      fs.unlinkSync(csvPath);
+    }
 
-  if(options.removeCsv) {
-    fs.unlinkSync(csvPath);
+    console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
+    console.log(`Finish: ${t} sec (${perPage} per page)`);
+  };
+
+  let isSuccess = true;
+  try {
+    saveAsXlsx(csvPath, xlsxPath);
+  } catch (e) {
+    if(e.code == 'EBUSY'){
+      isSuccess = false;
+      console.error(`${color.red}${xlsxPath} is busy, please close file in 10 seconds!`);
+      setTimeout(() => {
+        saveAsXlsx(csvPath, xlsxPath);
+        finishScan();
+      }, 10000)
+    }
+    else console.error(e);
   }
 
-  console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
-  console.log(`Finish: ${t} sec (${perPage} per page)`);
+  if(isSuccess) finishScan();
 };
