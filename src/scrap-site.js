@@ -1,6 +1,6 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
-const xlsx = require('xlsx-style');
+const xlsx = require('@popstas/xlsx-style');
 const xlsxOrig = require('xlsx');
 const HCCrawler = require('headless-chrome-crawler');
 const CSVExporter = require('headless-chrome-crawler/exporter/csv');
