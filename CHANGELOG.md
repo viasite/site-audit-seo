@@ -1,3 +1,18 @@
+# [2.2.0](https://github.com/viasite/sites-scraper/compare/v2.1.0...v2.2.0) (2020-04-18)
+
+
+### Bug Fixes
+
+*  switch to [@popstas](https://github.com/popstas)/xlsx-style package until author package update ([b26ec76](https://github.com/viasite/sites-scraper/commit/b26ec76))
+* not show is_canonical: 0 when canonical is empty ([31d0271](https://github.com/viasite/sites-scraper/commit/31d0271))
+
+
+### Features
+
+* style and validation of xlsx ([eb99928](https://github.com/viasite/sites-scraper/commit/eb99928))
+
+
+
 # [2.1.0](https://github.com/viasite/sites-scraper/compare/v2.0.1...v2.1.0) (2020-04-17)
 
 
