@@ -1,6 +1,10 @@
-Русское описание [здесь](#русский)
+![npm](https://img.shields.io/npm/v/sites-scraper) ![npm](https://img.shields.io/npm/dt/sites-scraper)
 
-Scans one or several sites and generate CSV and/or XLSX.
+CLI tool for SEO, scans one or several sites and generate CSV and/or XLSX.
+
+Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer).
+
+Русское описание [ниже](#русский)
 
 ## Install:
 ``` bash

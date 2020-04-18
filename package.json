@@ -1,7 +1,7 @@
 {
   "name": "sites-scraper",
   "version": "2.3.0",
-  "description": "Generate CSV with pages and docs for site list with puppeteer",
+  "description": "CLI tool for SEO, scans one or several sites and generate CSV and/or XLSX",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -25,5 +25,13 @@
     "commander": "^5.0.0",
     "headless-chrome-crawler": "^1.8.0",
     "xlsx": "^0.15.6"
-  }
+  },
+  "keywords": [
+    "crawler",
+    "scraper",
+    "puppeteer",
+    "SEO",
+    "CLI",
+    "XLSX"
+  ]
 }
