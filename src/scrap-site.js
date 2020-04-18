@@ -237,7 +237,7 @@ module.exports = async (baseUrl, options = {}) => {
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
       // т.к. в этом контексте нет текущего урла, он задаётся в глобал через событие requeststarted
-      const isDoc = options.docsExtentions.some(ext => currentUrl.includes(`.${ext}`));
+      const isDoc = options.docsExtensions.some(ext => currentUrl.includes(`.${ext}`));
       if (isDoc) {
         return {
           options: {},
