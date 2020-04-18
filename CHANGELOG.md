@@ -1,3 +1,22 @@
+# [2.3.0](https://github.com/viasite/sites-scraper/compare/v2.2.0...v2.3.0) (2020-04-18)
+
+
+### Bug Fixes
+
+* --skip-static and --concurrency fix ([086eabd](https://github.com/viasite/sites-scraper/commit/086eabd))
+* better width fitting ([0942833](https://github.com/viasite/sites-scraper/commit/0942833))
+* h1 warning validation ([9aabfc7](https://github.com/viasite/sites-scraper/commit/9aabfc7))
+* message when max requests reached ([6693528](https://github.com/viasite/sites-scraper/commit/6693528))
+* retry save xls after 10 seconds when file busy ([7b54273](https://github.com/viasite/sites-scraper/commit/7b54273))
+
+
+### Features
+
+* --no-limit-domain ([b765ce7](https://github.com/viasite/sites-scraper/commit/b765ce7))
+* add --docs-extensions ([4903598](https://github.com/viasite/sites-scraper/commit/4903598))
+
+
+
 # [2.2.0](https://github.com/viasite/sites-scraper/compare/v2.1.0...v2.2.0) (2020-04-18)
 
 
