@@ -142,6 +142,7 @@ module.exports = async (baseUrl, options = {}) => {
 
         let domainParts = location.host.split('.');
         const domain2level = domainParts.slice(domainParts.length-2).join('.');
+        const canonical = $('link[rel="canonical"]').attr('href');
         const result = {
           request_time:
             window.performance.timing.responseEnd - window.performance.timing.requestStart,
@@ -171,8 +172,8 @@ module.exports = async (baseUrl, options = {}) => {
                 .join(' ')) ||
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
-          canonical: $('link[rel="canonical"]').attr('href'),
-          is_canonical: $('link[rel="canonical"]').attr('href') == window.location.href ? 1 : 0,
+          canonical: canonical,
+          is_canonical: canonical ? (canonical == window.location.href ? 1 : 0) : '',
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
           schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', ')
