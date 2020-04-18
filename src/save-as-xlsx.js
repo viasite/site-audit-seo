@@ -136,7 +136,8 @@ module.exports = (csvPath, xlsxPath) => {
       }
     }
   }
-  const colsObj = cols.map(length => { return {wch: length} });
+  // width magic numbers for better fitting
+  const colsObj = cols.map(length => { return { wch: length > 30 ? length - 4 : (length <= 5 ? 5 : length -7) } });
   ws['!cols'] = colsObj;
 
   // fix first row and first column
