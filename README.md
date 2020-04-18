@@ -53,6 +53,7 @@ Options:
   -c, --concurrenty        Threads number
   -f, --fields <json>      JSON with custom fields
   --no-skip-static         Scan static files
+  --no-limit-domain        Scan not only current domain
   --docs-extensions        Docs extensions (comma-separated) that will be add to table, default:doc,docx,xls,xlsx,pdf,rar,zip
   --follow-xml-sitemap     Follow sitemap.xml
   --max-requests <num>     Limit max pages scan (default: 0)

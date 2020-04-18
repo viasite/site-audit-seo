@@ -102,7 +102,7 @@ module.exports = async (baseUrl, options = {}) => {
   });
 
   const defaultOptions = {
-    allowedDomains: [domain], // закомментить, если надо не только этот домен (лучше дописать)
+    allowedDomains: options.limitDomain ? [domain] : undefined, // закомментить, если надо не только этот домен (лучше дописать)
     skipRequestedRedirect: true, // все редиректы помечаются как посещённые
     depthPriority: false, // без этой опции сканирует криво, многое не видит
     args: ['--no-sandbox'], // puppeteer freezes without it
