@@ -6,7 +6,6 @@ const CSVExporter = require('headless-chrome-crawler/exporter/csv');
 const url = require('url');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
-const docs = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip']; // можно дополнять
 
 const color = {
   reset: '\x1b[0m',
@@ -104,13 +103,10 @@ module.exports = async (baseUrl, options = {}) => {
 
   const defaultOptions = {
     allowedDomains: [domain], // закомментить, если надо не только этот домен (лучше дописать)
-    maxDepth: 10, // макс. глубина
-    maxConcurrency: 2, // параллельные потоки
     skipRequestedRedirect: true, // все редиректы помечаются как посещённые
     depthPriority: false, // без этой опции сканирует криво, многое не видит
-    args: ['--no-sandbox'], // без этого puppeteer зависает
+    args: ['--no-sandbox'], // puppeteer freezes without it
     exporter,
-    encoding: 'utf-8',
 
     // сюда дописывать правила игнора url
     preRequest: options => {
@@ -241,7 +237,7 @@ module.exports = async (baseUrl, options = {}) => {
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
       // т.к. в этом контексте нет текущего урла, он задаётся в глобал через событие requeststarted
-      const isDoc = docs.some(ext => currentUrl.includes(`.${ext}`));
+      const isDoc = options.docsExtentions.some(ext => currentUrl.includes(`.${ext}`));
       if (isDoc) {
         return {
           options: {},

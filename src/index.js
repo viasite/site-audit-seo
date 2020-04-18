@@ -16,6 +16,7 @@ program
   .option('-c, --concurrenty', 'Threads number', 2)
   .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
+  .option('--docs-extensions', `Docs extensions (comma-separated) that will be add to table, default:doc,docx,xls,xlsx,pdf,rar,zip`, list)
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
   .option('--max-requests <num>', `Limit max pages scan`, 0)
   .option('--no-headless', `Show browser GUI while scan`)
@@ -36,6 +37,10 @@ async function start() {
 
   const sites = program.urls;
 
+  if(program.docsExtensions === undefined) {
+    program.docsExtensions = ['doc', 'docx', 'xls', 'xlsx', 'pdf', 'rar', 'zip'];
+  }
+
   for (site of sites) {
     // console.log('program: ', program);
     await scrap_site(site, {
@@ -46,7 +51,7 @@ async function start() {
       followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
       maxRequest: program.maxRequests,            // для тестов
       headless: program.headless,                 // на десктопе открывает браузер визуально
-      encoding: program.encoding,                 // для Excel
+      docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
       fields: program.fields,                     // дополнительные поля
