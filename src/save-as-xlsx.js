@@ -22,6 +22,7 @@ module.exports = (csvPath, xlsxPath) => {
       warning: (v) => v.length > 256
     },
     h1_count: {
+      warning: (v) => v == 0,
       error: (v) => v > 1
     },
     dom_size: {
