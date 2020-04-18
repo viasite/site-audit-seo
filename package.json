@@ -3,6 +3,10 @@
   "version": "2.1.0",
   "description": "Generate CSV with pages and docs for site list with puppeteer",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viasite/sites-scraper.git"
+  },
   "scripts": {
     "start": "node src/index.js",
     "version": "npm run changelog && git add CHANGELOG.md",
@@ -19,6 +23,7 @@
   "dependencies": {
     "commander": "^5.0.0",
     "headless-chrome-crawler": "^1.8.0",
-    "xlsx": "^0.15.6"
+    "xlsx": "^0.15.6",
+    "xlsx-style": "github:protobi/js-xlsx"
   }
 }
