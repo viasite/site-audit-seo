@@ -307,7 +307,13 @@ module.exports = async (baseUrl, options = {}) => {
   console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
-  const crawler = await HCCrawler.launch(crawlerOptions);
+  let crawler;
+  try {
+    crawler = await HCCrawler.launch(crawlerOptions);
+  } catch(e) {
+    console.log(e);
+  }
+
   crawler.on('requeststarted', async options => {
     currentUrl = options.url.toLowerCase();
     const queueCount = await crawler.queueSize();
@@ -322,6 +328,9 @@ module.exports = async (baseUrl, options = {}) => {
   });
   crawler.on('maxdepthreached', options => {
     console.log(`${color.yellow}Max depth reached${color.reset}`);
+  });
+  crawler.on('maxrequestreached', options => {
+    console.log(`${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
@@ -450,6 +459,6 @@ module.exports = async (baseUrl, options = {}) => {
 
   saveAsXlsx();
 
-  console.log(`${color.yellow}Saved to ${xlsxPath}${color.reset}`);
+  console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
   console.log(`Finish: ${t} sec (${perPage} per page)`);
 };
