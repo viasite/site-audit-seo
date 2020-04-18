@@ -53,7 +53,7 @@ Options:
 - Each site is saved to a file with a domain name
 - Does not follow links outside the scanned domain (configurable)
 - Does not load images, css, js (configurable)
-- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](blob/master/src/scrap-site.js#L147))
+- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L112))
 
 ### XLSX features
 - The first row and the first column are fixed
@@ -120,7 +120,7 @@ Single quotes `'` should be replaced to `
 - Каждый сайт сохраняется в файл с именем домена
 - Не ходит по ссылкам вне сканируемого домена (настраивается)
 - Не загружает картинки, css, js (настраивается)
-- Некоторые URL игнорируются ([`preRequest` в `src/scrap-site.js`](blob/master/src/scrap-site.js#L147))
+- Некоторые URL игнорируются ([`preRequest` в `src/scrap-site.js`](src/scrap-site.js#L112))
 
 ### Особенности XLSX:
 - Первый ряд и первая колонка закрепляются
