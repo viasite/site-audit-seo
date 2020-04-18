@@ -91,8 +91,8 @@ module.exports = async (baseUrl, options = {}) => {
     fields = [...Object.keys(options.fields).map(f => 'result.' + f), ...fields];
   }
 
-  if (options.skip_static !== undefined) {
-    SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skip_static;
+  if (options.skipStatic !== undefined) {
+    SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skipStatic;
   }
 
   const exporter = new CSVExporter({

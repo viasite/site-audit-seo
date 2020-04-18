@@ -50,7 +50,7 @@ Options:
   -u --urls <urls>         Comma separated url list for scan
   -p, --preset <preset>    Table preset (minimal, seo, headers, parse) (default: "seo")
   -d, --max-depth <depth>  Max scan depth (default: 10)
-  -c, --concurrenty        Threads number
+  -c, --concurrency        Threads number
   -f, --fields <json>      JSON with custom fields
   --no-skip-static         Scan static files
   --no-limit-domain        Scan not only current domain

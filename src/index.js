@@ -13,7 +13,7 @@ program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
   .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
-  .option('-c, --concurrenty', 'Threads number', 2)
+  .option('-c, --concurrency <threads>', 'Threads number', 2)
   .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
   .option('--no-limit-domain', `Scan not only current domain`)
@@ -47,8 +47,8 @@ async function start() {
     await scrap_site(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
       maxDepth: program.maxDepth,                 // глубина сканирования
-      maxConcurrency: 2,                          // параллельно открываемые вкладки
-      skip_static: program.scipStatic,            // не пропускать подгрузку браузером статики (картинки, css, js)
+      maxConcurrency: program.concurrency,        // параллельно открываемые вкладки
+      skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
       followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
       limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)
       maxRequest: program.maxRequests,            // для тестов
