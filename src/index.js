@@ -26,6 +26,7 @@ program
   .option('--out-dir <dir>', `Output directory`, '.')
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--no-color', `No console colors`)
+  .option('--no-console-validate', `Don't output validate messages in console`)
   .name("sites-scraper")
   .version(packageJson.version)
   .usage("-u https://example.com")
@@ -71,7 +72,8 @@ async function start() {
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
       fields: program.fields,                     // дополнительные поля
-      removeCsv: program.removeCsv                // удалять csv после генерации xlsx
+      removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
+      consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     });
   }
 }

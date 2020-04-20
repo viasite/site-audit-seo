@@ -1,38 +1,9 @@
 const fs = require('fs');
 const xlsx = require('@popstas/xlsx-style');
 const xlsxOrig = require('xlsx');
-
+const {colsValidate} = require('./validate')
 module.exports = (csvPath, xlsxPath) => {
   // validation functions for fields for xlsx
-  const colsValidate = {
-    mixed_content: {
-      error: (v) => !!v
-    },
-    is_canonical: {
-      error: (v) => v == 0
-    },
-    request_time: {
-      warning: (v) => v > 500,
-      error: (v) => v > 1000
-    },
-    status: {
-      error: (v) => v != 200
-    },
-    description: {
-      warning: (v) => v.length > 256
-    },
-    h1_count: {
-      warning: (v) => v == 0,
-      error: (v) => v > 1
-    },
-    dom_size: {
-      warning: (v) => v > 1500,
-      error: (v) => v > 3000
-    },
-    html_size: {
-      warning: (v) => v > 1000000
-    }
-  }
 
   // limit max column width
   const colWidths = {

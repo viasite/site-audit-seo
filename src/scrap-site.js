@@ -4,6 +4,7 @@ const saveAsXlsx = require('./save-as-xlsx');
 const HCCrawler = require('headless-chrome-crawler');
 const CSVExporter = require('headless-chrome-crawler/exporter/csv');
 const url = require('url');
+const {validateResults} = require('./validate');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -192,6 +193,17 @@ module.exports = async (baseUrl, options = {}) => {
 
     onSuccess: result => {
       if (!result.result) return;
+
+      // console validate output
+      const msgs = [];
+      const validate = validateResults(result, fields); // TODO: fields declared implicitly
+      for(let name in validate) {
+        const res = validate[name];
+        const msgColor = { warning: color.yellow, error: color.red }[res.type];
+        msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+      }
+      if(msgs.length > 0) console.log(msgs.join(', '));
+
       if (result.result.error) console.error(`${color.red}Error collect page data: result.result.error${color.reset}`);
       // console.log(`html_size: ${result.result.html_size}`);
     },
@@ -259,11 +271,8 @@ module.exports = async (baseUrl, options = {}) => {
       // The result contains options, links, cookies and etc.
       const result = await crawl();
 
-      if(result.response.status != 200) {
-        console.error(`${color.red}Code: ${result.response.status}${color.reset}`);
-      }
-
       result.result.mixed_content_url = mixedContentUrl;
+
       // You can access the page object after requests
       result.content = await page.content();
       // You need to extend and return the crawled result
