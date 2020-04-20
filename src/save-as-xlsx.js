@@ -47,13 +47,13 @@ module.exports = (csvPath, xlsxPath) => {
   // styles presets for validation
   const styles = {
     warning: {
-      font: {
-        color: { rgb: "FFA09600" }
+      fill: {
+        fgColor: { rgb: "FFFFDAA2" }
       }
     },
     error: {
-      font: {
-        color: { rgb: "FFFF0000" }
+      fill: {
+        fgColor: { rgb: "FFF7A19A" }
       }
     }
   }
