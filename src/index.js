@@ -3,7 +3,8 @@ const fs = require('fs');
 const process = require('process');
 const { program } = require('commander');
 const packageJson = require('../package.json');
-const scrap_site = require('./scrap-site');
+const scrapSite = require('./scrap-site');
+const saveAsXlsx = require('./save-as-xlsx');
 
 const list = val => {
   return val ? val.split(',') : [];
@@ -23,6 +24,7 @@ program
   .option('--no-headless', `Show browser GUI while scan`)
   .option('--no-remove-csv', `No delete csv after xlsx generate`)
   .option('--out-dir <dir>', `Output directory`, '.')
+  .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--no-color', `No console colors`)
   .name("sites-scraper")
   .version(packageJson.version)
@@ -30,6 +32,18 @@ program
   .parse(process.argv);
 
 async function start() {
+  if(program.csv) {
+    const csvPath = program.csv
+    const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
+    try {
+      saveAsXlsx(csvPath, xlsxPath);
+      console.log(`${xlsxPath} saved`)
+    } catch(e) {
+      console.error(e)
+    }
+    return;
+  }
+
   if(!program.urls) {
     console.log(`${program.name()} ${program.version()}`);
     console.log(`Usage: ${program.name()} ${program.usage()}`);
@@ -44,7 +58,7 @@ async function start() {
 
   for (site of sites) {
     // console.log('program: ', program);
-    await scrap_site(site, {
+    await scrapSite(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
       maxDepth: program.maxDepth,                 // глубина сканирования
       maxConcurrency: program.concurrency,        // параллельно открываемые вкладки
