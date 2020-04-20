@@ -257,6 +257,10 @@ module.exports = async (baseUrl, options = {}) => {
       // The result contains options, links, cookies and etc.
       const result = await crawl();
 
+      if(result.response.status != 200) {
+        console.error(`${color.red}Code: ${result.response.status}${color.reset}`);
+      }
+
       result.result.mixed_content_url = mixedContentUrl;
       // You can access the page object after requests
       result.content = await page.content();
