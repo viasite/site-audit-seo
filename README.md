@@ -1,4 +1,4 @@
-![npm](https://img.shields.io/npm/v/sites-scraper) ![npm](https://img.shields.io/npm/dt/sites-scraper)
+[![npm](https://img.shields.io/npm/v/sites-scraper)](https://www.npmjs.com/package/sites-scraper) [![npm](https://img.shields.io/npm/dt/sites-scraper)](https://www.npmjs.com/package/sites-scraper)
 
 CLI tool for SEO, scans one or several sites and generate CSV and/or XLSX.
 
