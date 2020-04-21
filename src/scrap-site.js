@@ -221,7 +221,11 @@ module.exports = async (baseUrl, options = {}) => {
           return request.abort();
         }
 
-        if (SKIP_IMAGES && request.resourceType() == 'image') {
+        const isDoc = options.docsExtensions.some(ext => request.url().includes(`.${ext}`));
+        if(isDoc) {
+          // досюда как-то доходит
+          request.abort();
+        } else if (SKIP_IMAGES && request.resourceType() == 'image') {
           request.abort();
         } else if (SKIP_CSS && request.resourceType() == 'stylesheet') {
           request.abort();
@@ -238,12 +242,16 @@ module.exports = async (baseUrl, options = {}) => {
         }
       });
 
+      page.on('error', function(err) {
+        console.error('${color.red}Page error:${color.reset} ' + err.toString()); 
+      });
+
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
       // т.к. в этом контексте нет текущего урла, он задаётся в глобал через событие requeststarted
       const isDoc = options.docsExtensions.some(ext => currentUrl.includes(`.${ext}`));
       if (isDoc) {
-        return {
+        return{
           options: {},
           depth: 0,
           previousUrl: '',
@@ -315,10 +323,11 @@ module.exports = async (baseUrl, options = {}) => {
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
+  await crawler.close();
 
+  // after scan
   const t = Math.round((Date.now() - start) / 1000);
   const perPage = Math.round((t / requestedCount) * 100) / 100;
-  await crawler.close();
 
   const finishScan = () => {
     if(options.removeCsv) {
