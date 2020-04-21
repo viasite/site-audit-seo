@@ -194,16 +194,6 @@ module.exports = async (baseUrl, options = {}) => {
     onSuccess: result => {
       if (!result.result) return;
 
-      // console validate output
-      const msgs = [];
-      const validate = validateResults(result, fields); // TODO: fields declared implicitly
-      for(let name in validate) {
-        const res = validate[name];
-        const msgColor = { warning: color.yellow, error: color.red }[res.type];
-        msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
-      }
-      if(msgs.length > 0) console.log(msgs.join(', '));
-
       if (result.result.error) console.error(`${color.red}Error collect page data: result.result.error${color.reset}`);
       // console.log(`html_size: ${result.result.html_size}`);
     },
@@ -272,6 +262,17 @@ module.exports = async (baseUrl, options = {}) => {
       const result = await crawl();
 
       result.result.mixed_content_url = mixedContentUrl;
+
+      // console validate output
+      // was in onSuccess(), but causes exception on docs
+      const msgs = [];
+      const validate = validateResults(result, fields); // TODO: fields declared implicitly
+      for(let name in validate) {
+        const res = validate[name];
+        const msgColor = { warning: color.yellow, error: color.red }[res.type];
+        msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+      }
+      if(msgs.length > 0) console.log(msgs.join(', '));
 
       // You can access the page object after requests
       result.content = await page.content();

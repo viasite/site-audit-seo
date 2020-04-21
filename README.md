@@ -66,7 +66,7 @@ Options:
 - Title is right-aligned to reveal the common part
 - Validation of some columns (status, request time, description length)
 
-### Fields list (19.04.2020):
+### Fields list (20.04.2020):
 - url
 - mixed_content_url
 - canonical
@@ -89,6 +89,7 @@ Options:
 - images
 - images_without_alt
 - images_alt_empty
+- images_outer
 - links
 - links_inner
 - links_outer
