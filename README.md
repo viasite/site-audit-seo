@@ -39,20 +39,23 @@ Options:
   -f, --fields <json>          JSON with custom fields
   --no-skip-static             Scan static files
   --no-limit-domain            Scan not only current domain
-  --docs-extensions            Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,pdf,rar,zip
+  --docs-extensions            Comma-separated extensions that will be add to table,
+                               default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
   --follow-xml-sitemap         Follow sitemap.xml
   --max-requests <num>         Limit max pages scan (default: 0)
   --no-headless                Show browser GUI while scan
   --no-remove-csv              No delete csv after xlsx generate
   --out-dir <dir>              Output directory (default: ".")
+  --csv <path>                 Skip scan, only convert csv to xlsx
   --no-color                   No console colors
+  --no-console-validate        Don't output validate messages in console
   -V, --version                output the version number
   -h, --help                   display help for command
 ```
 
 ## Features:
 - Crawls the entire site, collects links to pages and documents
-- Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
+- Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `ppt`,` pptx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
 - Search pages with SSL mixed content
 - Each site is saved to a file with a domain name
 - Does not follow links outside the scanned domain (configurable)
