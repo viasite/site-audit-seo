@@ -20,6 +20,7 @@ program
   .option('--no-limit-domain', `Scan not only current domain`)
   .option('--docs-extensions', `Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip`, list)
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
+  .option('--ignore-robots-txt', `Ignore disallowed in robots.txt`)
   .option('-m, --max-requests <num>', `Limit max pages scan`, 0)
   .option('--no-headless', `Show browser GUI while scan`)
   .option('--no-remove-csv', `No delete csv after xlsx generate`)
@@ -74,6 +75,7 @@ async function start() {
       fields: program.fields,                     // дополнительные поля
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
+      obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     });
   }
 }

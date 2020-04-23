@@ -42,6 +42,7 @@ Options:
   --docs-extensions            Comma-separated extensions that will be add to table,
                                default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
   --follow-xml-sitemap         Follow sitemap.xml
+  --ignore-robots-txt          Ignore disallowed in robots.txt
   -m, --max-requests <num>     Limit max pages scan (default: 0)
   --no-headless                Show browser GUI while scan
   --no-remove-csv              No delete csv after xlsx generate
