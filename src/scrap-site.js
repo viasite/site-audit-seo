@@ -158,7 +158,7 @@ module.exports = async (baseUrl, options = {}) => {
           images: $('img').length,
           images_without_alt: $('img:not([alt]').length,
           images_alt_empty: $('img[alt=""]').length,
-          images_outer: $('img[src]:not([src^="/"]):not([src*="'+domain2level+'"])').length,
+          images_outer: $('img[src^="http"]:not([src^="/"]):not([src*="'+domain2level+'"])').length,
           links: $('a[href]:not([href^="javascript"]):not([href^="#"])').length,
           links_inner: $('a[href^="/"], a[href*="'+domain2level+'"]').length,
           links_outer: $('a[href]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="'+domain2level+'"])').length,
