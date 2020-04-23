@@ -20,7 +20,7 @@ program
   .option('--no-limit-domain', `Scan not only current domain`)
   .option('--docs-extensions', `Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip`, list)
   .option('--follow-xml-sitemap', `Follow sitemap.xml`)
-  .option('--max-requests <num>', `Limit max pages scan`, 0)
+  .option('-m, --max-requests <num>', `Limit max pages scan`, 0)
   .option('--no-headless', `Show browser GUI while scan`)
   .option('--no-remove-csv', `No delete csv after xlsx generate`)
   .option('--out-dir <dir>', `Output directory`, '.')
