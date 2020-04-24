@@ -15,6 +15,7 @@ program
   .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
+  .option('--delay <ms>', 'Delay between requests', 0)
   .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
   .option('--no-limit-domain', `Scan not only current domain`)
@@ -54,6 +55,11 @@ async function start() {
 
   const sites = program.urls;
 
+  if(program.delay > 0 && program.concurrency != 1) {
+    console.log('Force set concurrency to 1, must be 1 when delay is set');
+    program.concurrency = 1;
+  }
+
   if(program.docsExtensions === undefined) {
     program.docsExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip'];
   }
@@ -63,7 +69,8 @@ async function start() {
     await scrapSite(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
       maxDepth: program.maxDepth,                 // глубина сканирования
-      maxConcurrency: program.concurrency,        // параллельно открываемые вкладки
+      maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
+      delay: parseInt(program.delay),             // задержка между запросами
       skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
       followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
       limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)

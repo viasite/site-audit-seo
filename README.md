@@ -36,6 +36,7 @@ Options:
   -p, --preset <preset>        Table preset (minimal, seo, headers, parse) (default: "seo")
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: 2)
+  --delay <ms>                 Delay between requests (default: 0)
   -f, --fields <json>          JSON with custom fields
   --no-skip-static             Scan static files
   --no-limit-domain            Scan not only current domain
@@ -185,3 +186,4 @@ sites-scraper -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
 
 ## TODO:
 - Unique links
+- After timeout scraper freezes?
