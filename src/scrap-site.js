@@ -242,9 +242,17 @@ module.exports = async (baseUrl, options = {}) => {
         }
       });
 
-      page.on('error', function(err) {
-        console.error('${color.red}Page error:${color.reset} ' + err.toString()); 
-      });
+      /* page.on('error', function(err) {
+        console.error(`${color.red}Page error:${color.reset} ` + err.toString()); 
+      }); */
+
+      /*page.on('close', function() {
+        console.error(`${color.red}Page closed${color.reset} `); 
+      });*/
+
+      /* page.on('pegeerror', function(err) {
+        console.error(`${color.red}pegeerror:${color.reset} ` + err.toString()); 
+      }); */
 
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
