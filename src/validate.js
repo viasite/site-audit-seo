@@ -26,6 +26,9 @@ const colsValidate = {
     warning: (v) => v > 1500,
     error: (v) => v > 3000,
   },
+  text_ratio: {
+    warning: (v) => v < 10,
+  },
   html_size: {
     warning: (v) => v > 1000000,
   },
