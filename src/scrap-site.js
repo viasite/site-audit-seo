@@ -118,6 +118,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.includes('?vi=y')) return false; // версия для слабовидящих
       if (options.url.includes('gallery/?page=detail')) return false; // Битрикс Галерея 2.0
       if (options.url.includes('/?display=')) return false; // Аспро: вид списка
+      if (options.url.includes('/?lightbox=')) return false; // lightbox
       if (options.url.includes('redirect.php')) return false; // bitrix redirect
       if (options.url.includes('rk.php')) return false; // bitrix rk
       if (options.url.includes('/?catalog_view=')) return false; // bitrix display
@@ -172,7 +173,7 @@ module.exports = async (baseUrl, options = {}) => {
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
           canonical: canonical,
-          is_canonical: canonical ? (canonical == window.location.href ? 1 : 0) : '',
+          is_canonical: canonical ? (canonical == decodeURI(window.location.href) ? 1 : 0) : '',
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
           schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', ')
@@ -278,6 +279,7 @@ module.exports = async (baseUrl, options = {}) => {
       const result = await crawl();
 
       result.result.mixed_content_url = mixedContentUrl;
+      if(result.response.url) result.response.url = decodeURI(result.response.url);
 
       // console validate output
       // was in onSuccess(), but causes exception on docs
@@ -315,13 +317,13 @@ module.exports = async (baseUrl, options = {}) => {
     currentUrl = options.url.toLowerCase();
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
-    if (DEBUG) console.log(`${requestedCount} ${options.url} (${queueCount})`);
+    if (DEBUG) console.log(`${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
-    console.error(`${color.red}Failed: ${error.options.url}${color.reset}`);
+    console.error(`${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
   });
   crawler.on('requestdisallowed', options => {
-    console.error(`${color.yellow}Disallowed in robots.txt: ${options.url}${color.reset}`);
+    console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(options.url)}${color.reset}`);
   });
   crawler.on('maxdepthreached', options => {
     console.log(`${color.yellow}Max depth reached${color.reset}`);
