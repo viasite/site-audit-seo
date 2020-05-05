@@ -1,6 +1,6 @@
 {
   "name": "sites-scraper",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "CLI tool for SEO, scans one or several sites and generate CSV and/or XLSX",
   "main": "src/index.js",
   "repository": {
