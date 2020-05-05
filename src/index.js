@@ -29,7 +29,7 @@ program
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--no-color', `No console colors`)
   .option('--no-console-validate', `Don't output validate messages in console`)
-  .name("sites-scraper")
+  .name("site-audit")
   .version(packageJson.version)
   .usage("-u https://example.com")
   .parse(process.argv);

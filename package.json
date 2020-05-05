@@ -1,11 +1,11 @@
 {
-  "name": "sites-scraper",
+  "name": "site-audit",
   "version": "2.3.1",
-  "description": "CLI tool for SEO, scans one or several sites and generate CSV and/or XLSX",
+  "description": "CLI tool for SEO site audit, crawl site, output to console, csv and xlsx",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/viasite/sites-scraper.git"
+    "url": "https://github.com/viasite/site-audit.git"
   },
   "scripts": {
     "start": "node src/index.js",
@@ -16,7 +16,7 @@
     "deploy": "test -e data/deploy.sh && bash data/deploy.sh || echo no deploy script"
   },
   "bin": {
-    "sites-scraper": "./src/index.js"
+    "site-audit": "./src/index.js"
   },
   "author": "Stanislav Popov",
   "license": "ISC",
@@ -27,11 +27,12 @@
     "xlsx": "^0.15.6"
   },
   "keywords": [
+    "audit",
     "crawler",
     "scraper",
     "puppeteer",
-    "SEO",
-    "CLI",
-    "XLSX"
+    "seo",
+    "cli",
+    "xlsx"
   ]
 }
