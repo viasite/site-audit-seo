@@ -79,7 +79,6 @@ module.exports = async (baseUrl, options = {}) => {
   const protocol = url.parse(baseUrl).protocol;
   const csvPath = `${options.outDir}/${domain}.csv`;
   const xlsxPath = `${options.outDir}/${domain}.xlsx`;
-  let currentUrl = ''; // для хака с документами
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
 
@@ -103,6 +102,7 @@ module.exports = async (baseUrl, options = {}) => {
     separator: ';'
   });
 
+  let crawler;
   const defaultOptions = {
     allowedDomains: options.limitDomain ? [domain] : undefined,
     skipRequestedRedirect: true, // all redirects marks as visited
@@ -117,9 +117,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.url.match(/\?width=\d+&height=\d+/)) return false; // визитки, сотрудники
       if (options.url.includes('?vi=y')) return false; // версия для слабовидящих
       if (options.url.includes('gallery/?page=detail')) return false; // Битрикс Галерея 2.0
-      if (options.url.includes('/?display=')) return false; // Аспро: вид списка
       if (options.url.includes('/?lightbox=')) return false; // lightbox
-      if (options.url.includes('redirect.php')) return false; // bitrix redirect
       if (options.url.includes('rk.php')) return false; // bitrix rk
       if (options.url.includes('/?catalog_view=')) return false; // bitrix display
       if (options.url.includes('/?SORT=')) return false; // bitrix sort
@@ -199,7 +197,7 @@ module.exports = async (baseUrl, options = {}) => {
       // console.log(`html_size: ${result.result.html_size}`);
     },
 
-    customCrawl: async (page, crawl) => {
+    customCrawl: async (page, crawl, crawler) => {
       // You can access the page object before requests
       await page.setRequestInterception(true);
       await page.setBypassCSP(true);
@@ -255,17 +253,19 @@ module.exports = async (baseUrl, options = {}) => {
         console.error(`${color.red}pegeerror:${color.reset} ` + err.toString()); 
       }); */
 
+      // console.log('co '+ crawler._options.url);
+
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
       // т.к. в этом контексте нет текущего урла, он задаётся в глобал через событие requeststarted
-      const isDoc = options.docsExtensions.some(ext => currentUrl.includes(`.${ext}`));
+      const isDoc = crawler._options.url && options.docsExtensions.some(ext => crawler._options.url.includes(`.${ext}`));
       if (isDoc) {
         return{
           options: {},
           depth: 0,
           previousUrl: '',
           response: {
-            url: currentUrl
+            url: crawler._options.url
           },
           redirectChain: [],
           result: {},
@@ -306,7 +306,6 @@ module.exports = async (baseUrl, options = {}) => {
   console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
-  let crawler;
   try {
     crawler = await HCCrawler.launch(crawlerOptions);
   } catch(e) {
@@ -314,7 +313,6 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   crawler.on('requeststarted', async options => {
-    currentUrl = options.url.toLowerCase();
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
     if (DEBUG) console.log(`${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
