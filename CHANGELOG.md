@@ -1,3 +1,33 @@
+## [2.3.2](https://github.com/viasite/site-audit-seo/compare/v2.3.1...v2.3.2) (2020-05-05)
+
+
+
+## [2.3.1](https://github.com/viasite/site-audit-seo/compare/v2.3.0...v2.3.1) (2020-05-05)
+
+
+### Bug Fixes
+
+*  canonical and url fix for non-ascii urls ([5600e68](https://github.com/viasite/site-audit-seo/commit/5600e68))
+* -m alias for --max-requests ([b744d04](https://github.com/viasite/site-audit-seo/commit/b744d04))
+* add ppt, pptx to docs extensions ([ab21e61](https://github.com/viasite/site-audit-seo/commit/ab21e61))
+* change validation colors, background in place of font color ([4e4df1a](https://github.com/viasite/site-audit-seo/commit/4e4df1a))
+* errors while doc request (ignore docs in 'request' handler) ([dc0f4b6](https://github.com/viasite/site-audit-seo/commit/dc0f4b6))
+* exception while trying docs validate ([0e71bf1](https://github.com/viasite/site-audit-seo/commit/0e71bf1))
+* fix images_outer for src like "images/img.jpg", "data:..." ([dd84e51](https://github.com/viasite/site-audit-seo/commit/dd84e51))
+
+
+### Features
+
+* --csv, only convert csv to xlsx ([59449b1](https://github.com/viasite/site-audit-seo/commit/59449b1))
+* --delay between requests ([cc15ea8](https://github.com/viasite/site-audit-seo/commit/cc15ea8))
+* --ignore-robots-txt ([33535b2](https://github.com/viasite/site-audit-seo/commit/33535b2))
+* console output of non-200 http codes ([009dedb](https://github.com/viasite/site-audit-seo/commit/009dedb))
+* images_outer ([007995d](https://github.com/viasite/site-audit-seo/commit/007995d))
+* text_ratio validate (<10% warning) ([db47575](https://github.com/viasite/site-audit-seo/commit/db47575))
+* validation results in console, --no-console-validate ([ee63716](https://github.com/viasite/site-audit-seo/commit/ee63716))
+
+
+
 # [2.3.0](https://github.com/viasite/site-audit-seo/compare/v2.2.0...v2.3.0) (2020-04-18)
 
 
