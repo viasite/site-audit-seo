@@ -1,11 +1,11 @@
 {
-  "name": "site-audit",
+  "name": "site-audit-seo",
   "version": "2.3.1",
   "description": "CLI tool for SEO site audit, crawl site, output to console, csv and xlsx",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/viasite/site-audit.git"
+    "url": "https://github.com/viasite/site-audit-seo.git"
   },
   "scripts": {
     "start": "node src/index.js",
@@ -16,7 +16,7 @@
     "deploy": "test -e data/deploy.sh && bash data/deploy.sh || echo no deploy script"
   },
   "bin": {
-    "site-audit": "./src/index.js"
+    "site-audit-seo": "./src/index.js"
   },
   "author": "Stanislav Popov",
   "license": "ISC",

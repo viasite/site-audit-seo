@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/site-audit)](https://www.npmjs.com/package/site-audit) [![npm](https://img.shields.io/npm/dt/site-audit)](https://www.npmjs.com/package/site-audit)
+[![npm](https://img.shields.io/npm/v/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo) [![npm](https://img.shields.io/npm/dt/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo)
 
 CLI tool for SEO site audit, crawl site, output to console, csv and xlsx.
 
@@ -10,19 +10,19 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 
 ## Install:
 ``` bash
-npm install -g site-audit
+npm install -g site-audit-seo
 ```
 
 #### For linux users
 ``` bash
-npm install -g site-audit --unsafe-perm=true
+npm install -g site-audit-seo --unsafe-perm=true
 ```
 After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user (replace `1000` to your username):
 ``` bash
-chown -R 1000:1000 /usr/lib/node_modules/site-audit/node_modules/puppeteer/.local-chromium/
+chown -R 1000:1000 /usr/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
 
 # or
-chown -R 1000:1000 /usr/local/lib/node_modules/site-audit/node_modules/puppeteer/.local-chromium/
+chown -R 1000:1000 /usr/local/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
 ```
 
 Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
@@ -30,8 +30,8 @@ Error details [Invalid file descriptor to ICU data received](https://github.com/
 
 ## Usage:
 ```
-$ site-audit --help
-Usage: site-audit -u https://example.com
+$ site-audit-seo --help
+Usage: site-audit-seo -u https://example.com
 
 Options:
   -u --urls <urls>             Comma separated url list for scan
@@ -107,7 +107,7 @@ Options:
 
 ## Custom fields
 ``` bash
-site-audit -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
+site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
 ```
 You should pass JSON.
 
@@ -123,7 +123,7 @@ Single quotes `'` should be replaced to `
 
 ## Free audit tools alternatives
 - [WebSite Auditor (Link Assistant)](https://www.link-assistant.com/) - desktop app, 500 pages
-- [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) - desktop app, same as site-audit, 500 pages
+- [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) - desktop app, same as site-audit-seo, 500 pages
 - [Seobility](https://www.seobility.net/) - 1 project up to 1000 pages free
 - [Neilpatel (Ubersuggest)](https://app.neilpatel.com/) - 1 project, 150 pages
 - [Semrush](https://semrush.com/) - 1 project, 100 pages per month free
@@ -162,20 +162,20 @@ Single quotes `'` should be replaced to `
 
 ## Установка:
 ``` bash
-npm install -g site-audit
+npm install -g site-audit-seo
 ```
 
 #### Если у вас Ubuntu
 ``` bash
-npm install -g site-audit --unsafe-perm=true
+npm install -g site-audit-seo --unsafe-perm=true
 ```
 
 После установки на Ubuntu может понадобиться поменять владельца папки с Chrome с root на пользователя (замените `1000` на вашего юзера):
 ``` bash
-chown -R 1000:1000 /usr/lib/node_modules/site-audit/node_modules/puppeteer/.local-chromium/
+chown -R 1000:1000 /usr/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
 
 # or
-chown -R 1000:1000 /usr/local/lib/node_modules/site-audit/node_modules/puppeteer/.local-chromium/
+chown -R 1000:1000 /usr/local/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
 ```
 
 Подробности ошибки [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
@@ -184,7 +184,7 @@ chown -R 1000:1000 /usr/local/lib/node_modules/site-audit/node_modules/puppeteer
 ## Кастомные поля
 Можно передать дополнительные поля так:
 ``` bash
-site-audit -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
+site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
 ```
 Надо передавать JSON.
 
