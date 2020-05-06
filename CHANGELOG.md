@@ -1,3 +1,17 @@
+## [2.3.3](https://github.com/viasite/site-audit-seo/compare/v2.3.2...v2.3.3) (2020-05-06)
+
+
+### Bug Fixes
+
+* switch to [@popstas](https://github.com/popstas)/headless-chrome-crawler was not finished ([786ad89](https://github.com/viasite/site-audit-seo/commit/786ad89))
+
+
+### Features
+
+* canonical_count ([b986eec](https://github.com/viasite/site-audit-seo/commit/b986eec))
+
+
+
 ## [2.3.2](https://github.com/viasite/site-audit-seo/compare/v2.3.1...v2.3.2) (2020-05-05)
 
 
