@@ -22,6 +22,9 @@ const colsValidate = {
     warning: (v) => v == 0,
     error: (v) => v > 1,
   },
+  canonical_count: {
+    warning: (v) => v > 1,
+  },
   dom_size: {
     warning: (v) => v > 1500,
     error: (v) => v > 3000,
