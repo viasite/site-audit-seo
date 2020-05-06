@@ -17,12 +17,9 @@ npm install -g site-audit-seo
 ``` bash
 npm install -g site-audit-seo --unsafe-perm=true
 ```
-After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user (replace `1000` to your username):
+After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user (replace `$USER` to your username or run from your user, not from `root`):
 ``` bash
-chown -R 1000:1000 /usr/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
-
-# or
-chown -R 1000:1000 /usr/local/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
+sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
 ```
 
 Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
