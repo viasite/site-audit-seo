@@ -17,7 +17,13 @@ npm install -g site-audit-seo
 ``` bash
 npm install -g site-audit-seo --unsafe-perm=true
 ```
-After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user (replace `$USER` to your username or run from your user, not from `root`):
+
+After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user:
+```
+npm run postinstall-puppeteer-fix
+```
+
+Or run this (replace `$USER` to your username or run from your user, not from `root`):
 ``` bash
 sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
 ```
@@ -167,12 +173,13 @@ npm install -g site-audit-seo
 npm install -g site-audit-seo --unsafe-perm=true
 ```
 
-После установки на Ubuntu может понадобиться поменять владельца папки с Chrome с root на пользователя (замените `1000` на вашего юзера):
-``` bash
-chown -R 1000:1000 /usr/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
+```
+npm run postinstall-puppeteer-fix
+```
 
-# or
-chown -R 1000:1000 /usr/local/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/
+Или запустите это (замените `$USER` на вашего юзера, либо запускайте под юзером, не под `root`):
+``` bash
+sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
 ```
 
 Подробности ошибки [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
