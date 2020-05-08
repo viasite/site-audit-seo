@@ -48,15 +48,19 @@ exports.validateResults = (results, fields) => {
     let msg;
 
     // validate
-    if(colsValidate[colName]){
-      if(colsValidate[colName].warning && colsValidate[colName].warning(colVal)){
-        msg = colsValidate[colName].warningMsg ? colsValidate[colName].warningMsg(colVal) : colVal;
-        validate[colName] = { type: 'warning', msg: msg };
-      }
-      if(colsValidate[colName].error && colsValidate[colName].error(colVal)){
-        msg = colsValidate[colName].errorMsg ? colsValidate[colName].errorMsg(colVal) : colVal;
-        validate[colName] = { type: 'error', msg: msg };
-      }
+    if(!colsValidate[colName]) continue;
+
+    for(let type of ['warning', 'error']) {
+      const test = colsValidate[colName][type];
+      if(!test) continue;
+
+      const invalid = test(colVal);
+      if(!invalid) continue;
+
+      const msgRender = colsValidate[colName][`${type}Msg`]; // warningMsg
+      msg = msgRender ? msgRender(colVal) : colVal;
+
+      validate[colName] = { type, msg };
     }
   }
   return validate;
