@@ -1,7 +1,7 @@
 const {at} = require('lodash');
 
 const colsValidate = {
-  mixed_content: {
+  mixed_content_url: {
     error: (v) => !!v,
   },
   is_canonical: {
@@ -37,6 +37,8 @@ const colsValidate = {
   },
 };
 
+const validationSum = {};
+
 exports.colsValidate = colsValidate;
 
 exports.validateResults = (results, fields) => {
@@ -50,7 +52,7 @@ exports.validateResults = (results, fields) => {
     // validate
     if(!colsValidate[colName]) continue;
 
-    for(let type of ['warning', 'error']) {
+    for(let type of ['error', 'warning']) {
       const test = colsValidate[colName][type];
       if(!test) continue;
 
@@ -61,7 +63,14 @@ exports.validateResults = (results, fields) => {
       msg = msgRender ? msgRender(colVal) : colVal;
 
       validate[colName] = { type, msg };
+
+      if(!validationSum[colName]) validationSum[colName] = [];
+      validationSum[colName].push({ type, msg, url: results.response.url });
+
+      break;
     }
   }
   return validate;
 };
+
+exports.getValidationSum = () => validationSum;

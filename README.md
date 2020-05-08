@@ -62,6 +62,7 @@ Options:
 
 ## Features:
 - Crawls the entire site, collects links to pages and documents
+- Validation summary after scan
 - Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `ppt`,` pptx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
 - Search pages with SSL mixed content
 - Each site is saved to a file with a domain name
@@ -149,6 +150,7 @@ Single quotes `'` should be replaced to `
 
 ## Особенности:
 - Обходит весь сайт, собирает ссылки на страницы и документы
+- Сводка результатов после сканирования
 - Документы с расширениями `doc`, `docx`, `xls`, `xlsx`, `pdf`, `rar`, `zip` добавляются в список с глубиной 0
 - Поиск страниц с SSL mixed content
 - Каждый сайт сохраняется в файл с именем домена

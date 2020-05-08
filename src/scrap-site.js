@@ -4,7 +4,7 @@ const saveAsXlsx = require('./save-as-xlsx');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
-const {validateResults} = require('./validate');
+const {validateResults, getValidationSum} = require('./validate');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -342,6 +342,17 @@ module.exports = async (baseUrl, options = {}) => {
   const finishScan = () => {
     if(options.removeCsv) {
       fs.unlinkSync(csvPath);
+    }
+
+    // Validate summary
+    const sum = getValidationSum();
+    console.log(`\n\n${color.white}Validation summary:${color.reset}`);
+    for(let colName in sum) {
+      console.log(`\n${color.white}${colName}:${color.reset}`);
+      for(let res of sum[colName]) {
+        const msgColor = { warning: color.yellow, error: color.red }[res.type];
+        console.log(`${msgColor}${res.msg}${color.reset}\t${res.url}`);
+      }
     }
 
     console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
