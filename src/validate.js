@@ -14,6 +14,10 @@ const colsValidate = {
   status: {
     error: (v) => v != 200,
   },
+  title: {
+    error: (v) => v.length === 0,
+    errorMsg: (v) => v.length
+  },
   description: {
     warning: (v) => v.length > 256,
     warningMsg: (v) => v.length
