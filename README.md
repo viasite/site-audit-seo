@@ -8,6 +8,8 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 
 Русское описание [ниже](#русский)
 
+![site-audit-demo](assets/site-audit-demo.gif)
+
 ## Install:
 ``` bash
 npm install -g site-audit-seo
