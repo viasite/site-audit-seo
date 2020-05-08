@@ -1,3 +1,12 @@
+# [2.4.0](https://github.com/viasite/site-audit-seo/compare/v2.3.3...v2.4.0) (2020-05-08)
+
+
+### Features
+
+* validation summary ([e9a0917](https://github.com/viasite/site-audit-seo/commit/e9a0917))
+
+
+
 ## [2.3.3](https://github.com/viasite/site-audit-seo/compare/v2.3.2...v2.3.3) (2020-05-06)
 
 
