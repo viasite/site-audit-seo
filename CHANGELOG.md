@@ -1,3 +1,12 @@
+## [2.4.1](https://github.com/viasite/site-audit-seo/compare/v2.4.0...v2.4.1) (2020-05-08)
+
+
+### Bug Fixes
+
+* title validate ([41b72fd](https://github.com/viasite/site-audit-seo/commit/41b72fd))
+
+
+
 # [2.4.0](https://github.com/viasite/site-audit-seo/compare/v2.3.3...v2.4.0) (2020-05-08)
 
 
