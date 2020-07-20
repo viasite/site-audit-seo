@@ -1,3 +1,12 @@
+# [2.5.0](https://github.com/viasite/site-audit-seo/compare/v2.4.1...v2.5.0) (2020-07-20)
+
+
+### Features
+
+* open file after scan on Windows and MacOS, --open-file ([f1cee2a](https://github.com/viasite/site-audit-seo/commit/f1cee2a))
+
+
+
 ## [2.4.1](https://github.com/viasite/site-audit-seo/compare/v2.4.0...v2.4.1) (2020-05-08)
 
 
