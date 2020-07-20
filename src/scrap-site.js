@@ -5,6 +5,7 @@ const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
 const {validateResults, getValidationSum} = require('./validate');
+const { exec } = require('child_process');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -357,6 +358,7 @@ module.exports = async (baseUrl, options = {}) => {
 
     console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
     console.log(`Finish: ${t} sec (${perPage} per page)`);
+    if(options.openFile) exec(`"${xlsxPath}"`);
   };
 
   let isSuccess = true;

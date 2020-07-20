@@ -5,6 +5,8 @@ const { program } = require('commander');
 const packageJson = require('../package.json');
 const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
+const { exec } = require('child_process');
+const os = require('os');
 
 const list = val => {
   return val ? val.split(',') : [];
@@ -28,6 +30,7 @@ program
   .option('--out-dir <dir>', `Output directory`, '.')
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--no-color', `No console colors`)
+  .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-console-validate', `Don't output validate messages in console`)
   .name("site-audit-seo")
   .version(packageJson.version)
@@ -35,12 +38,17 @@ program
   .parse(process.argv);
 
 async function start() {
+  if(program.openFile === undefined) {
+    program.openFile = ['darwin', 'win32'].includes(os.platform());
+  }
+
   if(program.csv) {
     const csvPath = program.csv
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
     try {
       saveAsXlsx(csvPath, xlsxPath);
-      console.log(`${xlsxPath} saved`)
+      console.log(`${xlsxPath} saved`);
+      if(program.openFile) exec(`"${xlsxPath}"`);
     } catch(e) {
       console.error(e)
     }
@@ -79,6 +87,7 @@ async function start() {
       docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
+      openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль

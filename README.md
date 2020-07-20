@@ -57,6 +57,7 @@ Options:
   --out-dir <dir>              Output directory (default: ".")
   --csv <path>                 Skip scan, only convert csv to xlsx
   --no-color                   No console colors
+  --open-file                  Open file after scan (default: yes on Windows and MacOS)
   --no-console-validate        Don't output validate messages in console
   -V, --version                output the version number
   -h, --help                   display help for command
@@ -79,7 +80,7 @@ Options:
 - Title is right-aligned to reveal the common part
 - Validation of some columns (status, request time, description length)
 
-### Fields list (20.04.2020):
+### Fields list (20.07.2020):
 - url
 - mixed_content_url
 - canonical
@@ -99,6 +100,7 @@ Options:
 - h2_count
 - h3_count
 - h4_count
+- canonical_count
 - images
 - images_without_alt
 - images_alt_empty
@@ -215,7 +217,6 @@ site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
 
 ## TODO:
 - Unique links
-- Scraper freezes when scrap doc in 2 threads
 - [Offline w3c validation](https://www.npmjs.com/package/html-validator)
 - [Words count](https://github.com/IonicaBizau/count-words)
 - [Sentences count](https://github.com/NaturalNode/natural)
