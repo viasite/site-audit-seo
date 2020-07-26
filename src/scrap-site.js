@@ -87,7 +87,15 @@ module.exports = async (baseUrl, options = {}) => {
   if (!options.fields_preset || !fields_presets[options.fields_preset]){
     options.fields_preset = 'default';
   }
+
   let fields = fields_presets[options.fields_preset];
+
+  if (options.fieldsExclude && options.fieldsExclude.length > 0){
+    fields = fields.filter(f => {
+      const fName = f.replace(/.*\./g, '');
+      return !options.fieldsExclude.includes(fName);
+    });
+  }
 
   if(options.fields) {
     //console.log('options.fields: ', options.fields);

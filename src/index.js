@@ -15,6 +15,7 @@ const list = val => {
 program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
   .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
+  .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
   .option('--delay <ms>', 'Delay between requests', 0)
@@ -76,6 +77,7 @@ async function start() {
     // console.log('program: ', program);
     await scrapSite(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
+      fieldsExclude: program.exclude,             // исключить поля
       maxDepth: program.maxDepth,                 // глубина сканирования
       maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
       delay: parseInt(program.delay),             // задержка между запросами

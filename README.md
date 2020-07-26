@@ -20,12 +20,9 @@ npm install -g site-audit-seo
 npm install -g site-audit-seo --unsafe-perm=true
 ```
 
-After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user:
-```
-npm run postinstall-puppeteer-fix
-```
+After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user.
 
-Or run this (replace `$USER` to your username or run from your user, not from `root`):
+Run this (replace `$USER` to your username or run from your user, not from `root`):
 ``` bash
 sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
 ```
@@ -41,14 +38,14 @@ Usage: site-audit-seo -u https://example.com
 Options:
   -u --urls <urls>             Comma separated url list for scan
   -p, --preset <preset>        Table preset (minimal, seo, headers, parse) (default: "seo")
+  -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: 2)
   --delay <ms>                 Delay between requests (default: 0)
   -f, --fields <json>          JSON with custom fields
   --no-skip-static             Scan static files
   --no-limit-domain            Scan not only current domain
-  --docs-extensions            Comma-separated extensions that will be add to table,
-                               default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
+  --docs-extensions            Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
   --follow-xml-sitemap         Follow sitemap.xml
   --ignore-robots-txt          Ignore disallowed in robots.txt
   -m, --max-requests <num>     Limit max pages scan (default: 0)
@@ -121,6 +118,12 @@ You should pass JSON.
 
 Single quotes `'` should be replaced to `
 
+
+## Remove fields from results
+This will output fields from `seo` preset excluding canonical fields:
+``` bash
+site-audit-seo -u https://example.com --exclude canonical,is_canonical
+```
 
 ## Bugs
 1. Sometimes it writes identical pages to csv. This happens in 2 cases:  
