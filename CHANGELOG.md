@@ -1,3 +1,12 @@
+# [2.6.0](https://github.com/viasite/site-audit-seo/compare/v2.5.0...v2.6.0) (2020-07-26)
+
+
+### Features
+
+* --exclude fields from result ([1a1b7d7](https://github.com/viasite/site-audit-seo/commit/1a1b7d7))
+
+
+
 # [2.5.0](https://github.com/viasite/site-audit-seo/compare/v2.4.1...v2.5.0) (2020-07-20)
 
 
