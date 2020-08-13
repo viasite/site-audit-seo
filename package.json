@@ -1,7 +1,7 @@
 {
   "name": "site-audit-seo",
   "version": "2.6.0",
-  "description": "CLI tool for SEO site audit, crawl site, output to console, csv and xlsx",
+  "description": "CLI tool for SEO site audit, crawl site, lighthouse each page, output to console, csv and xlsx",
   "main": "src/index.js",
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "dependencies": {
     "@popstas/headless-chrome-crawler": "^1.8.2",
     "@popstas/xlsx-style": "^0.8.20",
+    "chrome-launcher": "^0.13.4",
     "commander": "^5.0.0",
     "lighthouse": "^6.2.0",
     "xlsx": "^0.15.6"

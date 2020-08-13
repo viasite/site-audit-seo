@@ -41,6 +41,7 @@ Options:
   -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: 2)
+  --lighthouse                 Do lighthouse
   --delay <ms>                 Delay between requests (default: 0)
   -f, --fields <json>          JSON with custom fields
   --no-skip-static             Scan static files
@@ -69,6 +70,7 @@ Options:
 - Does not follow links outside the scanned domain (configurable)
 - Does not load images, css, js (configurable)
 - Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L112))
+- Analyse each page with Lighthouse (see below)
 
 ### XLSX features
 - The first row and the first column are fixed
@@ -125,6 +127,11 @@ This will output fields from `seo` preset excluding canonical fields:
 site-audit-seo -u https://example.com --exclude canonical,is_canonical
 ```
 
+## Analyse each page with Lighthouse
+``` bash
+site-audit-seo -u https://example.com --preset lighthouse
+```
+
 ## Bugs
 1. Sometimes it writes identical pages to csv. This happens in 2 cases:  
 1.1. Redirect from another page to this (solved by setting `skipRequestedRedirect: true`, hardcoded).  
@@ -164,6 +171,7 @@ site-audit-seo -u https://example.com --exclude canonical,is_canonical
 - Не ходит по ссылкам вне сканируемого домена (настраивается)
 - Не загружает картинки, css, js (настраивается)
 - Некоторые URL игнорируются ([`preRequest` в `src/scrap-site.js`](src/scrap-site.js#L112))
+- Можно прогнать каждую страницу по Lighthouse (см. ниже)
 
 ### Особенности XLSX:
 - Первый ряд и первая колонка закрепляются
@@ -203,6 +211,10 @@ site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
 
 Одинарные кавычки `'` в команде надо менять на ` 
 
+## Прогнать каждую страницу по Lighthouse
+``` bash
+site-audit-seo -u https://example.com --preset lighthouse
+```
 
 ## Как посчитать контент по csv
 1. Открыть в блокноте

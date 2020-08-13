@@ -1,5 +1,10 @@
 const {at} = require('lodash');
 
+const lighthouseValidateScore = {
+  warning: (v) => v < 90,
+  error: (v) => v < 50,
+};
+
 const colsValidate = {
   mixed_content_url: {
     error: (v) => !!v,
@@ -38,6 +43,38 @@ const colsValidate = {
   },
   html_size: {
     warning: (v) => v > 1000000,
+  },
+
+  'lighthouse.scores.performance': lighthouseValidateScore,
+  'lighthouse.scores.pwa': lighthouseValidateScore,
+  'lighthouse.scores.accessibility': lighthouseValidateScore,
+  'lighthouse.scores.best-practices': lighthouseValidateScore,
+  'lighthouse.scores.seo': lighthouseValidateScore,
+
+  // https://web.dev/lighthouse-performance/
+  'lighthouse.first-contentful-paint': {
+    warning: (v) => v > 2000,
+    error: (v) => v > 4000
+  },
+  'lighthouse.speed-index': {
+    warning: (v) => v > 4300,
+    error: (v) => v > 5800
+  },
+  'lighthouse.largest-contentful-paint': {
+    warning: (v) => v > 2000,
+    error: (v) => v > 4000
+  },
+  'lighthouse.interactive': {
+    warning: (v) => v > 3800,
+    error: (v) => v > 7300
+  },
+  'lighthouse.total-blocking-time': {
+    warning: (v) => v > 300,
+    error: (v) => v > 600
+  },
+  'lighthouse.cumulative-layout-shift': {
+    warning: (v) => v > 100,
+    error: (v) => v > 250
   },
 };
 

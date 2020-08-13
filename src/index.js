@@ -18,6 +18,7 @@ program
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
+  .option('--lighthouse', 'Do lighthouse')
   .option('--delay <ms>', 'Delay between requests', 0)
   .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
   .option('--no-skip-static', `Scan static files`)
@@ -64,7 +65,7 @@ async function start() {
 
   const sites = program.urls;
 
-  if(program.delay > 0 && program.concurrency != 1) {
+  if(program.delay > 0 && program.concurrency !== 1) {
     console.log('Force set concurrency to 1, must be 1 when delay is set');
     program.concurrency = 1;
   }
@@ -73,13 +74,18 @@ async function start() {
     program.docsExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip'];
   }
 
-  for (site of sites) {
+  if(program.preset === 'lighthouse') {
+    program.lighthouse = true;
+  }
+
+  for (let site of sites) {
     // console.log('program: ', program);
     await scrapSite(site, {
       fields_preset: program.preset,              // варианты: default, seo, headers, minimal
       fieldsExclude: program.exclude,             // исключить поля
       maxDepth: program.maxDepth,                 // глубина сканирования
       maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
+      lighthouse: program.lighthouse,             // сканировать через lighthouse
       delay: parseInt(program.delay),             // задержка между запросами
       skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
       followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц

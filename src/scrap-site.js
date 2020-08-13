@@ -6,6 +6,8 @@ const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
 const {validateResults, getValidationSum} = require('./validate');
 const { exec } = require('child_process');
+const lighthouse = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -73,6 +75,22 @@ const fields_presets = {
     'result.h1',
     'result.description',
     'result.keywords',
+  ],
+  lighthouse: [
+    'response.url',
+    'result.title',
+    'lighthouse.scores.performance',
+    'lighthouse.scores.pwa',
+    'lighthouse.scores.accessibility',
+    'lighthouse.scores.best-practices',
+    'lighthouse.scores.seo',
+
+    'lighthouse.first-contentful-paint',
+    'lighthouse.speed-index',
+    'lighthouse.largest-contentful-paint',
+    'lighthouse.interactive',
+    'lighthouse.total-blocking-time',
+    'lighthouse.cumulative-layout-shift',
   ]
 };
 
@@ -288,6 +306,42 @@ module.exports = async (baseUrl, options = {}) => {
 
       // The result contains options, links, cookies and etc.
       const result = await crawl();
+
+      if(options.lighthouse) {
+        const chrome = await chromeLauncher.launch({chromeFlags: ['--headless', "--no-sandbox"]});
+        const opts = {
+          // extends: 'lighthouse:default',
+          /*onlyAudits: [
+            'first-meaningful-paint',
+            'speed-index',
+            'first-cpu-idle',
+            'interactive',
+          ],*/
+          onlyCategories : [ 'performance', 'pwa', 'accessibility', 'best-practices', 'seo' ],
+          port: chrome.port
+        };
+        const res = await lighthouse(crawler._options.url, opts);
+        const data = JSON.parse(res.report);
+
+        const lighthouseData = {
+          'first-contentful-paint': parseInt(data.audits['first-contentful-paint'].numericValue),
+          'speed-index':            parseInt(data.audits['speed-index'].numericValue),
+          'largest-contentful-paint': parseInt(data.audits['largest-contentful-paint'].numericValue),
+          'interactive': parseInt(data.audits['interactive'].numericValue),
+          'total-blocking-time':    parseInt(data.audits['total-blocking-time'].numericValue),
+          'cumulative-layout-shift': parseInt(data.audits['cumulative-layout-shift'].numericValue),
+
+          scores: {
+            performance: parseInt(data.categories.performance.score * 100),
+            pwa: parseInt(data.categories.pwa.score * 100),
+            accessibility: parseInt(data.categories.accessibility.score * 100),
+            'best-practices': parseInt(data.categories['best-practices'].score * 100),
+            seo: parseInt(data.categories.seo.score * 100)
+          }
+        }
+        result.lighthouse = lighthouseData;
+        // console.log(lighthouseData);
+      }
 
       result.result.mixed_content_url = mixedContentUrl;
       if(result.response.url) result.response.url = decodeURI(result.response.url);
