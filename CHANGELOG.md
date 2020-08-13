@@ -1,3 +1,12 @@
+# [2.7.0](https://github.com/viasite/site-audit-seo/compare/v2.6.0...v2.7.0) (2020-08-13)
+
+
+### Features
+
+* --preset lighthouse ([07f50c2](https://github.com/viasite/site-audit-seo/commit/07f50c2))
+
+
+
 # [2.6.0](https://github.com/viasite/site-audit-seo/compare/v2.5.0...v2.6.0) (2020-07-26)
 
 
