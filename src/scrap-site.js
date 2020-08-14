@@ -124,6 +124,14 @@ module.exports = async (baseUrl, options = {}) => {
     SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skipStatic;
   }
 
+  // open second chrome for lighthouse
+  let lighthouseChrome;
+  if(options.lighthouse) {
+    const chromeFlags = ['--no-sandbox'];
+    if (options.headless) chromeFlags.push('--headless');
+    lighthouseChrome = await chromeLauncher.launch({chromeFlags});
+  }
+
   const exporter = new CSVExporter({
     file: csvPath,
     fields: fields,
@@ -308,7 +316,6 @@ module.exports = async (baseUrl, options = {}) => {
       const result = await crawl();
 
       if(options.lighthouse) {
-        const chrome = await chromeLauncher.launch({chromeFlags: ['--headless', "--no-sandbox"]});
         const opts = {
           // extends: 'lighthouse:default',
           /*onlyAudits: [
@@ -318,7 +325,7 @@ module.exports = async (baseUrl, options = {}) => {
             'interactive',
           ],*/
           onlyCategories : [ 'performance', 'pwa', 'accessibility', 'best-practices', 'seo' ],
-          port: chrome.port
+          port: lighthouseChrome.port
         };
         const res = await lighthouse(crawler._options.url, opts);
         const data = JSON.parse(res.report);
@@ -401,6 +408,9 @@ module.exports = async (baseUrl, options = {}) => {
   // after scan
   const t = Math.round((Date.now() - start) / 1000);
   const perPage = Math.round((t / requestedCount) * 100) / 100;
+
+  // close lighthouse's chrome
+  await chromeLauncher.killAll();;
 
   const finishScan = () => {
     if(options.removeCsv) {
