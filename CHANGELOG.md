@@ -1,3 +1,12 @@
+## [2.7.1](https://github.com/viasite/site-audit-seo/compare/v2.7.0...v2.7.1) (2020-08-14)
+
+
+### Bug Fixes
+
+* lighthouse memory leak fix: now only 1 chrome instance for lighthouse ([2ebf375](https://github.com/viasite/site-audit-seo/commit/2ebf375))
+
+
+
 # [2.7.0](https://github.com/viasite/site-audit-seo/compare/v2.6.0...v2.7.0) (2020-08-13)
 
 

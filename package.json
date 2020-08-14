@@ -1,6 +1,6 @@
 {
   "name": "site-audit-seo",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "CLI tool for SEO site audit, crawl site, lighthouse each page, output to console, csv and xlsx",
   "main": "src/index.js",
   "repository": {
