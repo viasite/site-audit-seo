@@ -17,6 +17,11 @@ module.exports = (csvPath, xlsxPath) => {
 
   // styles presets for validation
   const styles = {
+    success: {
+      fill: {
+        fgColor: { rgb: "FFA4F79A" }
+      }
+    },
     warning: {
       fill: {
         fgColor: { rgb: "FFFFDAA2" }
@@ -103,6 +108,7 @@ module.exports = (csvPath, xlsxPath) => {
         if(colsValidate[colName]){
           if(colsValidate[colName].warning && colsValidate[colName].warning(colVal)) ws[addr].s = styles.warning;
           if(colsValidate[colName].error && colsValidate[colName].error(colVal)) ws[addr].s = styles.error;
+          if(colsValidate[colName].success && colsValidate[colName].success(colVal)) ws[addr].s = styles.success;
         }
       }
     }

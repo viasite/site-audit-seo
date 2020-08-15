@@ -115,9 +115,10 @@ module.exports = async (baseUrl, options = {}) => {
     });
   }
 
-  if(options.fields) {
-    //console.log('options.fields: ', options.fields);
-    fields = [...Object.keys(options.fields).map(f => 'result.' + f), ...fields];
+  if(options.fields.length > 0) {
+    // console.log('options.fields: ', options.fields);
+    const newFields = Object.keys(options.fields).map(f => 'result.' + f);
+    fields = [...fields, ...newFields];
   }
 
   if (options.skipStatic !== undefined) {

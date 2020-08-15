@@ -1,8 +1,20 @@
 const {at} = require('lodash');
 
 const lighthouseValidateScore = {
+  success: (v) => v >= 90,
   warning: (v) => v < 90,
   error: (v) => v < 50,
+};
+
+const warnErrorThresholds = (warn, error, isSuccess=true) => {
+  const rules = {
+    warning: (v) => v > warn,
+    error: (v) => v > error,
+  }
+  if(isSuccess) {
+    rules.success = (v) => v <= warn;
+  }
+  return rules;
 };
 
 const colsValidate = {
@@ -45,37 +57,19 @@ const colsValidate = {
     warning: (v) => v > 1000000,
   },
 
-  'lighthouse.scores.performance': lighthouseValidateScore,
-  'lighthouse.scores.pwa': lighthouseValidateScore,
-  'lighthouse.scores.accessibility': lighthouseValidateScore,
-  'lighthouse.scores.best-practices': lighthouseValidateScore,
-  'lighthouse.scores.seo': lighthouseValidateScore,
+  'lighthouse.scores.performance':       lighthouseValidateScore,
+  'lighthouse.scores.pwa':               lighthouseValidateScore,
+  'lighthouse.scores.accessibility':     lighthouseValidateScore,
+  'lighthouse.scores.best-practices':    lighthouseValidateScore,
+  'lighthouse.scores.seo':               lighthouseValidateScore,
 
   // https://web.dev/lighthouse-performance/
-  'lighthouse.first-contentful-paint': {
-    warning: (v) => v > 2000,
-    error: (v) => v > 4000
-  },
-  'lighthouse.speed-index': {
-    warning: (v) => v > 4300,
-    error: (v) => v > 5800
-  },
-  'lighthouse.largest-contentful-paint': {
-    warning: (v) => v > 2000,
-    error: (v) => v > 4000
-  },
-  'lighthouse.interactive': {
-    warning: (v) => v > 3800,
-    error: (v) => v > 7300
-  },
-  'lighthouse.total-blocking-time': {
-    warning: (v) => v > 300,
-    error: (v) => v > 600
-  },
-  'lighthouse.cumulative-layout-shift': {
-    warning: (v) => v > 100,
-    error: (v) => v > 250
-  },
+  'lighthouse.first-contentful-paint':   warnErrorThresholds(2000, 4000),
+  'lighthouse.speed-index':              warnErrorThresholds(4300, 5800),
+  'lighthouse.largest-contentful-paint': warnErrorThresholds(2000, 4000),
+  'lighthouse.interactive':              warnErrorThresholds(3800, 7300),
+  'lighthouse.total-blocking-time':      warnErrorThresholds(300, 600),
+  'lighthouse.cumulative-layout-shift':  warnErrorThresholds(100, 250),
 };
 
 const validationSum = {};
