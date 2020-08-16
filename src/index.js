@@ -55,6 +55,7 @@ program
   .option('--web', `Publish sheet to google docs`)
   .option('--no-color', `No console colors`)
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
+  .option('--no-open-file', `Don't open file after scan`)
   .option('--no-console-validate', `Don't output validate messages in console`)
   .name("site-audit-seo")
   .version(packageJson.version)
