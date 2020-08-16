@@ -12,12 +12,7 @@ const chromeLauncher = require('chrome-launcher');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
-const color = {
-  reset: '\x1b[0m',
-  white: '\x1b[37m',
-  yellow: '\x1b[33m',
-  red: '\x1b[31m'
-};
+const color = require('./color');
 
 // запреты браузеру на подгрузку статики, ускоряет
 let SKIP_IMAGES = true;

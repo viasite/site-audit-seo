@@ -2,6 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const path = require('path');
+const color = require('./color');
 
 // If modifying these scopes, delete token.json.
 const SCOPES = [
@@ -89,8 +90,9 @@ async function uploadReport(auth, xlsxPath) {
     fields: 'webViewLink'
   });
 
-  console.log(`Google Drive: saved to ${folderName}/${filename}`);
-  console.log('URL: ' + res.data.webViewLink);
+  console.log(`\n${color.yellow}Google Drive:${color.reset}`);
+  console.log(`Saved to: ${folderName}/${filename}`);
+  console.log('URL:      ' + res.data.webViewLink);
   // console.log(res.data);
 }
 
@@ -124,12 +126,12 @@ function getAccessToken(oAuth2Client, callback) {
     access_type: 'offline',
     scope: SCOPES,
   });
-  console.log('Authorize this app by visiting this url:', authUrl);
+  console.log('\nAuthorize this app by visiting this url:', authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question('Enter the code from that page here: ', (code) => {
+  rl.question('\nEnter the code from that page here: ', (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
       if (err) return console.error('Error retrieving access token', err);

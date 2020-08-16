@@ -8,6 +8,7 @@ const saveAsXlsx = require('./save-as-xlsx');
 const publishGoogleSheets = require('./publish-google-sheets');
 const { exec } = require('child_process');
 const os = require('os');
+const color = require('./color');
 
 const fieldsCustom = {};
 
@@ -15,13 +16,6 @@ const list = val => {
   return val ? val.split(',') : [];
 }
 
-
-const color = {
-  reset: '\x1b[0m',
-  white: '\x1b[37m',
-  yellow: '\x1b[33m',
-  red: '\x1b[31m'
-};
 
 const collect = (value, previous) => {
   const res = value.match(/(.*?)=(.*)/);
