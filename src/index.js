@@ -5,6 +5,7 @@ const { program } = require('commander');
 const packageJson = require('../package.json');
 const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
+const publishGoogleSheets = require('./publish-google-sheets');
 const { exec } = require('child_process');
 const os = require('os');
 
@@ -57,6 +58,7 @@ program
   .option('--no-remove-csv', `No delete csv after xlsx generate`)
   .option('--out-dir <dir>', `Output directory`, '.')
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
+  .option('--web', `Publish sheet to google docs`)
   .option('--no-color', `No console colors`)
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-console-validate', `Don't output validate messages in console`)
@@ -75,6 +77,7 @@ async function start() {
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
     try {
       saveAsXlsx(csvPath, xlsxPath);
+      if (program.web) await publishGoogleSheets(xlsxPath);
       console.log(`${xlsxPath} saved`);
       if(program.openFile) exec(`"${xlsxPath}"`);
     } catch(e) {
@@ -188,6 +191,7 @@ async function start() {
       openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
+      web: program.web,                           // публиковать на google docs
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     });

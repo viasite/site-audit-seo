@@ -1,6 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const saveAsXlsx = require('./save-as-xlsx');
+const publishGoogleSheets = require('./publish-google-sheets');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
@@ -443,12 +444,14 @@ module.exports = async (baseUrl, options = {}) => {
   let isSuccess = true;
   try {
     saveAsXlsx(csvPath, xlsxPath);
+    if (options.web) await publishGoogleSheets(xlsxPath);
   } catch (e) {
     if(e.code == 'EBUSY'){
       isSuccess = false;
       console.error(`${color.red}${xlsxPath} is busy, please close file in 10 seconds!`);
-      setTimeout(() => {
+      setTimeout(async () => {
         saveAsXlsx(csvPath, xlsxPath);
+        if (options.web) await publishGoogleSheets(xlsxPath);
         finishScan();
       }, 10000)
     }

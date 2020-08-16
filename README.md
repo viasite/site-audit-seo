@@ -37,13 +37,13 @@ Usage: site-audit-seo -u https://example.com
 
 Options:
   -u --urls <urls>             Comma separated url list for scan
-  -p, --preset <preset>        Table preset (minimal, seo, headers, parse) (default: "seo")
+  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse) (default: "seo")
   -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: 2)
   --lighthouse                 Do lighthouse
   --delay <ms>                 Delay between requests (default: 0)
-  -f, --fields <json>          JSON with custom fields
+  -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
   --no-skip-static             Scan static files
   --no-limit-domain            Scan not only current domain
   --docs-extensions            Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
@@ -54,6 +54,7 @@ Options:
   --no-remove-csv              No delete csv after xlsx generate
   --out-dir <dir>              Output directory (default: ".")
   --csv <path>                 Skip scan, only convert csv to xlsx
+  --web                        Publish sheet to google docs
   --no-color                   No console colors
   --open-file                  Open file after scan (default: yes on Windows and MacOS)
   --no-console-validate        Don't output validate messages in console
@@ -78,6 +79,7 @@ Options:
 - URL, title, description and some other fields are limited in width
 - Title is right-aligned to reveal the common part
 - Validation of some columns (status, request time, description length)
+- Export xlsx to Google Drive and print URL
 
 ### Fields list (20.07.2020):
 - url
@@ -182,6 +184,7 @@ site-audit-seo -u https://example.com --preset lighthouse
 - URL, title, description и некоторые другие поля ограничены по ширине
 - Title выравнивается по правому краю для выявления общей части
 - Валидация некоторых колонок (status, request time, description length)
+- Загрузка xlsx на Google Drive и вывод ссылки
 
 ## Установка:
 ``` bash
