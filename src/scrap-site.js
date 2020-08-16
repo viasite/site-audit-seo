@@ -325,28 +325,34 @@ module.exports = async (baseUrl, options = {}) => {
             'first-cpu-idle',
             'interactive',
           ],*/
-          onlyCategories : [ 'performance', 'pwa', 'accessibility', 'best-practices', 'seo' ],
+          // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
           port: lighthouseChrome.port
         };
         const res = await lighthouse(crawler._options.url, opts);
         const data = JSON.parse(res.report);
 
+        const audits = [
+          'first-contentful-paint',
+          'speed-index',
+          'largest-contentful-paint',
+          'interactive',
+          'total-blocking-time',
+          'cumulative-layout-shift',
+        ];
         const lighthouseData = {
-          'first-contentful-paint': parseInt(data.audits['first-contentful-paint'].numericValue),
-          'speed-index':            parseInt(data.audits['speed-index'].numericValue),
-          'largest-contentful-paint': parseInt(data.audits['largest-contentful-paint'].numericValue),
-          'interactive': parseInt(data.audits['interactive'].numericValue),
-          'total-blocking-time':    parseInt(data.audits['total-blocking-time'].numericValue),
-          'cumulative-layout-shift': parseInt(data.audits['cumulative-layout-shift'].numericValue),
-
-          scores: {
-            performance: parseInt(data.categories.performance.score * 100),
-            pwa: parseInt(data.categories.pwa.score * 100),
-            accessibility: parseInt(data.categories.accessibility.score * 100),
-            'best-practices': parseInt(data.categories['best-practices'].score * 100),
-            seo: parseInt(data.categories.seo.score * 100)
-          }
+          scores: {}
         }
+
+        for (let auditName of audits) {
+          if (!data.audits[auditName]) continue;
+          lighthouseData[auditName] = parseInt(data.audits[auditName].numericValue);
+        }
+
+        for (let category of ['performance', 'pwa', 'accessibility', 'best-practices', 'seo']) {
+          if(!data.categories[category]) continue;
+          lighthouseData.scores[category] = parseInt(data.categories[category].score * 100)
+        }
+
         result.lighthouse = lighthouseData;
         // console.log(lighthouseData);
       }
