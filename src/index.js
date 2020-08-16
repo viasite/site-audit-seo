@@ -12,9 +12,33 @@ const list = val => {
   return val ? val.split(',') : [];
 }
 
+
+const color = {
+  reset: '\x1b[0m',
+  white: '\x1b[37m',
+  yellow: '\x1b[33m',
+  red: '\x1b[31m'
+};
+
+const collect = (value, previous) => {
+  const res = value.match(/(.*?)=(.*)/);
+  const name = res[1];
+  const extractor = res[2];
+  return previous.concat([{name, extractor}]);
+}
+
+const fieldsCustomCollect = (value, previous) => {
+  const res = value.match(/(.*?)=(.*)/);
+  const name = res[1];
+  const extractor = res[2];
+
+  fieldsCustom[name] = extractor;
+  return fieldsCustom;
+}
+
 program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
-  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse)', 'seo')
+  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse)', 'seo')
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
@@ -41,7 +65,7 @@ program
 
 async function start() {
   if(program.openFile === undefined) {
-    program.openFile = ['darwin', 'win32'].includes(os.platform());
+    program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
   }
 
   if(program.csv) {
@@ -77,6 +101,70 @@ async function start() {
   if(program.preset === 'lighthouse') {
     program.lighthouse = true;
   }
+
+  const brief = [
+    {
+      name: 'Preset',
+      value: program.preset,
+      comment: '--preset [minimal, seo, headers, parse, lighthouse]'
+    },
+    {
+      name: 'Threads',
+      value: program.concurrency,
+      comment: '-c' +
+          (program.concurrency > 1 && program.lighthouse ?
+          `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
+          : '')
+    },
+    {
+      name: 'Delay',
+      value: program.delay,
+      comment: '--delay ms'
+    },
+    {
+      name: 'Ignore robots.txt',
+      value: (program.ignoreRobotsTxt ? 'yes' : 'no'),
+      comment: (!program.ignoreRobotsTxt ? '--ignore-robots-txt' : '')
+    },
+    {
+      name: 'Follow sitemap.xml',
+      value: (program.followSitemapXml ? 'yes' : 'no'),
+      comment: (!program.followSitemapXml ? '--follow-xml-sitemap' : '')
+    },
+    {
+      name: 'Max depth',
+      value: program.maxDepth,
+      comment: '-d 8'
+    },
+    {
+      name: 'Max requests',
+      value: program.maxRequests ? program.maxRequests : 'unlimited',
+      comment: '-m 123'
+    },
+    /*{
+      name: 'Lighthouse',
+      value: (program.lighthouse ? 'yes' : 'no'),
+    },*/
+    {
+      name: 'Headless',
+      value: (program.headless ? 'yes' : 'no'),
+      comment: (program.headless ? '--no-headless' : '')
+    },
+    {
+      name: 'Docs extensions',
+      value: program.docsExtensions.join(','),
+      comment: '--docs-extensions zip,rar'
+    },
+  ];
+
+  console.log('');
+  for (let line of brief) {
+    const nameCol = line.name.padEnd(20, ' ');
+    const valueCol = `${line.value}`.padEnd(10, ' ')
+    console.log(color.white + nameCol + valueCol + color.reset
+        + (line.comment ? ` ${line.comment}` : ''))
+  }
+  console.log('');
 
   for (let site of sites) {
     // console.log('program: ', program);
