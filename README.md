@@ -113,13 +113,16 @@ Options:
 
 
 ## Custom fields
+
+### Linux/Mac:
 ``` bash
-site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
+site-audit-seo -d 1 -u https://example -f 'title=$("title").text()' -f 'h1=$("h1").text()'
 ```
-You should pass JSON.
 
-Single quotes `'` should be replaced to `
-
+### Windows:
+``` bash
+site-audit-seo -d 1 -u https://example -f title=$('title').text() -f h1=$('h1').text()
+```
 
 ## Remove fields from results
 This will output fields from `seo` preset excluding canonical fields:
@@ -205,11 +208,8 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 ## Кастомные поля
 Можно передать дополнительные поля так:
 ``` bash
-site-audit-seo -d 1 -u https://example -f '{ "title": "$(`title`).text()" }'
+site-audit-seo -d 1 -u https://example -f "title=$('title').text()" -f "h1=$('h1').text()"
 ```
-Надо передавать JSON.
-
-Одинарные кавычки `'` в команде надо менять на ` 
 
 ## Прогнать каждую страницу по Lighthouse
 ``` bash

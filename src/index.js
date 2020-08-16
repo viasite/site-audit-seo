@@ -8,6 +8,8 @@ const saveAsXlsx = require('./save-as-xlsx');
 const { exec } = require('child_process');
 const os = require('os');
 
+const fieldsCustom = {};
+
 const list = val => {
   return val ? val.split(',') : [];
 }
@@ -43,8 +45,8 @@ program
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
   .option('--lighthouse', 'Do lighthouse')
-  .option('--delay <ms>', 'Delay between requests', 0)
-  .option('-f, --fields <json>', 'JSON with custom fields', JSON.parse)
+  .option('--delay <ms>', 'Delay between requests', parseInt, 0)
+  .option('-f, --fields <json>', 'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect, [])
   .option('--no-skip-static', `Scan static files`)
   .option('--no-limit-domain', `Scan not only current domain`)
   .option('--docs-extensions', `Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip`, list)
@@ -184,7 +186,7 @@ async function start() {
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
       openFile: program.openFile,                 // открыть файл после сканирования
-      fields: program.fields,                     // дополнительные поля
+      fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
