@@ -1,3 +1,12 @@
+# [2.9.0](https://github.com/viasite/site-audit-seo/compare/v2.8.0...v2.9.0) (2020-08-16)
+
+
+### Features
+
+* export xlsx report to Google Drive ([c7c3458](https://github.com/viasite/site-audit-seo/commit/c7c3458))
+
+
+
 # [2.8.0](https://github.com/viasite/site-audit-seo/compare/v2.7.1...v2.8.0) (2020-08-16)
 
 
