@@ -76,7 +76,7 @@ module.exports = (csvPath, xlsxPath) => {
 
       // header
       if(r === 0) {
-        const colName = colVal.replace('result.', '').replace('response.', '');
+        const colName = colVal.replace('result.', '').replace('response.', '').replace('lighthouse.', '');
         ws[addr].v = colName
         if(colName) {
           cols[c] = colName.length;

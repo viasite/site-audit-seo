@@ -57,19 +57,19 @@ const colsValidate = {
     warning: (v) => v > 1000000,
   },
 
-  'lighthouse.scores.performance':       lighthouseValidateScore,
-  'lighthouse.scores.pwa':               lighthouseValidateScore,
-  'lighthouse.scores.accessibility':     lighthouseValidateScore,
-  'lighthouse.scores.best-practices':    lighthouseValidateScore,
-  'lighthouse.scores.seo':               lighthouseValidateScore,
+  'scores.performance':       lighthouseValidateScore,
+  'scores.pwa':               lighthouseValidateScore,
+  'scores.accessibility':     lighthouseValidateScore,
+  'scores.best-practices':    lighthouseValidateScore,
+  'scores.seo':               lighthouseValidateScore,
 
   // https://web.dev/lighthouse-performance/
-  'lighthouse.first-contentful-paint':   warnErrorThresholds(2000, 4000),
-  'lighthouse.speed-index':              warnErrorThresholds(4300, 5800),
-  'lighthouse.largest-contentful-paint': warnErrorThresholds(2000, 4000),
-  'lighthouse.interactive':              warnErrorThresholds(3800, 7300),
-  'lighthouse.total-blocking-time':      warnErrorThresholds(300, 600),
-  'lighthouse.cumulative-layout-shift':  warnErrorThresholds(100, 250),
+  'first-contentful-paint':   warnErrorThresholds(2000, 4000),
+  'speed-index':              warnErrorThresholds(4300, 5800),
+  'largest-contentful-paint': warnErrorThresholds(2000, 4000),
+  'interactive':              warnErrorThresholds(3800, 7300),
+  'total-blocking-time':      warnErrorThresholds(300, 600),
+  'cumulative-layout-shift':  warnErrorThresholds(100, 250),
 };
 
 const validationSum = {};
