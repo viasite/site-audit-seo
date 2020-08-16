@@ -1,3 +1,19 @@
+# [2.8.0](https://github.com/viasite/site-audit-seo/compare/v2.7.1...v2.8.0) (2020-08-16)
+
+
+### Bug Fixes
+
+* shortened lighthouse column names ([ade33ef](https://github.com/viasite/site-audit-seo/commit/ade33ef))
+
+
+### Features
+
+* --fields 'title=$("title").text()' ([5b130d0](https://github.com/viasite/site-audit-seo/commit/5b130d0))
+* display scan parameters on start ([9bfb201](https://github.com/viasite/site-audit-seo/commit/9bfb201))
+* success colors for lighthouse in xlsx ([c31e554](https://github.com/viasite/site-audit-seo/commit/c31e554))
+
+
+
 ## [2.7.1](https://github.com/viasite/site-audit-seo/compare/v2.7.0...v2.7.1) (2020-08-14)
 
 
