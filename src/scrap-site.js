@@ -87,6 +87,164 @@ const fields_presets = {
     'lighthouse.interactive',
     'lighthouse.total-blocking-time',
     'lighthouse.cumulative-layout-shift',
+  ],
+  'lighthouse-all': [
+    'response.url',
+    'result.title',
+    'lighthouse.scores.performance',
+    'lighthouse.scores.pwa',
+    'lighthouse.scores.accessibility',
+    'lighthouse.scores.best-practices',
+    'lighthouse.scores.seo',
+    'lighthouse.first-contentful-paint',
+    'lighthouse.speed-index',
+    'lighthouse.largest-contentful-paint',
+    'lighthouse.interactive',
+    'lighthouse.total-blocking-time',
+    'lighthouse.cumulative-layout-shift',
+    'lighthouse.first-cpu-idle',
+    'lighthouse.max-potential-fid',
+    'lighthouse.first-meaningful-paint',
+    'lighthouse.estimated-input-latency',
+    'lighthouse.render-blocking-resources',
+    'lighthouse.uses-responsive-images',
+    'lighthouse.offscreen-images',
+    'lighthouse.unminified-css',
+    'lighthouse.unminified-javascript',
+    'lighthouse.unused-css-rules',
+    'lighthouse.unused-javascript',
+    'lighthouse.uses-optimized-images',
+    'lighthouse.uses-webp-images',
+    'lighthouse.uses-text-compression',
+    'lighthouse.uses-rel-preconnect',
+    'lighthouse.server-response-time',
+    'lighthouse.redirects',
+    'lighthouse.uses-rel-preload',
+    'lighthouse.uses-http2',
+    'lighthouse.efficient-animated-content',
+    'lighthouse.duplicated-javascript',
+    'lighthouse.legacy-javascript',
+    'lighthouse.total-byte-weight',
+    'lighthouse.uses-long-cache-ttl',
+    'lighthouse.dom-size',
+    'lighthouse.critical-request-chains',
+    'lighthouse.user-timings',
+    'lighthouse.bootup-time',
+    'lighthouse.mainthread-work-breakdown',
+    'lighthouse.font-display',
+    'lighthouse.performance-budget',
+    'lighthouse.timing-budget',
+    'lighthouse.resource-summary',
+    'lighthouse.third-party-summary',
+    'lighthouse.largest-contentful-paint-element',
+    'lighthouse.layout-shift-elements',
+    'lighthouse.uses-passive-event-listeners',
+    'lighthouse.no-document-write',
+    'lighthouse.long-tasks',
+    'lighthouse.non-composited-animations',
+    'lighthouse.unsized-images',
+    'lighthouse.network-requests',
+    'lighthouse.network-rtt',
+    'lighthouse.network-server-latency',
+    'lighthouse.main-thread-tasks',
+    'lighthouse.diagnostics',
+    'lighthouse.metrics',
+    'lighthouse.screenshot-thumbnails',
+    'lighthouse.final-screenshot',
+    'lighthouse.accesskeys',
+    'lighthouse.aria-allowed-attr',
+    'lighthouse.aria-hidden-body',
+    'lighthouse.aria-hidden-focus',
+    'lighthouse.aria-input-field-name',
+    'lighthouse.aria-required-attr',
+    'lighthouse.aria-required-children',
+    'lighthouse.aria-required-parent',
+    'lighthouse.aria-roles',
+    'lighthouse.aria-toggle-field-name',
+    'lighthouse.aria-valid-attr-value',
+    'lighthouse.aria-valid-attr',
+    'lighthouse.button-name',
+    'lighthouse.bypass',
+    'lighthouse.color-contrast',
+    'lighthouse.definition-list',
+    'lighthouse.dlitem',
+    'lighthouse.document-title',
+    'lighthouse.duplicate-id-active',
+    'lighthouse.duplicate-id-aria',
+    'lighthouse.form-field-multiple-labels',
+    'lighthouse.frame-title',
+    'lighthouse.heading-order',
+    'lighthouse.html-has-lang',
+    'lighthouse.html-lang-valid',
+    'lighthouse.image-alt',
+    'lighthouse.input-image-alt',
+    'lighthouse.label',
+    'lighthouse.layout-table',
+    'lighthouse.link-name',
+    'lighthouse.list',
+    'lighthouse.listitem',
+    'lighthouse.meta-refresh',
+    'lighthouse.meta-viewport',
+    'lighthouse.object-alt',
+    'lighthouse.tabindex',
+    'lighthouse.td-headers-attr',
+    'lighthouse.th-has-data-cells',
+    'lighthouse.valid-lang',
+    'lighthouse.video-caption',
+    'lighthouse.video-description',
+    'lighthouse.logical-tab-order',
+    'lighthouse.focusable-controls',
+    'lighthouse.interactive-element-affordance',
+    'lighthouse.managed-focus',
+    'lighthouse.focus-traps',
+    'lighthouse.custom-controls-labels',
+    'lighthouse.custom-controls-roles',
+    'lighthouse.visual-order-follows-dom',
+    'lighthouse.offscreen-content-hidden',
+    'lighthouse.use-landmarks',
+    'lighthouse.is-on-https',
+    'lighthouse.external-anchors-use-rel-noopener',
+    'lighthouse.geolocation-on-start',
+    'lighthouse.notification-on-start',
+    'lighthouse.no-vulnerable-libraries',
+    'lighthouse.password-inputs-can-be-pasted-into',
+    'lighthouse.image-aspect-ratio',
+    'lighthouse.image-size-responsive',
+    'lighthouse.doctype',
+    'lighthouse.charset',
+    'lighthouse.no-unload-listeners',
+    'lighthouse.appcache-manifest',
+    'lighthouse.js-libraries',
+    'lighthouse.deprecations',
+    'lighthouse.errors-in-console',
+    'lighthouse.viewport',
+    'lighthouse.meta-description',
+    'lighthouse.http-status-code',
+    'lighthouse.link-text',
+    'lighthouse.crawlable-anchors',
+    'lighthouse.is-crawlable',
+    'lighthouse.robots-txt',
+    'lighthouse.hreflang',
+    'lighthouse.canonical',
+    'lighthouse.font-size',
+    'lighthouse.plugins',
+    'lighthouse.tap-targets',
+    'lighthouse.structured-data',
+    'lighthouse.load-fast-enough-for-pwa',
+    'lighthouse.works-offline',
+    'lighthouse.offline-start-url',
+    'lighthouse.service-worker',
+    'lighthouse.installable-manifest',
+    'lighthouse.redirects-http',
+    'lighthouse.splash-screen',
+    'lighthouse.themed-omnibox',
+    'lighthouse.content-width',
+    'lighthouse.without-javascript',
+    'lighthouse.apple-touch-icon',
+    'lighthouse.maskable-icon',
+    'lighthouse.pwa-cross-browser',
+    'lighthouse.pwa-page-transitions',
+    'lighthouse.pwa-each-page-has-url'
   ]
 };
 
@@ -347,6 +505,7 @@ module.exports = async (baseUrl, options = {}) => {
           'total-blocking-time',
           'cumulative-layout-shift',
         ];
+        const categories = ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'];
         const lighthouseData = {
           scores: {}
         }
@@ -356,10 +515,34 @@ module.exports = async (baseUrl, options = {}) => {
           lighthouseData[auditName] = parseInt(data.audits[auditName].numericValue);
         }
 
-        for (let category of ['performance', 'pwa', 'accessibility', 'best-practices', 'seo']) {
+        for (let category of categories) {
           if(!data.categories[category]) continue;
+
+          // lighthouse.scores
           lighthouseData.scores[category] = parseInt(data.categories[category].score * 100)
+
+          // all audits
+          for (let auditRef of data.categories[category].auditRefs) {
+            let value;
+            const auditName = auditRef.id;
+            const audit = data.audits[auditName];
+
+            if (audit.numericValue) value = parseInt(audit.numericValue);
+            else value = audit.score;
+
+            lighthouseData[auditName] = value;
+
+            // add to sheet fields
+            /*if (options.fields_preset === 'lighthouse-all') {
+              const fieldId = 'lighthouse.' + auditName;
+              if (fields.indexOf(fieldId) === -1) {
+                fields.push(fieldId);
+              }
+            }*/
+          }
         }
+
+
 
         result.lighthouse = lighthouseData;
         // console.log(lighthouseData);

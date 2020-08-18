@@ -98,7 +98,7 @@ async function start() {
     program.docsExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip'];
   }
 
-  if(program.preset === 'lighthouse') {
+  if(program.preset === 'lighthouse' || program.preset === 'lighthouse-all') {
     program.lighthouse = true;
   }
 
