@@ -104,6 +104,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   let fields = fields_presets[options.fields_preset];
 
+  // exclude fields
   if (options.fieldsExclude && options.fieldsExclude.length > 0){
     fields = fields.filter(f => {
       const fName = f.replace(/.*\./g, '');
@@ -111,12 +112,23 @@ module.exports = async (baseUrl, options = {}) => {
     });
   }
 
+  // custom fields
   if(options.fields.length > 0) {
     // console.log('options.fields: ', options.fields);
     const newFields = Object.keys(options.fields).map(f => 'result.' + f);
     fields = [...fields, ...newFields];
   }
 
+  // lighthouse fields
+  if (options.lighthouse) {
+    for (let fName of fields_presets.lighthouse) {
+      if (fields.indexOf(fName) === -1) {
+        fields.push(fName);
+      }
+    }
+  }
+
+  // skip static
   if (options.skipStatic !== undefined) {
     SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skipStatic;
   }
@@ -376,6 +388,15 @@ module.exports = async (baseUrl, options = {}) => {
 
   const crawlerOptions = { ...defaultOptions, ...options };
 
+
+
+
+
+
+
+
+
+  // start
   const start = Date.now();
 
   console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
@@ -407,6 +428,16 @@ module.exports = async (baseUrl, options = {}) => {
   await crawler.queue(baseUrl);
   await crawler.onIdle();
   await crawler.close();
+
+
+
+
+
+
+
+
+
+
 
   // after scan
   const t = Math.round((Date.now() - start) / 1000);

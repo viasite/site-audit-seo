@@ -81,7 +81,7 @@ Options:
 - Validation of some columns (status, request time, description length)
 - Export xlsx to Google Drive and print URL
 
-### Fields list (20.07.2020):
+### Fields list (18.08.2020):
 - url
 - mixed_content_url
 - canonical
@@ -112,6 +112,17 @@ Options:
 - text_ratio_percent
 - dom_size
 - html_size
+- lighthouse.scores.performance
+- lighthouse.scores.pwa
+- lighthouse.scores.accessibility
+- lighthouse.scores.best-practices
+- lighthouse.scores.seo
+- lighthouse.first-contentful-paint
+- lighthouse.speed-index
+- lighthouse.largest-contentful-paint
+- lighthouse.interactive
+- lighthouse.total-blocking-time
+- lighthouse.cumulative-layout-shift
 
 
 ## Custom fields
@@ -132,9 +143,15 @@ This will output fields from `seo` preset excluding canonical fields:
 site-audit-seo -u https://example.com --exclude canonical,is_canonical
 ```
 
-## Analyse each page with Lighthouse
+## Lighthouse
+### Analyse each page with Lighthouse
 ``` bash
 site-audit-seo -u https://example.com --preset lighthouse
+```
+
+### Analyse seo + Lighthouse
+``` bash
+site-audit-seo -u https://example.com --lighthouse
 ```
 
 ## Bugs
@@ -214,9 +231,15 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 site-audit-seo -d 1 -u https://example -f "title=$('title').text()" -f "h1=$('h1').text()"
 ```
 
-## Прогнать каждую страницу по Lighthouse
+## Lighthouse
+### Прогнать каждую страницу по Lighthouse
 ``` bash
 site-audit-seo -u https://example.com --preset lighthouse
+```
+
+### Обычный seo аудит + Lighthouse
+``` bash
+site-audit-seo -u https://example.com --lighthouse
 ```
 
 ## Как посчитать контент по csv

@@ -39,7 +39,7 @@ program
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
-  .option('--lighthouse', 'Do lighthouse')
+  .option('--lighthouse', 'Appends base Lighthouse fields to preset')
   .option('--delay <ms>', 'Delay between requests', parseInt, 0)
   .option('-f, --fields <json>', 'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect, [])
   .option('--no-skip-static', `Scan static files`)
