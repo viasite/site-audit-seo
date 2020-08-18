@@ -5,6 +5,7 @@ const { program } = require('commander');
 const packageJson = require('../package.json');
 const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
+const saveAsJson = require('./save-as-json');
 const publishGoogleSheets = require('./publish-google-sheets');
 const { exec } = require('child_process');
 const os = require('os');
@@ -53,6 +54,7 @@ program
   .option('--out-dir <dir>', `Output directory`, '.')
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--web', `Publish sheet to google docs`)
+  .option('--json', `Output results in JSON`)
   .option('--no-color', `No console colors`)
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-open-file', `Don't open file after scan`)
@@ -70,8 +72,10 @@ async function start() {
   if(program.csv) {
     const csvPath = program.csv
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
+    const jsonPath = csvPath.replace(/\.csv$/, '.json');
     try {
       saveAsXlsx(csvPath, xlsxPath);
+      if (program.json) await saveAsJson(csvPath, jsonPath);
       if (program.web) await publishGoogleSheets(xlsxPath);
       console.log(`${xlsxPath} saved`);
       if(program.openFile) exec(`"${xlsxPath}"`);

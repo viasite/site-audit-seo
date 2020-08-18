@@ -26,6 +26,7 @@
     "@popstas/xlsx-style": "^0.8.20",
     "chrome-launcher": "^0.13.4",
     "commander": "^5.0.0",
+    "csvtojson": "^2.0.10",
     "googleapis": "^59.0.0",
     "lighthouse": "^6.2.0",
     "xlsx": "^0.15.6"
