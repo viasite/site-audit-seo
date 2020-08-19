@@ -36,7 +36,7 @@ const fieldsCustomCollect = (value, previous) => {
 
 program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
-  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse)', 'seo')
+  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)', 'seo')
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
   .option('-c, --concurrency <threads>', 'Threads number', 2)
@@ -110,7 +110,7 @@ async function start() {
     {
       name: 'Preset',
       value: program.preset,
-      comment: '--preset [minimal, seo, headers, parse, lighthouse]'
+      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]'
     },
     {
       name: 'Threads',

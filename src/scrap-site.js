@@ -492,7 +492,8 @@ module.exports = async (baseUrl, options = {}) => {
             'interactive',
           ],*/
           // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
-          port: lighthouseChrome.port
+          port: lighthouseChrome.port,
+          locale: 'ru'
         };
         const res = await lighthouse(crawler._options.url, opts);
         const data = JSON.parse(res.report);
@@ -510,19 +511,21 @@ module.exports = async (baseUrl, options = {}) => {
           scores: {}
         }
 
+        const fieldConfigs = []; // для генерации конфига полей
+
         for (let auditName of audits) {
           if (!data.audits[auditName]) continue;
           lighthouseData[auditName] = parseInt(data.audits[auditName].numericValue);
         }
 
-        for (let category of categories) {
-          if(!data.categories[category]) continue;
+        for (let categoryId of categories) {
+          if(!data.categories[categoryId]) continue;
 
           // lighthouse.scores
-          lighthouseData.scores[category] = parseInt(data.categories[category].score * 100)
+          lighthouseData.scores[categoryId] = parseInt(data.categories[categoryId].score * 100)
 
           // all audits
-          for (let auditRef of data.categories[category].auditRefs) {
+          for (let auditRef of data.categories[categoryId].auditRefs) {
             let value;
             const auditName = auditRef.id;
             const audit = data.audits[auditName];
@@ -533,18 +536,33 @@ module.exports = async (baseUrl, options = {}) => {
             lighthouseData[auditName] = value;
 
             // add to sheet fields
-            /*if (options.fields_preset === 'lighthouse-all') {
+            if (options.fields_preset === 'lighthouse-all') {
               const fieldId = 'lighthouse.' + auditName;
               if (fields.indexOf(fieldId) === -1) {
                 fields.push(fieldId);
               }
-            }*/
+            }
+
+            // generate field config
+            const fieldConfig = {
+              name: 'lighthouse_' + audit.id,
+              comment: audit.title,
+              description: audit.description,
+              groups: ['Lighthouse: ' + data.categories[categoryId].title]
+            }
+            if (auditRef.group) {
+              const groupTitle = data.categories[categoryId].title + ': ' + data.categoryGroups[auditRef.group].title;
+              fieldConfig.groups.push(groupTitle);
+              // fieldConfig.groups = [groupTitle];
+            }
+            fieldConfigs.push(fieldConfig);
           }
         }
 
 
 
         result.lighthouse = lighthouseData;
+        // console.log(JSON.stringify(fieldConfigs)); // copy to fields.js
         // console.log(lighthouseData);
       }
 
