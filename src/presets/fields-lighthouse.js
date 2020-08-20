@@ -6,7 +6,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_speed-index",
@@ -15,7 +16,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_largest-contentful-paint",
@@ -24,7 +26,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_interactive",
@@ -33,7 +36,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_total-blocking-time",
@@ -42,7 +46,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_cumulative-layout-shift",
@@ -51,7 +56,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Показатели"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_first-cpu-idle",
@@ -59,7 +65,8 @@ const fields = [
         "description": "Время окончания работы ЦП – время, когда на странице становится возможна обработка пользовательского ввода.  [Подробнее…](https://web.dev/first-cpu-idle/)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_max-potential-fid",
@@ -67,7 +74,8 @@ const fields = [
         "description": "Максимальная потенциальная задержка после первого ввода показывает время выполнения самой длительной задачи. [Подробнее…](https://web.dev/lighthouse-max-potential-fid/)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_first-meaningful-paint",
@@ -75,7 +83,8 @@ const fields = [
         "description": "Первая значимая отрисовка – показатель, определяющий интервал времени между началом загрузки страницы и появлением основного контента. [Подробнее…](https://web.dev/first-meaningful-paint/)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_estimated-input-latency",
@@ -83,7 +92,8 @@ const fields = [
         "description": "Примерное время задержки при вводе показывает время в миллисекундах, через которое приложение реагирует на действия пользователя в течение самых активных 5 секунд загрузки страницы. Если это время превышает 50 мс, пользователям может показаться, что ваше приложение работает слишком медленно. [Подробнее…](https://web.dev/estimated-input-latency/)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_render-blocking-resources",
@@ -92,7 +102,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-responsive-images",
@@ -101,7 +112,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_offscreen-images",
@@ -110,7 +122,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_unminified-css",
@@ -119,7 +132,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_unminified-javascript",
@@ -128,7 +142,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_unused-css-rules",
@@ -137,7 +152,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_unused-javascript",
@@ -146,7 +162,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-optimized-images",
@@ -155,7 +172,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-webp-images",
@@ -164,7 +182,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-text-compression",
@@ -173,7 +192,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-rel-preconnect",
@@ -182,7 +202,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_server-response-time",
@@ -191,7 +212,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_redirects",
@@ -200,7 +222,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-rel-preload",
@@ -209,7 +232,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-http2",
@@ -218,7 +242,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_efficient-animated-content",
@@ -227,7 +252,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_duplicated-javascript",
@@ -236,7 +262,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_legacy-javascript",
@@ -245,7 +272,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_total-byte-weight",
@@ -254,7 +282,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-long-cache-ttl",
@@ -263,7 +292,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_dom-size",
@@ -272,7 +302,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_critical-request-chains",
@@ -281,7 +312,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_user-timings",
@@ -290,7 +322,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_bootup-time",
@@ -299,7 +332,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_mainthread-work-breakdown",
@@ -308,7 +342,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_font-display",
@@ -317,7 +352,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_performance-budget",
@@ -326,7 +362,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Бюджет"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_timing-budget",
@@ -335,7 +372,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Бюджет"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_resource-summary",
@@ -344,7 +382,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_third-party-summary",
@@ -353,7 +392,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_largest-contentful-paint-element",
@@ -362,7 +402,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_layout-shift-elements",
@@ -371,7 +412,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_uses-passive-event-listeners",
@@ -380,7 +422,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_no-document-write",
@@ -389,7 +432,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_long-tasks",
@@ -398,7 +442,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_non-composited-animations",
@@ -407,7 +452,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_unsized-images",
@@ -416,7 +462,8 @@ const fields = [
         "groups": [
             "Lighthouse: Производительность",
             "Производительность: Диагностика"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_network-requests",
@@ -424,7 +471,8 @@ const fields = [
         "description": "Lists the network requests that were made during page load.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_network-rtt",
@@ -432,7 +480,8 @@ const fields = [
         "description": "Время прохождения сигнала сети (RTT) напрямую влияет на производительность сайта. Высокое время прохождения сигнала означает, что серверы расположены слишком далеко от пользователя и сайт будет работать медленнее. [Подробнее…](https://hpbn.co/primer-on-latency-and-bandwidth/)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_network-server-latency",
@@ -440,7 +489,8 @@ const fields = [
         "description": "Задержки со стороны сервера могут влиять на скорость загрузки страниц. Высокое время реакции сервера говорит о его перегруженности или недостаточной производительности. [Подробнее…](https://hpbn.co/primer-on-web-performance/#analyzing-the-resource-waterfall)",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_main-thread-tasks",
@@ -448,7 +498,8 @@ const fields = [
         "description": "Lists the toplevel main thread tasks that executed during page load.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_diagnostics",
@@ -456,7 +507,8 @@ const fields = [
         "description": "Collection of useful page vitals.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_metrics",
@@ -464,7 +516,8 @@ const fields = [
         "description": "Collects all available metrics.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_screenshot-thumbnails",
@@ -472,7 +525,8 @@ const fields = [
         "description": "This is what the load of your site looked like.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_final-screenshot",
@@ -480,7 +534,8 @@ const fields = [
         "description": "The last screenshot captured of the pageload.",
         "groups": [
             "Lighthouse: Производительность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_accesskeys",
@@ -489,7 +544,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Навигация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-allowed-attr",
@@ -498,7 +554,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-hidden-body",
@@ -507,7 +564,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-hidden-focus",
@@ -516,7 +574,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-input-field-name",
@@ -525,7 +584,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-required-attr",
@@ -534,7 +594,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-required-children",
@@ -543,7 +604,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-required-parent",
@@ -552,7 +614,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-roles",
@@ -561,7 +624,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-toggle-field-name",
@@ -570,7 +634,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-valid-attr-value",
@@ -579,7 +644,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_aria-valid-attr",
@@ -588,7 +654,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_button-name",
@@ -597,7 +664,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_bypass",
@@ -606,7 +674,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Навигация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_color-contrast",
@@ -615,7 +684,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Контрастность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_definition-list",
@@ -624,7 +694,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_dlitem",
@@ -633,7 +704,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_document-title",
@@ -642,7 +714,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_duplicate-id-active",
@@ -651,7 +724,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Навигация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_duplicate-id-aria",
@@ -660,7 +734,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: ARIA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_form-field-multiple-labels",
@@ -669,7 +744,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_frame-title",
@@ -678,7 +754,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_heading-order",
@@ -687,7 +764,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Навигация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_html-has-lang",
@@ -696,7 +774,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Интернационализация и локализация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_html-lang-valid",
@@ -705,7 +784,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Интернационализация и локализация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_image-alt",
@@ -714,7 +794,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_input-image-alt",
@@ -723,7 +804,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_label",
@@ -732,7 +814,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_layout-table",
@@ -741,7 +824,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_link-name",
@@ -750,7 +834,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_list",
@@ -759,7 +844,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_listitem",
@@ -768,7 +854,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_meta-refresh",
@@ -777,7 +864,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_meta-viewport",
@@ -786,7 +874,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_object-alt",
@@ -795,7 +884,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Названия и ярлыки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_tabindex",
@@ -804,7 +894,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Навигация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_td-headers-attr",
@@ -813,7 +904,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_th-has-data-cells",
@@ -822,7 +914,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Таблицы и списки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_valid-lang",
@@ -831,7 +924,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Интернационализация и локализация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_video-caption",
@@ -840,7 +934,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Аудио и видео"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_video-description",
@@ -849,7 +944,8 @@ const fields = [
         "groups": [
             "Lighthouse: Специальные возможности",
             "Специальные возможности: Аудио и видео"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_logical-tab-order",
@@ -857,7 +953,8 @@ const fields = [
         "description": "Tabbing through the page follows the visual layout. Users cannot focus elements that are offscreen. [Learn more](https://web.dev/logical-tab-order/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_focusable-controls",
@@ -865,7 +962,8 @@ const fields = [
         "description": "Custom interactive controls are keyboard focusable and display a focus indicator. [Learn more](https://web.dev/focusable-controls/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_interactive-element-affordance",
@@ -873,7 +971,8 @@ const fields = [
         "description": "Interactive elements, such as links and buttons, should indicate their state and be distinguishable from non-interactive elements. [Learn more](https://web.dev/interactive-element-affordance/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_managed-focus",
@@ -881,7 +980,8 @@ const fields = [
         "description": "If new content, such as a dialog, is added to the page, the user's focus is directed to it. [Learn more](https://web.dev/managed-focus/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_focus-traps",
@@ -889,7 +989,8 @@ const fields = [
         "description": "A user can tab into and out of any control or region without accidentally trapping their focus. [Learn more](https://web.dev/focus-traps/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_custom-controls-labels",
@@ -897,7 +998,8 @@ const fields = [
         "description": "Custom interactive controls have associated labels, provided by aria-label or aria-labelledby. [Learn more](https://web.dev/custom-controls-labels/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_custom-controls-roles",
@@ -905,7 +1007,8 @@ const fields = [
         "description": "Custom interactive controls have appropriate ARIA roles. [Learn more](https://web.dev/custom-control-roles/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_visual-order-follows-dom",
@@ -913,7 +1016,8 @@ const fields = [
         "description": "DOM order matches the visual order, improving navigation for assistive technology. [Learn more](https://web.dev/visual-order-follows-dom/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_offscreen-content-hidden",
@@ -921,7 +1025,8 @@ const fields = [
         "description": "Offscreen content is hidden with display: none or aria-hidden=true. [Learn more](https://web.dev/offscreen-content-hidden/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_use-landmarks",
@@ -929,7 +1034,8 @@ const fields = [
         "description": "Landmark elements (<main>, <nav>, etc.) are used to improve the keyboard navigation of the page for assistive technology. [Learn more](https://web.dev/use-landmarks/).",
         "groups": [
             "Lighthouse: Специальные возможности"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_is-on-https",
@@ -938,7 +1044,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Надежность и безопасность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_external-anchors-use-rel-noopener",
@@ -947,7 +1054,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Надежность и безопасность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_geolocation-on-start",
@@ -956,7 +1064,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Надежность и безопасность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_notification-on-start",
@@ -965,7 +1074,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Надежность и безопасность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_no-vulnerable-libraries",
@@ -974,7 +1084,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Надежность и безопасность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_password-inputs-can-be-pasted-into",
@@ -983,7 +1094,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Удобство для пользователей"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_image-aspect-ratio",
@@ -992,7 +1104,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Удобство для пользователей"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_image-size-responsive",
@@ -1001,7 +1114,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Удобство для пользователей"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_doctype",
@@ -1010,7 +1124,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Совместимость с браузерами"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_charset",
@@ -1019,7 +1134,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Совместимость с браузерами"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_no-unload-listeners",
@@ -1028,7 +1144,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Общие рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_appcache-manifest",
@@ -1037,7 +1154,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Общие рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_js-libraries",
@@ -1046,7 +1164,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Общие рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_deprecations",
@@ -1055,7 +1174,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Общие рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_errors-in-console",
@@ -1064,7 +1184,8 @@ const fields = [
         "groups": [
             "Lighthouse: Рекомендации",
             "Рекомендации: Общие рекомендации"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_viewport",
@@ -1073,7 +1194,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Оптимизация для мобильных устройств"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_document-title",
@@ -1082,7 +1204,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_meta-description",
@@ -1091,7 +1214,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_http-status-code",
@@ -1100,7 +1224,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Сканирование и индексирование"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_link-text",
@@ -1109,7 +1234,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_crawlable-anchors",
@@ -1118,7 +1244,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Сканирование и индексирование"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_is-crawlable",
@@ -1127,7 +1254,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Сканирование и индексирование"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_robots-txt",
@@ -1136,7 +1264,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Сканирование и индексирование"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_image-alt",
@@ -1145,7 +1274,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_hreflang",
@@ -1154,7 +1284,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_canonical",
@@ -1163,7 +1294,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_font-size",
@@ -1172,7 +1304,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Оптимизация для мобильных устройств"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_plugins",
@@ -1181,7 +1314,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Рекомендации в отношении контента"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_tap-targets",
@@ -1190,7 +1324,8 @@ const fields = [
         "groups": [
             "Lighthouse: Поисковая оптимизация",
             "Поисковая оптимизация: Оптимизация для мобильных устройств"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_structured-data",
@@ -1198,7 +1333,8 @@ const fields = [
         "description": "Для тестирования структурированных данных воспользуйтесь [инструментом проверки](https://search.google.com/structured-data/testing-tool/) и [инструментом Structured Data Linter](http://linter.structured-data.org/). [Подробнее…](https://web.dev/structured-data/)",
         "groups": [
             "Lighthouse: Поисковая оптимизация"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_load-fast-enough-for-pwa",
@@ -1207,7 +1343,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Скорость работы и надежность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_works-offline",
@@ -1216,7 +1353,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Скорость работы и надежность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_offline-start-url",
@@ -1225,7 +1363,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Скорость работы и надежность"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_is-on-https",
@@ -1234,7 +1373,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Возможность установки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_service-worker",
@@ -1243,7 +1383,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Возможность установки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_installable-manifest",
@@ -1252,7 +1393,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Возможность установки"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_redirects-http",
@@ -1261,7 +1403,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_splash-screen",
@@ -1270,7 +1413,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_themed-omnibox",
@@ -1279,7 +1423,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_content-width",
@@ -1288,7 +1433,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_viewport",
@@ -1297,7 +1443,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_without-javascript",
@@ -1306,7 +1453,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_apple-touch-icon",
@@ -1315,7 +1463,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_maskable-icon",
@@ -1324,7 +1473,8 @@ const fields = [
         "groups": [
             "Lighthouse: Современное веб-приложение",
             "Современное веб-приложение: Соответствие рекомендациям для PWA"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_pwa-cross-browser",
@@ -1332,7 +1482,8 @@ const fields = [
         "description": "Для максимального охвата аудитории сайт должен поддерживать все основные браузеры. [Подробнее…](https://web.dev/pwa-cross-browser/)",
         "groups": [
             "Lighthouse: Современное веб-приложение"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_pwa-page-transitions",
@@ -1340,7 +1491,8 @@ const fields = [
         "description": "Переходы должны создавать впечатление мгновенного отклика даже при медленной работе сети. Это имеет решающее значение для удобства работы с приложением. [Подробнее…](https://web.dev/pwa-page-transitions/)",
         "groups": [
             "Lighthouse: Современное веб-приложение"
-        ]
+        ],
+        "type": "integer"
     },
     {
         "name": "lighthouse_pwa-each-page-has-url",
@@ -1348,7 +1500,8 @@ const fields = [
         "description": "Убедитесь, что у каждой страницы есть уникальный URL, чтобы их было удобно распространять в социальных сетях. [Подробнее…](https://web.dev/pwa-each-page-has-url/)",
         "groups": [
             "Lighthouse: Современное веб-приложение"
-        ]
+        ],
+        "type": "integer"
     }
 ];
 

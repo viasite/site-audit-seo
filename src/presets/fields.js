@@ -25,6 +25,7 @@ const fields = [
             error: '== 0'
         },
         groups: ['canonical'],
+        type: 'boolean',
     },
     {
         name: 'previousUrl',
@@ -35,6 +36,7 @@ const fields = [
         name: 'depth',
         comment: 'Глубина сканирования',
         groups: ['info'],
+        type: 'integer',
     },
     {
         name: 'status',
@@ -43,6 +45,7 @@ const fields = [
             error: '!= 200'
         },
         groups: ['info'],
+        type: 'integer',
     },
     {
         name: 'request_time',
@@ -52,6 +55,7 @@ const fields = [
             error: '> 1000'
         },
         groups: ['perf'],
+        type: 'integer',
     },
     {
         name: 'title',
@@ -102,21 +106,25 @@ const fields = [
             error: '> 1',
         },
         groups: ['seo'],
+        type: 'integer',
     },
     {
         name: 'h2_count',
         comment: 'Кол-во h2 на странице',
         groups: ['seo'],
+        type: 'integer',
     },
     {
         name: 'h3_count',
         comment: 'Кол-во h3 на странице',
         groups: ['seo'],
+        type: 'integer',
     },
     {
         name: 'h4_count',
         comment: 'Кол-во h4 на странице',
         groups: ['seo'],
+        type: 'integer',
     },
     {
         name: 'canonical_count',
@@ -125,46 +133,55 @@ const fields = [
             warning: '> 1'
         },
         groups: ['canonical'],
+        type: 'integer',
     },
     {
         name: 'images',
         comment: 'img на странице',
         groups: ['content', 'images'],
+        type: 'integer',
     },
     {
         name: 'images_without_alt',
         comment: 'img без alt',
         groups: ['content', 'seo', 'images'],
+        type: 'integer',
     },
     {
         name: 'images_alt_empty',
         comment: 'img с пустым alt',
         groups: ['seo', 'images'],
+        type: 'integer',
     },
     {
         name: 'images_outer',
         comment: 'img на внешние URL',
         groups: ['seo', 'images'],
+        type: 'integer',
     },
     {
         name: 'links',
         comment: 'Ссылки',
         groups: ['content', 'links'],
+        type: 'integer',
     },
     {
         name: 'links_inner',
         comment: 'Ссылки внутренние',
         groups: ['content', 'links'],
+        type: 'integer',
     },
     {
         name: 'links_outer',
         comment: 'Ссылки внешние',
         groups: ['content', 'links'],
+        type: 'integer',
     },
     {
         name: 'text_ratio_percent',
         comment: 'Text ratio, отношение текста к html',
         groups: ['content', 'seo'],
+        type: 'integer',
     },
     {
         name: 'dom_size',
@@ -174,6 +191,7 @@ const fields = [
             error: '> 3000'
         },
         groups: ['perf'],
+        type: 'integer',
     },
     {
         name: 'html_size',
@@ -182,32 +200,38 @@ const fields = [
             warning: '> 1000000'
         },
         groups: ['perf'],
+        type: 'integer',
     },
 
     {
         name: 'lighthouse_scores_performance',
         comment: 'Lighthouse: Производительность',
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_scores_pwa',
         comment: 'Lighthouse: PWA',
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_scores_accessibility',
         comment: 'Lighthouse: Доступность',
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_scores_best-practices',
         comment: 'Lighthouse: Best-practices',
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_scores_seo',
         comment: 'Lighthouse: SEO',
         groups: ['lighthouse'],
+        type: 'integer',
     },
 
     {
@@ -218,6 +242,7 @@ const fields = [
             error: '> 4000',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_speed-index',
@@ -227,6 +252,7 @@ const fields = [
             error: '> 5800',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_largest-contentful-paint',
@@ -236,6 +262,7 @@ const fields = [
             error: '> 4000',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_scores_interactive',
@@ -245,6 +272,7 @@ const fields = [
             error: '> 7300',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_total-blocking-time',
@@ -254,6 +282,7 @@ const fields = [
             error: '> 600',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
     {
         name: 'lighthouse_cumulative-layout-shift',
@@ -263,6 +292,7 @@ const fields = [
             error: '> 250',
         },
         groups: ['lighthouse'],
+        type: 'integer',
     },
 ];
 

@@ -26,8 +26,19 @@ module.exports = async (csvPath, jsonPath) => {
                 }
                 delete(item[iName]);
             }
+
+            // value types
+            for (let iName in item) {
+                const fDef = fields.find(f => f.name == iName);
+                if (fDef) {
+                    if(fDef.type === 'integer' || fDef.type === 'boolean') {
+                        item[iName] = parseInt(item[iName]);
+                    }
+                }
+            }
+
+            data.items[i] = item;
         }
-        data.items[i] = item;
     }
 
     data.fields = fields;
