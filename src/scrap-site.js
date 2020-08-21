@@ -553,7 +553,7 @@ module.exports = async (baseUrl, options = {}) => {
               name: 'lighthouse_' + audit.id,
               comment: audit.title,
               description: audit.description,
-              groups: ['Lighthouse: ' + data.categories[categoryId].title],
+              groups: ['# Lighthouse: ' + data.categories[categoryId].title],
               type: 'integer',
             }
             if (auditRef.group) {
