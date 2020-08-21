@@ -43,6 +43,23 @@ module.exports = async (csvPath, jsonPath) => {
 
     data.fields = fields;
 
+    // lighthouse validation 1/0, field values based
+    for (let i in data.fields) {
+        const field = data.fields[i];
+
+        if (!field.name.includes('lighthouse_')) continue;
+
+        const isBinValidate = field.validate && !field.validate.warning && field.validate.error == '== 0';
+        if (!isBinValidate) continue;
+
+        const moreThanBin = data.items.filter(item => ![0, 1, NaN].includes(item[field.name]) );
+        if (moreThanBin.length === 0) continue;
+        const vals = moreThanBin.map(item => item[field.name]);
+
+        delete(field.validate);
+        data.fields[i] = field;
+    }
+
     const raw = JSON.stringify(data);
     fs.writeFileSync(jsonPath, raw);
     console.log('Saved to ' + jsonPath);
