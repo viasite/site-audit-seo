@@ -2,7 +2,7 @@ const fieldsLighthouse = require('./fields-lighthouse');
 const fields = [
     {
         name: 'url',
-        comment: 'URL, который ответил (после редиректа)',
+        comment: 'URL',
         groups: ['info'],
     },
     {
@@ -197,7 +197,8 @@ const fields = [
         name: 'html_size',
         comment: 'Размер HTML, байт',
         validate: {
-            warning: '> 1000000'
+            warning: '> 500000',
+            error: '> 1000000'
         },
         groups: ['perf'],
         type: 'integer',
@@ -206,31 +207,31 @@ const fields = [
     {
         name: 'lighthouse_scores_performance',
         comment: 'Lighthouse: Производительность',
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
         name: 'lighthouse_scores_pwa',
         comment: 'Lighthouse: PWA',
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
         name: 'lighthouse_scores_accessibility',
         comment: 'Lighthouse: Доступность',
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
         name: 'lighthouse_scores_best-practices',
         comment: 'Lighthouse: Best-practices',
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
         name: 'lighthouse_scores_seo',
         comment: 'Lighthouse: SEO',
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
 
@@ -241,7 +242,7 @@ const fields = [
             warning: '> 2000',
             error: '> 4000',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
@@ -251,7 +252,7 @@ const fields = [
             warning: '> 4300',
             error: '> 5800',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
@@ -261,7 +262,7 @@ const fields = [
             warning: '> 2000',
             error: '> 4000',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
@@ -271,7 +272,7 @@ const fields = [
             warning: '> 3800',
             error: '> 7300',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
@@ -281,7 +282,7 @@ const fields = [
             warning: '> 300',
             error: '> 600',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
     {
@@ -291,7 +292,7 @@ const fields = [
             warning: '> 100',
             error: '> 250',
         },
-        groups: ['lighthouse'],
+        groups: ['Lighthouse: Главное'],
         type: 'integer',
     },
 ];
