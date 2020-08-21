@@ -20,7 +20,7 @@ module.exports = async (jsonPath) => {
     app.listen(port, () => {
         const dataJson = `http://localhost:${port}/data.json`;
         // console.log(`Open for view report: http://localhost:${port}/`);
-        console.log(`Online viewer: https://viasite.github.io/site-audit-seo/?url=${dataJson}`);
+        console.log(`Online viewer: https://viasite.github.io/site-audit-seo-viewer/?url=${dataJson}`);
         console.log(`Dev viewer: http://localhost:3000/?url=${dataJson}`);
         console.log(`JSON file: ${dataJson}`);
     });
