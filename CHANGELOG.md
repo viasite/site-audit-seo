@@ -1,3 +1,27 @@
+# [3.0.0](https://github.com/viasite/site-audit-seo/compare/v2.9.0...v3.0.0) (2020-08-21)
+
+
+### Bug Fixes
+
+* change to site-audit-seo-viewer web view ([e49edee](https://github.com/viasite/site-audit-seo/commit/e49edee))
+* field values based validation for lighthouse ([d93cf1a](https://github.com/viasite/site-audit-seo/commit/d93cf1a))
+* lighthouse group main ([6e7f26b](https://github.com/viasite/site-audit-seo/commit/6e7f26b))
+* save as JSON: integer type for correct sorting ([fa48b5a](https://github.com/viasite/site-audit-seo/commit/fa48b5a))
+
+
+### Features
+
+* --json, save results to .json file ([6347757](https://github.com/viasite/site-audit-seo/commit/6347757))
+* --lighthouse appends base Lighthouse fields to any preset ([fe6d274](https://github.com/viasite/site-audit-seo/commit/fe6d274))
+* --no-open-file ([ac38d77](https://github.com/viasite/site-audit-seo/commit/ac38d77))
+* --preset lighthouse-all ([15597de](https://github.com/viasite/site-audit-seo/commit/15597de))
+* --upload report to persistent public store ([192665e](https://github.com/viasite/site-audit-seo/commit/192665e))
+* export as json, named all fields ([eef898b](https://github.com/viasite/site-audit-seo/commit/eef898b))
+* filters, columns and default - new fields in json ([249d4f3](https://github.com/viasite/site-audit-seo/commit/249d4f3))
+* web viewer for json ([b76b4dc](https://github.com/viasite/site-audit-seo/commit/b76b4dc))
+
+
+
 # [2.9.0](https://github.com/viasite/site-audit-seo/compare/v2.8.0...v2.9.0) (2020-08-16)
 
 
