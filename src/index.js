@@ -6,6 +6,7 @@ const packageJson = require('../package.json');
 const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
 const saveAsJson = require('./save-as-json');
+const uploadJson = require('./upload-json');
 const publishGoogleSheets = require('./publish-google-sheets');
 const startViewer = require('./start-viewer');
 const { exec } = require('child_process');
@@ -56,6 +57,7 @@ program
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--web', `Publish sheet to google docs`)
   .option('--json', `Output results in JSON`)
+  .option('--upload', `Upload JSON to public web`)
   .option('--no-color', `No console colors`)
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-open-file', `Don't open file after scan`)
@@ -73,12 +75,14 @@ async function start() {
   if(program.csv) {
     const csvPath = program.csv
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
-    const jsonPath = csvPath.replace(/\.csv$/, '.json');
+    let jsonPath = csvPath.replace(/\.csv$/, '.json');
+    let webPath;
     try {
       saveAsXlsx(csvPath, xlsxPath);
       if (program.json) await saveAsJson(csvPath, jsonPath);
+      if (program.upload) webPath = await uploadJson(jsonPath, program);
       if (program.web) await publishGoogleSheets(xlsxPath);
-      if (program.json) await startViewer(jsonPath);
+      if (program.json) await startViewer(jsonPath, webPath);
       console.log(`${xlsxPath} saved`);
       if(program.openFile) exec(`"${xlsxPath}"`);
     } catch(e) {
@@ -193,6 +197,8 @@ async function start() {
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
       web: program.web,                           // публиковать на google docs
+      json: program.json,                         // сохранять json файл
+      upload: program.upload,                     // выгружать json на сервер
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     });

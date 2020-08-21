@@ -37,11 +37,11 @@ Usage: site-audit-seo -u https://example.com
 
 Options:
   -u --urls <urls>             Comma separated url list for scan
-  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse) (default: "seo")
+  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all) (default: "seo")
   -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: 2)
-  --lighthouse                 Do lighthouse
+  --lighthouse                 Appends base Lighthouse fields to preset
   --delay <ms>                 Delay between requests (default: 0)
   -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
   --no-skip-static             Scan static files
@@ -55,8 +55,11 @@ Options:
   --out-dir <dir>              Output directory (default: ".")
   --csv <path>                 Skip scan, only convert csv to xlsx
   --web                        Publish sheet to google docs
+  --json                       Output results in JSON
+  --upload                     Upload JSON to public web
   --no-color                   No console colors
   --open-file                  Open file after scan (default: yes on Windows and MacOS)
+  --no-open-file               Don't open file after scan
   --no-console-validate        Don't output validate messages in console
   -V, --version                output the version number
   -h, --help                   display help for command

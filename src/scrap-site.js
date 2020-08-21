@@ -2,7 +2,9 @@
 const fs = require('fs');
 const saveAsXlsx = require('./save-as-xlsx');
 const saveAsJson = require('./save-as-json');
+const uploadJson = require('./upload-json');
 const publishGoogleSheets = require('./publish-google-sheets');
+const startViewer = require('./start-viewer');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
@@ -255,6 +257,7 @@ module.exports = async (baseUrl, options = {}) => {
   const csvPath = `${options.outDir}/${domain}.csv`;
   const xlsxPath = `${options.outDir}/${domain}.xlsx`;
   const jsonPath = `${options.outDir}/${domain}.json`;
+  let webPath;
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
 
@@ -674,16 +677,20 @@ module.exports = async (baseUrl, options = {}) => {
   let isSuccess = true;
   try {
     saveAsXlsx(csvPath, xlsxPath);
-    if (options.web) await publishGoogleSheets(xlsxPath);
     if (options.json) await saveAsJson(csvPath, jsonPath);
+    if (options.upload) webPath = await uploadJson(jsonPath, options);
+    if (options.web) await publishGoogleSheets(xlsxPath);
+    if (options.json) await startViewer(jsonPath, webPath);
   } catch (e) {
     if(e.code == 'EBUSY'){
       isSuccess = false;
       console.error(`${color.red}${xlsxPath} is busy, please close file in 10 seconds!`);
       setTimeout(async () => {
         saveAsXlsx(csvPath, xlsxPath);
-        if (options.web) await publishGoogleSheets(xlsxPath);
         if (options.json) await saveAsJson(csvPath, jsonPath);
+        if (options.upload) webPath = await uploadJson(jsonPath, options);
+        if (options.web) await publishGoogleSheets(xlsxPath);
+        if (options.json) await startViewer(jsonPath, webPath);
         finishScan();
       }, 10000)
     }

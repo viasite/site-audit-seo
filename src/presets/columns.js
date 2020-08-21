@@ -64,6 +64,14 @@ module.exports = {
             'schema_types',
         ]
     },
+    title: {
+        name: 'title',
+        groups: ['seo'],
+        columns: [
+            'url',
+            'title',
+        ]
+    },
     mixed_content: {
         name: 'mixed_content',
         groups: ['info', 'seo'],
