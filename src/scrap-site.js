@@ -498,7 +498,7 @@ module.exports = async (baseUrl, options = {}) => {
           ],*/
           // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
           port: lighthouseChrome.port,
-          locale: 'ru'
+          locale: options.lang
         };
         const res = await lighthouse(crawler._options.url, opts);
         const data = JSON.parse(res.report);
@@ -630,7 +630,7 @@ module.exports = async (baseUrl, options = {}) => {
     console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
   crawler.on('maxrequestreached', options => {
-    console.log(`${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
+    console.log(`\n\n${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
@@ -677,7 +677,7 @@ module.exports = async (baseUrl, options = {}) => {
   let isSuccess = true;
   try {
     saveAsXlsx(csvPath, xlsxPath);
-    if (options.json) await saveAsJson(csvPath, jsonPath);
+    if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
     if (options.upload) webPath = await uploadJson(jsonPath, options);
     if (options.web) await publishGoogleSheets(xlsxPath);
     if (options.json) await startViewer(jsonPath, webPath);
@@ -687,7 +687,7 @@ module.exports = async (baseUrl, options = {}) => {
       console.error(`${color.red}${xlsxPath} is busy, please close file in 10 seconds!`);
       setTimeout(async () => {
         saveAsXlsx(csvPath, xlsxPath);
-        if (options.json) await saveAsJson(csvPath, jsonPath);
+        if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
         if (options.upload) webPath = await uploadJson(jsonPath, options);
         if (options.web) await publishGoogleSheets(xlsxPath);
         if (options.json) await startViewer(jsonPath, webPath);

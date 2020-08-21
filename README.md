@@ -58,6 +58,7 @@ Options:
   --json                       Output results in JSON
   --upload                     Upload JSON to public web
   --no-color                   No console colors
+  --lang <lang>                Language (en, ru) (default: "ru")
   --open-file                  Open file after scan (default: yes on Windows and MacOS)
   --no-open-file               Don't open file after scan
   --no-console-validate        Don't output validate messages in console

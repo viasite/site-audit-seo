@@ -59,6 +59,7 @@ program
   .option('--json', `Output results in JSON`)
   .option('--upload', `Upload JSON to public web`)
   .option('--no-color', `No console colors`)
+  .option('--lang <lang>', `Language (en, ru)`, 'ru')
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-open-file', `Don't open file after scan`)
   .option('--no-console-validate', `Don't output validate messages in console`)
@@ -72,6 +73,9 @@ async function start() {
     program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
   }
 
+  if(!['en', 'ru'].includes(program.lang)) program.lang = 'ru';
+  if(program.upload) program.json = true;
+
   if(program.csv) {
     const csvPath = program.csv
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
@@ -79,7 +83,7 @@ async function start() {
     let webPath;
     try {
       saveAsXlsx(csvPath, xlsxPath);
-      if (program.json) await saveAsJson(csvPath, jsonPath);
+      if (program.json) await saveAsJson(csvPath, jsonPath, program.lang);
       if (program.upload) webPath = await uploadJson(jsonPath, program);
       if (program.web) await publishGoogleSheets(xlsxPath);
       if (program.json) await startViewer(jsonPath, webPath);
@@ -161,6 +165,21 @@ async function start() {
       comment: (program.headless ? '--no-headless' : '')
     },
     {
+      name: 'Save as JSON',
+      value: (program.json ? 'yes' : 'no'),
+      comment: (!program.json ? '--json' : '')
+    },
+    {
+      name: 'Upload JSON',
+      value: (program.upload ? 'yes' : 'no'),
+      comment: (!program.json ? '--json --upload' : '')
+    },
+    {
+      name: 'Language',
+      value: program.lang,
+      comment: (program.lang == 'ru' ? '--lang [en]' : '')
+    },
+    {
       name: 'Docs extensions',
       value: program.docsExtensions.join(','),
       comment: '--docs-extensions zip,rar'
@@ -193,6 +212,7 @@ async function start() {
       docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
       outDir: program.outDir,                     // папка, куда сохраняются csv
       color: program.color,                       // раскрашивать консоль
+      lang: program.lang,                         // язык
       openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx

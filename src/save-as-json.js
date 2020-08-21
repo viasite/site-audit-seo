@@ -6,7 +6,7 @@ const columns = require('./presets/columns');
 
 const defaultField = 'url';
 
-module.exports = async (csvPath, jsonPath) => {
+module.exports = async (csvPath, jsonPath, lang) => {
     // read csv to workbook
     const data = {};
     data.items = await csv({delimiter: ';'}).fromFile(csvPath);
@@ -47,6 +47,19 @@ module.exports = async (csvPath, jsonPath) => {
 
     data.fields = fields;
 
+    // en translation
+    if (lang !== 'ru') {
+        for (let i in data.fields) {
+            const field = data.fields[i];
+            for (let fName of ['comment', 'description', 'groups']) {
+                const k = `${fName}_${lang}`;
+                if (!field[k]) continue;
+                field[fName] = field[k];
+                delete(field[k]);
+            }
+        }
+    }
+
     // lighthouse validation 1/0, field values based
     for (let i in data.fields) {
         const field = data.fields[i];
@@ -58,7 +71,7 @@ module.exports = async (csvPath, jsonPath) => {
 
         const moreThanBin = data.items.filter(item => ![0, 1, NaN].includes(item[field.name]) );
         if (moreThanBin.length === 0) continue;
-        const vals = moreThanBin.map(item => item[field.name]);
+        // const vals = moreThanBin.map(item => item[field.name]);
 
         delete(field.validate);
         data.fields[i] = field;
@@ -66,7 +79,7 @@ module.exports = async (csvPath, jsonPath) => {
 
     for (let i in data.fields) {
         if (data.fields[i].name === defaultField) {
-            data.fields[i].default = true; // TODO: default field in viewer
+            data.fields[i].default = true; // default field in viewer
         }
     }
 
