@@ -1,6 +1,10 @@
 const fs = require('fs');
 const csv = require('csvtojson');
 const { fields } = require('./presets/fields');
+const filters = require('./presets/filters');
+const columns = require('./presets/columns');
+
+const defaultField = 'url';
 
 module.exports = async (csvPath, jsonPath) => {
     // read csv to workbook
@@ -59,6 +63,15 @@ module.exports = async (csvPath, jsonPath) => {
         delete(field.validate);
         data.fields[i] = field;
     }
+
+    for (let i in data.fields) {
+        if (data.fields[i].name === defaultField) {
+            data.fields[i].default = true; // TODO: default field in viewer
+        }
+    }
+
+    data.filters = filters;
+    data.columns = columns;
 
     const raw = JSON.stringify(data);
     fs.writeFileSync(jsonPath, raw);
