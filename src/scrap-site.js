@@ -1,6 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const saveAsXlsx = require('./save-as-xlsx');
+const saveAsJson = require('./save-as-json');
 const publishGoogleSheets = require('./publish-google-sheets');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
@@ -253,6 +254,7 @@ module.exports = async (baseUrl, options = {}) => {
   const protocol = url.parse(baseUrl).protocol;
   const csvPath = `${options.outDir}/${domain}.csv`;
   const xlsxPath = `${options.outDir}/${domain}.xlsx`;
+  const jsonPath = `${options.outDir}/${domain}.json`;
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
 
@@ -673,6 +675,7 @@ module.exports = async (baseUrl, options = {}) => {
   try {
     saveAsXlsx(csvPath, xlsxPath);
     if (options.web) await publishGoogleSheets(xlsxPath);
+    if (options.json) await saveAsJson(csvPath, jsonPath);
   } catch (e) {
     if(e.code == 'EBUSY'){
       isSuccess = false;
@@ -680,6 +683,7 @@ module.exports = async (baseUrl, options = {}) => {
       setTimeout(async () => {
         saveAsXlsx(csvPath, xlsxPath);
         if (options.web) await publishGoogleSheets(xlsxPath);
+        if (options.json) await saveAsJson(csvPath, jsonPath);
         finishScan();
       }, 10000)
     }

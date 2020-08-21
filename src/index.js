@@ -7,6 +7,7 @@ const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
 const saveAsJson = require('./save-as-json');
 const publishGoogleSheets = require('./publish-google-sheets');
+const startViewer = require('./start-viewer');
 const { exec } = require('child_process');
 const os = require('os');
 const color = require('./color');
@@ -77,6 +78,7 @@ async function start() {
       saveAsXlsx(csvPath, xlsxPath);
       if (program.json) await saveAsJson(csvPath, jsonPath);
       if (program.web) await publishGoogleSheets(xlsxPath);
+      if (program.json) await startViewer(jsonPath);
       console.log(`${xlsxPath} saved`);
       if(program.openFile) exec(`"${xlsxPath}"`);
     } catch(e) {

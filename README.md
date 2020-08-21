@@ -81,6 +81,15 @@ Options:
 - Validation of some columns (status, request time, description length)
 - Export xlsx to Google Drive and print URL
 
+### Web viewer features:
+- Fixed table header and url column
+- Add/remove columns
+- Column presets
+- Field groups by categories
+- Filters presets (ex. `h1_count != 1`)
+- Color validation
+
+
 ### Fields list (18.08.2020):
 - url
 - mixed_content_url
