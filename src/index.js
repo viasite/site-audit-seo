@@ -50,7 +50,7 @@ function getConfigVal(name, def) {
   let val = undefined;
   if (config[name] === undefined) val = def;
   else val = config[name];
-  console.log(`config: ${name}: `, val);
+  // console.log(`config: ${name}: `, val);
   return val;
 }
 
@@ -73,9 +73,9 @@ program
   .option('--no-remove-csv', `No delete csv after xlsx generate`, !getConfigVal('removeCsv', true))
   .option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '.'))
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
-  .option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', true))
+  .option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false))
   .option('--gdrive', `Publish sheet to google docs`, getConfigVal('gdrive', false))
-  .option('--json', `Output results in JSON`, getConfigVal('json', false))
+  .option('--no-json', `No save as JSON`, !getConfigVal('json', true))
   .option('--upload', `Upload JSON to public web`, getConfigVal('upload', false))
   .option('--no-color', `No console colors`)
   .option('--lang <lang>', `Language (en, ru, default: system language)`, getConfigVal('lang', undefined))
@@ -88,7 +88,7 @@ program
   .parse(process.argv);
 
 async function start() {
-  if(!program.concurrency === undefined){
+  if(program.concurrency === undefined){
     program.concurrency = getConfigVal('concurrency', os.cpus().length);
   }
 
@@ -256,7 +256,7 @@ function outBrief(options) {
     {
       name: 'Save as JSON',
       value: (options.json ? 'yes' : 'no'),
-      comment: (!options.json ? '--json' : '')
+      comment: (options.json ? '--no-json' : '')
     },
     {
       name: 'Upload JSON',

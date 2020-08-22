@@ -4,7 +4,14 @@ const express = require('express')
 module.exports = async (jsonPath, webPath=false) => {
     const app = express();
     const port = 3001;
-    app.use('/', express.static('./web'));
+
+    const jsonUrl = webPath || `http://localhost:${port}/data.json`;
+    const jsonRaw = fs.readFileSync(jsonPath);
+
+    app.get('/', function (req, res, next) {
+        res.redirect(302, onlineViewLink(jsonUrl));
+    });
+
     app.use(function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -12,23 +19,25 @@ module.exports = async (jsonPath, webPath=false) => {
     });
     app.use('/data.json', (req, res) => {
         res.setHeader('Content-Type', 'application/json');
-        res.send(fs.readFileSync(jsonPath));
-        // express.static('./web')
+        res.send(jsonRaw);
     });
 
+    function onlineViewLink(url) {
+        return `https://viasite.github.io/site-audit-seo-viewer/?url=${url}`;
+    }
     function outLinks(url) {
         console.log(`JSON file: ${url}`);
         console.log('');
         console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
-        console.log(`Online viewer: https://viasite.github.io/site-audit-seo-viewer/?url=${url}`);
-        console.log('\n');
+        console.log(`Online viewer: ${onlineViewLink(url)}`);
+        console.log('');
     }
 
-    if (webPath) outLinks(webPath);
+    outLinks(jsonUrl);
 
     if(!webPath) {
         app.listen(port, () => {
-            outLinks(`http://localhost:${port}/data.json`);
+            console.log(`Started server at http://localhost:${port}, press Ctrl+C to exit`)
         });
     }
 }
