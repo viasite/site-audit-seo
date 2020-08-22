@@ -118,10 +118,6 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   parse(process.argv);
 
 async function start() {
-  if (program.concurrency === undefined) {
-    program.concurrency = getConfigVal('concurrency', os.cpus().length);
-  }
-
   if (program.openFile === undefined) {
     program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
   }
@@ -199,7 +195,9 @@ async function start() {
   }
 
   // c = 2, when lighthouse c = 1
-  if (!program.concurrency) program.concurrency = program.lighthouse ? 1 : 2;
+  if (program.concurrency === undefined) {
+    program.concurrency = program.lighthouse ? 1 : getConfigVal('concurrency', os.cpus().length);
+  }
 
   program.outDir = expandHomedir(program.outDir);
 
