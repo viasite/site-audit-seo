@@ -5,12 +5,15 @@ module.exports = async (jsonPath, options) => {
     const data = fs.readFileSync(jsonPath, 'utf8');
     // const raw = JSON.stringify(data);
 
-    const date = new Date().toISOString().replace('T', '-').replace('Z', '');
+    const date = new Date().toISOString()
+        .replace(/:/g, '-')
+        .replace('T', '_')
+        .replace('Z', '');
     // const dateStr = date.slice(0,10);
-    const name = jsonPath.replace(/[^0-9a-zа-я_.]/ig, "");
-    const uploadName = date + '-' + name;
+    const name = jsonPath.replace(/[^0-9a-zа-я_.]/ig, '');
+    const uploadName = date + '_' + name;
 
-    console.log('Uploading to https://site-audit.viasite.ru...');
+    console.log('\nUploading to https://site-audit.viasite.ru...');
     const res = await axios.post('https://site-audit.viasite.ru/upload/', {
         name: uploadName,
         data: data
