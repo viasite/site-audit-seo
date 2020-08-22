@@ -1,11 +1,12 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require('./actions');
+const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require(
+  './actions');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
 const {validateResults, getValidationSum} = require('./validate');
-const { exec } = require('child_process');
+const {exec} = require('child_process');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 
@@ -53,7 +54,7 @@ const fieldsPresets = {
     'result.links_outer',
     'result.text_ratio_percent',
     'result.dom_size',
-    'result.html_size'
+    'result.html_size',
   ],
   headers: [
     'response.url',
@@ -63,7 +64,7 @@ const fieldsPresets = {
     'response.headers.x-bitrix-composite',
     'response.headers.x-page-speed',
     'response.headers.x-cached-by',
-    'response.headers.x-drupal-cache'
+    'response.headers.x-drupal-cache',
   ],
   parse: [
     'response.url',
@@ -244,8 +245,8 @@ const fieldsPresets = {
     'lighthouse.maskable-icon',
     'lighthouse.pwa-cross-browser',
     'lighthouse.pwa-page-transitions',
-    'lighthouse.pwa-each-page-has-url'
-  ]
+    'lighthouse.pwa-each-page-has-url',
+  ],
 };
 
 module.exports = async (baseUrl, options = {}) => {
@@ -256,16 +257,16 @@ module.exports = async (baseUrl, options = {}) => {
   const jsonPath = `${options.outDir}/${domain}.json`;
   let webPath;
 
-  if(!options.color) color.white = color.red = color.reset = color.yellow = '';
+  if (!options.color) color.white = color.red = color.reset = color.yellow = '';
 
-  if (!options.fieldsPreset || !fieldsPresets[options.fieldsPreset]){
+  if (!options.fieldsPreset || !fieldsPresets[options.fieldsPreset]) {
     options.fieldsPreset = 'default';
   }
 
   let fields = fieldsPresets[options.fieldsPreset];
 
   // exclude fields
-  if (options.fieldsExclude && options.fieldsExclude.length > 0){
+  if (options.fieldsExclude && options.fieldsExclude.length > 0) {
     fields = fields.filter(f => {
       const fName = f.replace(/.*\./g, '');
       return !options.fieldsExclude.includes(fName);
@@ -273,7 +274,7 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   // custom fields
-  if(options.fields.length > 0) {
+  if (options.fields.length > 0) {
     // console.log('options.fields: ', options.fields);
     const newFields = Object.keys(options.fields).map(f => 'result.' + f);
     fields = [...fields, ...newFields];
@@ -295,7 +296,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   // open second chrome for lighthouse
   let lighthouseChrome;
-  if(options.lighthouse) {
+  if (options.lighthouse) {
     const chromeFlags = ['--no-sandbox'];
     if (options.headless) chromeFlags.push('--headless');
     lighthouseChrome = await chromeLauncher.launch({chromeFlags});
@@ -304,7 +305,7 @@ module.exports = async (baseUrl, options = {}) => {
   const exporter = new CSVExporter({
     file: csvPath,
     fields: fields,
-    separator: ';'
+    separator: ';',
   });
 
   let crawler;
@@ -330,7 +331,7 @@ module.exports = async (baseUrl, options = {}) => {
       // if (options.url.match(/\?(category|age|usage|madein|season|brand)=/)) return false; // bitrix filter
 
       // http scan while first page was https
-      if(url.parse(options.url).protocol != protocol) return false;
+      if (url.parse(options.url).protocol != protocol) return false;
 
       return true;
     },
@@ -343,11 +344,13 @@ module.exports = async (baseUrl, options = {}) => {
         // console.log('window.__customFields(): ', JSON.stringify(customFields));
 
         let domainParts = location.host.split('.');
-        const domain2level = domainParts.slice(domainParts.length-2).join('.');
+        const domain2level = domainParts.slice(domainParts.length - 2).
+          join('.');
         const canonical = $('link[rel="canonical"]').attr('href');
         const result = {
           request_time:
-            window.performance.timing.responseEnd - window.performance.timing.requestStart,
+            window.performance.timing.responseEnd -
+            window.performance.timing.requestStart,
           title: $('title').text(),
           h1: $('h1').text().trim(),
           h1_count: $('h1').length,
@@ -358,40 +361,52 @@ module.exports = async (baseUrl, options = {}) => {
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
-          html_size: document.head.innerHTML.length + document.body.innerHTML.length,
-          text_ratio_percent: Math.round(document.body.innerText.length / document.body.innerHTML.length * 100),
+          html_size: document.head.innerHTML.length +
+            document.body.innerHTML.length,
+          text_ratio_percent: Math.round(
+            document.body.innerText.length / document.body.innerHTML.length *
+            100),
           images: $('img').length,
           images_without_alt: $('img:not([alt]').length,
           images_alt_empty: $('img[alt=""]').length,
-          images_outer: $('img[src^="http"]:not([src^="/"]):not([src*="'+domain2level+'"])').length,
+          images_outer: $(
+            'img[src^="http"]:not([src^="/"]):not([src*="' + domain2level +
+            '"])').length,
           links: $('a[href]:not([href^="javascript"]):not([href^="#"])').length,
-          links_inner: $('a[href^="/"], a[href*="'+domain2level+'"]').length,
-          links_outer: $('a[href]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="'+domain2level+'"])').length,
+          links_inner: $(
+            'a[href^="/"], a[href*="' + domain2level + '"]').length,
+          links_outer: $(
+            'a[href]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="' +
+            domain2level + '"])').length,
           // links_absolute: $('').length,
           description:
             ($('meta[name="description"]').attr('content') &&
-              $('meta[name="description"]')
-                .attr('content')
-                .split('\n')
-                .join(' ')) ||
+              $('meta[name="description"]').
+                attr('content').
+                split('\n').
+                join(' ')) ||
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
           canonical: canonical,
-          is_canonical: canonical ? (canonical == decodeURI(window.location.href) ? 1 : 0) : '',
+          is_canonical: canonical ? (canonical ==
+          decodeURI(window.location.href) ? 1 : 0) : '',
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
-          schema_types: $.unique($('[itemtype]').map((i, item) => $(item).attr('itemType').replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', ')
+          schema_types: $.unique($('[itemtype]').
+            map((i, item) => $(item).
+              attr('itemType').
+              replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', '),
         };
 
-        for(let name in customFields) {
-          result[name] = eval(customFields[name].replace(/`/g, "'"));
+        for (let name in customFields) {
+          result[name] = eval(customFields[name].replace(/`/g, '\''));
           // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
         }
 
         return result;
       } catch (e) {
         return {
-          error: JSON.stringify(e)
+          error: JSON.stringify(e),
         };
       }
     },
@@ -399,7 +414,10 @@ module.exports = async (baseUrl, options = {}) => {
     onSuccess: result => {
       if (!result.result) return;
 
-      if (result.result.error) console.error(`${color.red}Error collect page data: result.result.error${color.reset}`);
+      if (result.result.error) {
+        const msg = `${color.red}Error collect page data: result.result.error${color.reset}`;
+        console.error(msg);
+      }
       // console.log(`html_size: ${result.result.html_size}`);
     },
 
@@ -420,14 +438,17 @@ module.exports = async (baseUrl, options = {}) => {
         //console.log('request.url(): ', request.url());
 
         // check for mixed content, thanks to https://github.com/busterc/mixed-content-crawler/
-        if (protocol == 'https:' && ['image', 'stylesheet', 'script'].includes(request.resourceType()) && request.url().match(/^http:/)) {
+        if (protocol == 'https:' &&
+          ['image', 'stylesheet', 'script'].includes(request.resourceType()) &&
+          request.url().match(/^http:/)) {
           request.notHTTPS = true;
           mixedContentUrl = request.url();
           return request.abort();
         }
 
-        const isDoc = options.docsExtensions.some(ext => request.url().includes(`.${ext}`));
-        if(isDoc) {
+        const isDoc = options.docsExtensions.some(
+          ext => request.url().includes(`.${ext}`));
+        if (isDoc) {
           // досюда как-то доходит
           request.abort();
         } else if (SKIP_IMAGES && request.resourceType() == 'image') {
@@ -441,22 +462,23 @@ module.exports = async (baseUrl, options = {}) => {
         }
       });
 
-      page.on('requestfailed',  request => {
+      page.on('requestfailed', request => {
         if (request.notHTTPS) {
-          console.error(`${color.red}mixed content: ${request.url()}${color.reset}`);
+          console.error(
+            `${color.red}mixed content: ${request.url()}${color.reset}`);
         }
       });
 
       /* page.on('error', function(err) {
-        console.error(`${color.red}Page error:${color.reset} ` + err.toString()); 
+        console.error(`${color.red}Page error:${color.reset} ` + err.toString());
       }); */
 
       /*page.on('close', function() {
-        console.error(`${color.red}Page closed${color.reset} `); 
+        console.error(`${color.red}Page closed${color.reset} `);
       });*/
 
       /* page.on('pegeerror', function(err) {
-        console.error(`${color.red}pegeerror:${color.reset} ` + err.toString()); 
+        console.error(`${color.red}pegeerror:${color.reset} ` + err.toString());
       }); */
 
       // console.log('co '+ crawler._options.url);
@@ -464,27 +486,28 @@ module.exports = async (baseUrl, options = {}) => {
       // костыль, который возвращает фейково обойдённый документ, если он признан документом
       // нужно, чтобы доки не сканировались (выдают ошибку), но при этом добавлялись в csv
       // т.к. в этом контексте нет текущего урла, он задаётся в глобал через событие requeststarted
-      const isDoc = crawler._options.url && options.docsExtensions.some(ext => crawler._options.url.includes(`.${ext}`));
+      const isDoc = crawler._options.url && options.docsExtensions.some(
+        ext => crawler._options.url.includes(`.${ext}`));
       if (isDoc) {
-        return{
+        return {
           options: {},
           depth: 0,
           previousUrl: '',
           response: {
-            url: crawler._options.url
+            url: crawler._options.url,
           },
           redirectChain: [],
           result: {},
           screenshot: null,
           cookies: [],
-          links: []
+          links: [],
         };
       }
 
       // The result contains options, links, cookies and etc.
       const result = await crawl();
 
-      if(options.lighthouse) {
+      if (options.lighthouse) {
         const opts = {
           // extends: 'lighthouse:default',
           /*onlyAudits: [
@@ -495,7 +518,7 @@ module.exports = async (baseUrl, options = {}) => {
           ],*/
           // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
           port: lighthouseChrome.port,
-          locale: options.lang
+          locale: options.lang,
         };
         const res = await lighthouse(crawler._options.url, opts);
         const data = JSON.parse(res.report);
@@ -508,23 +531,30 @@ module.exports = async (baseUrl, options = {}) => {
           'total-blocking-time',
           'cumulative-layout-shift',
         ];
-        const categories = ['performance', 'accessibility', 'best-practices', 'seo', 'pwa'];
+        const categories = [
+          'performance',
+          'accessibility',
+          'best-practices',
+          'seo',
+          'pwa'];
         const lighthouseData = {
-          scores: {}
-        }
+          scores: {},
+        };
 
         const fieldConfigs = []; // для генерации конфига полей
 
         for (let auditName of audits) {
           if (!data.audits[auditName]) continue;
-          lighthouseData[auditName] = parseInt(data.audits[auditName].numericValue);
+          lighthouseData[auditName] = parseInt(
+            data.audits[auditName].numericValue);
         }
 
         for (let categoryId of categories) {
-          if(!data.categories[categoryId]) continue;
+          if (!data.categories[categoryId]) continue;
 
           // lighthouse.scores
-          lighthouseData.scores[categoryId] = parseInt(data.categories[categoryId].score * 100)
+          lighthouseData.scores[categoryId] = parseInt(
+            data.categories[categoryId].score * 100);
 
           // all audits
           for (let auditRef of data.categories[categoryId].auditRefs) {
@@ -552,9 +582,10 @@ module.exports = async (baseUrl, options = {}) => {
               description: audit.description,
               groups: ['# Lighthouse: ' + data.categories[categoryId].title],
               type: 'integer',
-            }
+            };
             if (auditRef.group) {
-              const groupTitle = data.categories[categoryId].title + ': ' + data.categoryGroups[auditRef.group].title;
+              const groupTitle = data.categories[categoryId].title + ': ' +
+                data.categoryGroups[auditRef.group].title;
               fieldConfig.groups.push(groupTitle);
               // fieldConfig.groups = [groupTitle];
             }
@@ -562,43 +593,34 @@ module.exports = async (baseUrl, options = {}) => {
           }
         }
 
-
-
         result.lighthouse = lighthouseData;
         // console.log(JSON.stringify(fieldConfigs)); // copy to fields.js
         // console.log(lighthouseData);
       }
 
       result.result.mixed_content_url = mixedContentUrl;
-      if(result.response.url) result.response.url = decodeURI(result.response.url);
+      if (result.response.url) result.response.url = decodeURI(
+        result.response.url);
 
       // console validate output
       // was in onSuccess(), but causes exception on docs
       const msgs = [];
       const validate = validateResults(result, fields); // TODO: fields declared implicitly
-      for(let name in validate) {
+      for (let name in validate) {
         const res = validate[name];
-        const msgColor = { warning: color.yellow, error: color.red }[res.type];
+        const msgColor = {warning: color.yellow, error: color.red}[res.type];
         msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
       }
-      if(msgs.length > 0) console.log(msgs.join(', '));
+      if (msgs.length > 0) console.log(msgs.join(', '));
 
       // You can access the page object after requests
       result.content = await page.content();
       // You need to extend and return the crawled result
       return result;
-    }
+    },
   };
 
-  const crawlerOptions = { ...defaultOptions, ...options };
-
-
-
-
-
-
-
-
+  const crawlerOptions = {...defaultOptions, ...options};
 
   // start
   const start = Date.now();
@@ -608,56 +630,50 @@ module.exports = async (baseUrl, options = {}) => {
 
   try {
     crawler = await HCCrawler.launch(crawlerOptions);
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 
   crawler.on('requeststarted', async options => {
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
-    if (DEBUG) console.log(`${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
+    if (DEBUG) console.log(
+      `${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
-    console.error(`${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
+    console.error(
+      `${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
   });
   crawler.on('requestdisallowed', options => {
-    console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(options.url)}${color.reset}`);
+    console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(
+      options.url)}${color.reset}`);
   });
   crawler.on('maxdepthreached', options => {
     console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
   crawler.on('maxrequestreached', options => {
-    console.log(`\n\n${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
+    console.log(
+      `\n\n${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
   });
   await crawler.queue(baseUrl);
   await crawler.onIdle();
   await crawler.close();
-
-
-
-
-
-
-
-
-
-
 
   // after scan
   const t = Math.round((Date.now() - start) / 1000);
   const perPage = Math.round((t / requestedCount) * 100) / 100;
 
   // close lighthouse's chrome
-  await chromeLauncher.killAll();;
+  await chromeLauncher.killAll();
 
   const outValidationSummary = () => {
     const sum = getValidationSum();
-    if(Object.entries(sum).length === 0) return;
+    if (Object.entries(sum).length === 0) return;
     console.log(`\n\n${color.white}Validation summary:${color.reset}`);
-    for(let colName in sum) {
+    for (let colName in sum) {
       console.log(`\n${color.white}${colName}:${color.reset}`);
-      for(let res of sum[colName]) {
-        const msgColor = { warning: color.yellow, error: color.red }[res.type];
+      for (let res of sum[colName]) {
+        const msgColor = {warning: color.yellow, error: color.red}[res.type];
         console.log(`${msgColor}${res.msg}${color.reset}\t${res.url}`);
       }
     }
@@ -668,7 +684,7 @@ module.exports = async (baseUrl, options = {}) => {
     if (options.xlsx) {
       saveAsXlsx(csvPath, xlsxPath);
       if (options.web) await publishGoogleSheets(xlsxPath);
-      if(options.openFile) exec(`"${xlsxPath}"`);
+      if (options.openFile) exec(`"${xlsxPath}"`);
     }
 
     if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
@@ -692,11 +708,11 @@ module.exports = async (baseUrl, options = {}) => {
 
   const tryFinish = async (tries) => {
     try {
-      await finishScan()
+      await finishScan();
     } catch (e) {
       if (e.code == 'EBUSY') {
         let msg = `${color.red}${xlsxPath} is busy`;
-        if(tries > 0) msg += ', please close file in 10 seconds!';
+        if (tries > 0) msg += ', please close file in 10 seconds!';
         console.error(msg);
 
         if (tries > 0) {
