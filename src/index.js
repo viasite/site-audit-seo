@@ -6,7 +6,7 @@ const {program} = require('commander');
 const packageJson = require('../package.json');
 const systemLocale = getDefaultLocale(); // should be before scrap-site (before lighthouse require)
 const scrapSite = require('./scrap-site');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require(
+const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = require(
   './actions');
 const {exec} = require('child_process');
 const os = require('os');
@@ -95,7 +95,8 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('removeJson', true)).
   option('--no-remove-csv', `No delete csv after xlsx generate`).
   option('--no-remove-json', `No delete json after serve`).
-  option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '~/site-audit-seo/')).
+  option('--out-dir <dir>', `Output directory`,
+    getConfigVal('outDir', '~/site-audit-seo/')).
   option('--csv <path>', `Skip scan, only convert csv to xlsx`).
   option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
   option('--gdrive', `Publish sheet to google docs`,
@@ -151,22 +152,21 @@ async function start() {
     try {
       if (program.xlsx) {
         saveAsXlsx(csvPath, xlsxPath);
-        if (program.web) await publishGoogleSheets(xlsxPath);
+        if (program.gdrive) await publishGoogleDrive(xlsxPath);
         if (program.openFile) exec(`"${xlsxPath}"`);
       }
 
-      if (program.json) await saveAsJson(csvPath, jsonPath, program.lang);
-      if (!program.removeJson) console.log('Saved to ' + jsonPath);
-      if (program.upload) webPath = await uploadJson(jsonPath, program);
+      if (program.json) {
+        await saveAsJson(csvPath, jsonPath, program.lang);
+        if (!program.removeJson) console.log('Saved to ' + jsonPath);
+        if (program.upload) webPath = await uploadJson(jsonPath, program);
+        // if (program.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
-      if (program.json) await startViewer(jsonPath, webPath);
+        await startViewer(jsonPath, webPath);
+        if (program.removeJson) fs.unlinkSync(jsonPath);
+      }
 
-      if (program.removeCsv) {
-        fs.unlinkSync(csvPath);
-      }
-      if (program.removeJson) {
-        fs.unlinkSync(jsonPath);
-      }
+      if (program.removeCsv) fs.unlinkSync(csvPath);
     } catch (e) {
       console.error(e);
     }
@@ -196,10 +196,12 @@ async function start() {
 
   // c = 2, when lighthouse c = 1
   if (program.concurrency === undefined) {
-    program.concurrency = program.lighthouse ? 1 : getConfigVal('concurrency', os.cpus().length);
+    program.concurrency = program.lighthouse ? 1 : getConfigVal('concurrency',
+      os.cpus().length);
   }
 
   program.outDir = expandHomedir(program.outDir);
+  createDirIfNotExists(program.outDir);
 
   outBrief(program);
 
@@ -335,25 +337,16 @@ function getDefaultLocale() {
   return map[locale] || 'en';
 }
 
-// not using, now only cli
-function parseSitesFile(file) {
-  const urlRegex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig;
-
-  if (!fs.existsSync(file)) {
-    console.error(`${file} not found, please create sites list file!`);
-    return [];
+function createDirIfNotExists(path) {
+  const exists = fs.existsSync(path);
+  if (exists && fs.statSync(path).isFile()) {
+    throw new Error(`File exists, cannot save here: ${path}`);
+    return false;
   }
 
-  let urls = [];
-  const lines = fs.readFileSync(file, 'utf8').split('\n');
-  lines.forEach((line, ind) => {
-    if (line.match(/^\s*[#\/;]+/)) return; // commented line
-    let url = line.match(urlRegex);
-    if (!url || url[0].endsWith('.png') || url[0].endsWith('.jpg') ||
-      url[0].endsWith('.js') || url[0].endsWith('.css')) return;
-    urls.push(url[0]);
-  });
-  return urls;
+  if (!exists) fs.mkdirSync(path, {recursive: true});
+
+  return path;
 }
 
 start();

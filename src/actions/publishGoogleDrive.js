@@ -16,14 +16,16 @@ const homedir = require('os').homedir();
 const TOKEN_PATH = `${homedir}/.site-audit-seo-gdrive-token.json`;
 const folderName = 'site-audit-seo';
 
-module.exports = async (xlsxPath) => {
+let folderId;
+
+module.exports = async (filePath) => {
   // Load client secrets from a local file.
   /*fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
     authorize(JSON.parse(content), async (auth) => {
       // listFiles(auth);
-      await uploadReport(auth, xlsxPath)
+      await uploadReport(auth, filePath)
     });
   });*/
 
@@ -39,20 +41,36 @@ module.exports = async (xlsxPath) => {
     },
   };
 
-  authorize(authOptions, async (auth) => {
-    // listFiles(auth);
-    await uploadReport(auth, xlsxPath);
-  });
+  return new Promise((resolve, reject) => {
+    authorize(authOptions, async (auth) => {
+      // listFiles(auth);
+      const drive = google.drive({version: 'v3', auth});
+
+      // create folder
+      folderId = await createFolderIfNotExists(drive, folderName);
+      if (!folderId) {
+        console.log(`Error creating folder ${folderName}`);
+      }
+
+      console.log(`\n${color.yellow}Google Drive:${color.reset}`);
+
+      const ext = path.parse(filePath).ext.replace('.', '');
+      if (['json', 'xlsx'].includes(ext)) {
+        const res = await uploadFile(drive, filePath)
+        resolve(res);
+        return res;
+      }
+      else {
+        console.log('Only xlsx or json files can uploaded to google drive.');
+        resolve(false);
+      }
+    });
+  })
 };
 
-async function uploadReport(auth, xlsxPath) {
-  const drive = google.drive({version: 'v3', auth});
-
-  const filename = new Date().toLocaleString() + ' ' + path.basename(xlsxPath);
-
-  let folderId;
-
+async function createFolderIfNotExists(drive, folderName) {
   // get gdrive folder
+  let folderId;
   const folders = await drive.files.list({
     pageSize: 100,
     fields: 'nextPageToken, files(id, name, webViewLink)',
@@ -72,27 +90,7 @@ async function uploadReport(auth, xlsxPath) {
     });
     folderId = folder.data.id;
   }
-  if (!folderId) {
-    console.log(`Error creating folder ${folderName}`);
-  }
-
-  // upload file
-  const res = await drive.files.create({
-    requestBody: {
-      name: filename,
-      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      parents: [folderId],
-    },
-    media: {
-      body: fs.createReadStream(xlsxPath),
-    },
-    fields: 'webViewLink',
-  });
-
-  console.log(`\n${color.yellow}Google Drive:${color.reset}`);
-  console.log(`Saved to: ${folderName}/${filename}`);
-  console.log('URL:      ' + res.data.webViewLink);
-  // console.log(res.data);
+  return folderId;
 }
 
 /**
@@ -143,4 +141,35 @@ function getAccessToken(oAuth2Client, callback) {
       callback(oAuth2Client);
     });
   });
+}
+
+
+
+async function uploadFile(drive, filePath) {
+  const filename = new Date().toLocaleString() + ' ' + path.basename(filePath);
+  const ext = path.parse(filePath).ext.replace('.', '');
+
+  const mimeTypes = {
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    json: 'application/json',
+  }
+  const mimeType = mimeTypes[ext] || '';
+
+  // upload file
+  const res = await drive.files.create({
+    requestBody: {
+      name: filename,
+      mimeType: mimeType,
+      parents: [folderId],
+    },
+    media: {
+      body: fs.createReadStream(filePath),
+    },
+    fields: ['webViewLink', 'webContentLink'],
+  });
+
+  console.log(`Saved to: ${folderName}/${filename}`);
+  console.log('URL:      ' + res.data.webViewLink);
+
+  return res.data.webViewLink;
 }

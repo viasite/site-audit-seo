@@ -1,7 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const path = require('path');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require(
+const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = require(
   './actions');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
@@ -26,7 +26,6 @@ let SKIP_JS = true;
 const finishTries = 5;
 
 module.exports = async (baseUrl, options = {}) => {
-  createDirIfNotExists(options.outDir);
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
 
@@ -461,22 +460,21 @@ module.exports = async (baseUrl, options = {}) => {
     console.log('');
     if (options.xlsx) {
       saveAsXlsx(csvPath, xlsxPath);
-      if (options.web) await publishGoogleSheets(xlsxPath);
+      if (options.gdrive) await publishGoogleDrive(xlsxPath);
       if (options.openFile) exec(`"${xlsxPath}"`);
     }
 
-    if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
-    if (!options.removeJson) console.log('Saved to ' + jsonPath);
-    if (options.upload) webPath = await uploadJson(jsonPath, options);
+    if (options.json) {
+      await saveAsJson(csvPath, jsonPath, options.lang);
+      if (!options.removeJson) console.log('Saved to ' + jsonPath);
+      if (options.upload) webPath = await uploadJson(jsonPath, options);
+      // if (options.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
-    if (options.json) await startViewer(jsonPath, webPath);
+      await startViewer(jsonPath, webPath);
+      if (options.removeJson) fs.unlinkSync(jsonPath);
+    }
 
-    if (options.removeCsv) {
-      fs.unlinkSync(csvPath);
-    }
-    if (options.removeJson) {
-      fs.unlinkSync(jsonPath);
-    }
+    if (options.removeCsv) fs.unlinkSync(csvPath);
 
     console.log(`Finish: ${t} sec (${perPage} per page)`);
 
@@ -506,15 +504,3 @@ module.exports = async (baseUrl, options = {}) => {
 
   await tryFinish(finishTries);
 };
-
-function createDirIfNotExists(path) {
-  const exists = fs.existsSync(path);
-  if(exists && fs.statSync(path).isFile()) {
-    throw new Error(`File exists, cannot save here: ${path}`);
-    return false;
-  }
-
-  if(!exists) fs.mkdirSync(path, { recursive: true })
-
-  return path;
-}
