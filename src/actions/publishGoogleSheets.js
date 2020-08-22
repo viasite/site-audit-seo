@@ -2,7 +2,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const path = require('path');
-const color = require('./color');
+const color = require('../color');
 
 // If modifying these scopes, delete token.json.
 const SCOPES = [

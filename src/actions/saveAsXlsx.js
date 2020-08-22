@@ -1,8 +1,8 @@
 const fs = require('fs');
 const xlsx = require('@popstas/xlsx-style');
 const xlsxOrig = require('xlsx');
-const {colsValidate} = require('./validate')
-const color = require('./color');
+const {colsValidate} = require('../validate')
+const color = require('../color');
 
 module.exports = (csvPath, xlsxPath) => {
   // validation functions for fields for xlsx

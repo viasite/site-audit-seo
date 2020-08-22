@@ -1,10 +1,6 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
-const saveAsXlsx = require('./save-as-xlsx');
-const saveAsJson = require('./save-as-json');
-const uploadJson = require('./upload-json');
-const publishGoogleSheets = require('./publish-google-sheets');
-const startViewer = require('./start-viewer');
+const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require('./actions');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');

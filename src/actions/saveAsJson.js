@@ -1,8 +1,8 @@
 const fs = require('fs');
 const csv = require('csvtojson');
-const { fields } = require('./presets/fields');
-const filters = require('./presets/filters');
-const columns = require('./presets/columns');
+const { fields } = require('../presets/fields');
+const filters = require('../presets/filters');
+const columns = require('../presets/columns');
 
 const defaultField = 'url';
 
