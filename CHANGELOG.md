@@ -1,3 +1,26 @@
+# [3.1.0](https://github.com/viasite/site-audit-seo/compare/v3.0.0...v3.1.0) (2020-08-22)
+
+
+### Bug Fixes
+
+* "# Lighthouse" for main groups ([d4243eb](https://github.com/viasite/site-audit-seo/commit/d4243eb))
+* better finish scan ([eb25a69](https://github.com/viasite/site-audit-seo/commit/eb25a69))
+* better json name for upload ([fc848a9](https://github.com/viasite/site-audit-seo/commit/fc848a9))
+* default concurrency = 1 when use --lighthouse ([e4cf923](https://github.com/viasite/site-audit-seo/commit/e4cf923))
+* show uploaded json links when port 3001 is busy ([968dbd5](https://github.com/viasite/site-audit-seo/commit/968dbd5))
+
+
+### Features
+
+* --lang [en,ru] ([8b9bece](https://github.com/viasite/site-audit-seo/commit/8b9bece))
+* config file, add --xlsx option ([79aaa68](https://github.com/viasite/site-audit-seo/commit/79aaa68))
+* now default output dir is ~/site-audit-seo/, not current dir ([e38af7d](https://github.com/viasite/site-audit-seo/commit/e38af7d))
+* now default save as json, now as xlsx ([803727b](https://github.com/viasite/site-audit-seo/commit/803727b))
+* now default save as json, remove json, not save as xlsx ([a6ed60d](https://github.com/viasite/site-audit-seo/commit/a6ed60d))
+* use current locale language (only ru/en, default en) ([a2461a0](https://github.com/viasite/site-audit-seo/commit/a2461a0))
+
+
+
 # [3.0.0](https://github.com/viasite/site-audit-seo/compare/v2.9.0...v3.0.0) (2020-08-21)
 
 
