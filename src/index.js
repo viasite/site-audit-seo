@@ -3,6 +3,7 @@ const fs = require('fs');
 const process = require('process');
 const { program } = require('commander');
 const packageJson = require('../package.json');
+const systemLocale = getDefaultLocale(); // should be before scrap-site (before lighthouse require)
 const scrapSite = require('./scrap-site');
 const saveAsXlsx = require('./save-as-xlsx');
 const saveAsJson = require('./save-as-json');
@@ -59,7 +60,7 @@ program
   .option('--json', `Output results in JSON`)
   .option('--upload', `Upload JSON to public web`)
   .option('--no-color', `No console colors`)
-  .option('--lang <lang>', `Language (en, ru)`, 'ru')
+  .option('--lang <lang>', `Language (en, ru, default: system language)`)
   .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
   .option('--no-open-file', `Don't open file after scan`)
   .option('--no-console-validate', `Don't output validate messages in console`)
@@ -73,7 +74,10 @@ async function start() {
     program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
   }
 
-  if(!['en', 'ru'].includes(program.lang)) program.lang = 'ru';
+  // lang
+  if(!['en', 'ru'].includes(program.lang)) program.lang = systemLocale;
+
+  // --json when --upload
   if(program.upload) program.json = true;
 
   if(program.csv) {
@@ -172,12 +176,12 @@ async function start() {
     {
       name: 'Upload JSON',
       value: (program.upload ? 'yes' : 'no'),
-      comment: (!program.json ? '--json --upload' : '')
+      comment: (!program.upload ? '--upload' : '')
     },
     {
       name: 'Language',
       value: program.lang,
-      comment: (program.lang == 'ru' ? '--lang [en]' : '')
+      comment: '--lang ' + (program.lang == 'ru' ? 'en' : 'ru')
     },
     {
       name: 'Docs extensions',
@@ -223,6 +227,20 @@ async function start() {
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     });
   }
+}
+
+// only ru and en, default en
+function getDefaultLocale() {
+  const locale = new Intl.DateTimeFormat().resolvedOptions().locale;
+  // console.log('locale:', new Intl.DateTimeFormat().resolvedOptions())
+  const map = {
+    'en-US': 'en',
+    'ru-RU': 'ru',
+    'en': 'en',
+    'ru': 'ru',
+  }
+
+  return map[locale] || 'en';
 }
 
 // not using, now only cli
