@@ -1,3 +1,19 @@
+# [3.2.0](https://github.com/viasite/site-audit-seo/compare/v3.1.0...v3.2.0) (2020-08-22)
+
+
+### Bug Fixes
+
+* concurrency = 1 when lighthouse ([78a199d](https://github.com/viasite/site-audit-seo/commit/78a199d))
+* local time in json upload name ([58ef6a3](https://github.com/viasite/site-audit-seo/commit/58ef6a3))
+* when upload, get only json basename, not full path ([93c3d92](https://github.com/viasite/site-audit-seo/commit/93c3d92))
+
+
+### Features
+
+* default columns for presets in json ([61c777a](https://github.com/viasite/site-audit-seo/commit/61c777a))
+
+
+
 # [3.1.0](https://github.com/viasite/site-audit-seo/compare/v3.0.0...v3.1.0) (2020-08-22)
 
 
