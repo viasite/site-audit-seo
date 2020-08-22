@@ -20,7 +20,7 @@ let SKIP_JS = true;
 const finishTries = 5;
 
 // поля описаны в API по ссылке выше
-const fields_presets = {
+const fieldsPresets = {
   default: ['response.url', 'depth'],
   minimal: ['response.url'],
   seo: [
@@ -258,11 +258,11 @@ module.exports = async (baseUrl, options = {}) => {
 
   if(!options.color) color.white = color.red = color.reset = color.yellow = '';
 
-  if (!options.fields_preset || !fields_presets[options.fields_preset]){
-    options.fields_preset = 'default';
+  if (!options.fieldsPreset || !fieldsPresets[options.fieldsPreset]){
+    options.fieldsPreset = 'default';
   }
 
-  let fields = fields_presets[options.fields_preset];
+  let fields = fieldsPresets[options.fieldsPreset];
 
   // exclude fields
   if (options.fieldsExclude && options.fieldsExclude.length > 0){
@@ -281,7 +281,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   // lighthouse fields
   if (options.lighthouse) {
-    for (let fName of fields_presets.lighthouse) {
+    for (let fName of fieldsPresets.lighthouse) {
       if (fields.indexOf(fName) === -1) {
         fields.push(fName);
       }
@@ -538,7 +538,7 @@ module.exports = async (baseUrl, options = {}) => {
             lighthouseData[auditName] = value;
 
             // add to sheet fields
-            if (options.fields_preset === 'lighthouse-all') {
+            if (options.fieldsPreset === 'lighthouse-all') {
               const fieldId = 'lighthouse.' + auditName;
               if (fields.indexOf(fieldId) === -1) {
                 fields.push(fieldId);

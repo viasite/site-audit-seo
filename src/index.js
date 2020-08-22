@@ -179,7 +179,7 @@ async function start() {
   for (let site of sites) {
     // console.log('program: ', program);
     await scrapSite(site, {
-      fields_preset: program.preset,              // варианты: default, seo, headers, minimal
+      fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
       fieldsExclude: program.exclude,             // исключить поля
       maxDepth: program.maxDepth,                 // глубина сканирования
       maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
