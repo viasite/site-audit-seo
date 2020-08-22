@@ -16,11 +16,19 @@ module.exports = async (jsonPath, webPath=false) => {
         // express.static('./web')
     });
 
-    app.listen(port, () => {
-        const dataJson = webPath || `http://localhost:${port}/data.json`;
-        // console.log(`Open for view report: http://localhost:${port}/`);
-        console.log(`JSON file: ${dataJson}`);
-        console.log(`Dev viewer: http://localhost:3000/?url=${dataJson}`);
-        console.log(`Online viewer: https://viasite.github.io/site-audit-seo-viewer/?url=${dataJson}`);
-    });
+    function outLinks(url) {
+        console.log(`JSON file: ${url}`);
+        console.log('');
+        console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
+        console.log(`Online viewer: https://viasite.github.io/site-audit-seo-viewer/?url=${url}`);
+        console.log('\n');
+    }
+
+    if (webPath) outLinks(webPath);
+
+    if(!webPath) {
+        app.listen(port, () => {
+            outLinks(`http://localhost:${port}/data.json`);
+        });
+    }
 }
