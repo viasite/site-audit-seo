@@ -21,6 +21,7 @@ const color = require('./color');
 let SKIP_IMAGES = true;
 let SKIP_CSS = true;
 let SKIP_JS = true;
+const finishTries = 5;
 
 // поля описаны в API по ссылке выше
 const fields_presets = {
@@ -653,13 +654,9 @@ module.exports = async (baseUrl, options = {}) => {
   // close lighthouse's chrome
   await chromeLauncher.killAll();;
 
-  const finishScan = () => {
-    if(options.removeCsv) {
-      fs.unlinkSync(csvPath);
-    }
-
-    // Validate summary
+  const outValidationSummary = () => {
     const sum = getValidationSum();
+    if(Object.entries(sum).length === 0) return;
     console.log(`\n\n${color.white}Validation summary:${color.reset}`);
     for(let colName in sum) {
       console.log(`\n${color.white}${colName}:${color.reset}`);
@@ -668,34 +665,49 @@ module.exports = async (baseUrl, options = {}) => {
         console.log(`${msgColor}${res.msg}${color.reset}\t${res.url}`);
       }
     }
+  };
 
+  const finishScan = async () => {
+    saveAsXlsx(csvPath, xlsxPath);
     console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
+
+    if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
+    if (options.upload) webPath = await uploadJson(jsonPath, options);
+
+    if (options.web) await publishGoogleSheets(xlsxPath);
+
+    if (options.json) await startViewer(jsonPath, webPath);
+
+    if(options.removeCsv) {
+      fs.unlinkSync(csvPath);
+    }
+
     console.log(`Finish: ${t} sec (${perPage} per page)`);
+
     if(options.openFile) exec(`"${xlsxPath}"`);
   };
 
-  let isSuccess = true;
-  try {
-    saveAsXlsx(csvPath, xlsxPath);
-    if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
-    if (options.upload) webPath = await uploadJson(jsonPath, options);
-    if (options.web) await publishGoogleSheets(xlsxPath);
-    if (options.json) await startViewer(jsonPath, webPath);
-  } catch (e) {
-    if(e.code == 'EBUSY'){
-      isSuccess = false;
-      console.error(`${color.red}${xlsxPath} is busy, please close file in 10 seconds!`);
-      setTimeout(async () => {
-        saveAsXlsx(csvPath, xlsxPath);
-        if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
-        if (options.upload) webPath = await uploadJson(jsonPath, options);
-        if (options.web) await publishGoogleSheets(xlsxPath);
-        if (options.json) await startViewer(jsonPath, webPath);
-        finishScan();
-      }, 10000)
-    }
-    else console.error(e);
-  }
+  outValidationSummary();
 
-  if(isSuccess) finishScan();
+  const tryFinish = async (tries) => {
+    try {
+      await finishScan()
+    } catch (e) {
+      if (e.code == 'EBUSY') {
+        let msg = `${color.red}${xlsxPath} is busy`;
+        if(tries > 0) msg += ', please close file in 10 seconds!';
+        console.error(msg);
+
+        if (tries > 0) {
+          setTimeout(async () => {
+            await tryFinish(tries - 1);
+          }, 10000);
+        }
+      } else {
+        console.error(e);
+      }
+    }
+  };
+
+  await tryFinish(finishTries);
 };
