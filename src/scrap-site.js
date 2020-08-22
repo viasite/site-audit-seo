@@ -668,23 +668,24 @@ module.exports = async (baseUrl, options = {}) => {
   };
 
   const finishScan = async () => {
-    saveAsXlsx(csvPath, xlsxPath);
-    console.log(`\n${color.yellow}Saved to ${xlsxPath}${color.reset}`);
+    if (options.xlsx) {
+      saveAsXlsx(csvPath, xlsxPath);
+      if (options.web) await publishGoogleSheets(xlsxPath);
+      console.log(`${color.yellow}${xlsxPath} saved${color.reset}`);
+      if(options.openFile) exec(`"${xlsxPath}"`);
+    }
 
     if (options.json) await saveAsJson(csvPath, jsonPath, options.lang);
     if (options.upload) webPath = await uploadJson(jsonPath, options);
 
-    if (options.web) await publishGoogleSheets(xlsxPath);
-
     if (options.json) await startViewer(jsonPath, webPath);
 
-    if(options.removeCsv) {
+    if (options.removeCsv) {
       fs.unlinkSync(csvPath);
     }
 
     console.log(`Finish: ${t} sec (${perPage} per page)`);
 
-    if(options.openFile) exec(`"${xlsxPath}"`);
   };
 
   outValidationSummary();

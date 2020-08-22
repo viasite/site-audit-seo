@@ -14,6 +14,8 @@ const { exec } = require('child_process');
 const os = require('os');
 const color = require('./color');
 
+const defaultDocs = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip'];
+
 const fieldsCustom = {};
 
 const list = val => {
@@ -37,31 +39,47 @@ const fieldsCustomCollect = (value, previous) => {
   return fieldsCustom;
 }
 
+let config = {};
+const homedir = require('os').homedir();
+const configPath = `${homedir}/.site-audit-seo.conf.js`;
+if (fs.existsSync(configPath)) {
+  config = require(configPath);
+}
+
+function getConfigVal(name, def) {
+  let val = undefined;
+  if (config[name] === undefined) val = def;
+  else val = config[name];
+  console.log(`config: ${name}: `, val);
+  return val;
+}
+
 program
   .option('-u --urls <urls>', 'Comma separated url list for scan', list)
-  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)', 'seo')
+  .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)', getConfigVal('preset', 'seo'))
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
-  .option('-d, --max-depth <depth>', 'Max scan depth', 10)
-  .option('-c, --concurrency <threads>', 'Threads number (default: 2)', )
+  .option('-d, --max-depth <depth>', 'Max scan depth', getConfigVal('maxDepth', 10))
+  .option('-c, --concurrency <threads>', 'Threads number (default: by cpu cores)')
   .option('--lighthouse', 'Appends base Lighthouse fields to preset')
   .option('--delay <ms>', 'Delay between requests', parseInt, 0)
   .option('-f, --fields <json>', 'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect, [])
   .option('--no-skip-static', `Scan static files`)
   .option('--no-limit-domain', `Scan not only current domain`)
-  .option('--docs-extensions', `Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip`, list)
-  .option('--follow-xml-sitemap', `Follow sitemap.xml`)
-  .option('--ignore-robots-txt', `Ignore disallowed in robots.txt`)
-  .option('-m, --max-requests <num>', `Limit max pages scan`, 0)
-  .option('--no-headless', `Show browser GUI while scan`)
-  .option('--no-remove-csv', `No delete csv after xlsx generate`)
-  .option('--out-dir <dir>', `Output directory`, '.')
+  .option('--docs-extensions', `Comma-separated extensions that will be add to table (default: ${defaultDocs.join(',')})`, list)
+  .option('--follow-xml-sitemap', `Follow sitemap.xml`, getConfigVal('followXmlSitemap', false))
+  .option('--ignore-robots-txt', `Ignore disallowed in robots.txt`, getConfigVal('ignoreRobotsTxt', false))
+  .option('-m, --max-requests <num>', `Limit max pages scan`, getConfigVal('maxRequests', 0))
+  .option('--no-headless', `Show browser GUI while scan`, !getConfigVal('headless', true))
+  .option('--no-remove-csv', `No delete csv after xlsx generate`, !getConfigVal('removeCsv', true))
+  .option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '.'))
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
-  .option('--web', `Publish sheet to google docs`)
-  .option('--json', `Output results in JSON`)
-  .option('--upload', `Upload JSON to public web`)
+  .option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', true))
+  .option('--gdrive', `Publish sheet to google docs`, getConfigVal('gdrive', false))
+  .option('--json', `Output results in JSON`, getConfigVal('json', false))
+  .option('--upload', `Upload JSON to public web`, getConfigVal('upload', false))
   .option('--no-color', `No console colors`)
-  .option('--lang <lang>', `Language (en, ru, default: system language)`)
-  .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`)
+  .option('--lang <lang>', `Language (en, ru, default: system language)`, getConfigVal('lang', undefined))
+  .option('--open-file', `Open file after scan (default: yes on Windows and MacOS)`, getConfigVal('openFile', undefined))
   .option('--no-open-file', `Don't open file after scan`)
   .option('--no-console-validate', `Don't output validate messages in console`)
   .name("site-audit-seo")
@@ -70,6 +88,10 @@ program
   .parse(process.argv);
 
 async function start() {
+  if(!program.concurrency === undefined){
+    program.concurrency = getConfigVal('concurrency', os.cpus().length);
+  }
+
   if(program.openFile === undefined) {
     program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
   }
@@ -77,27 +99,48 @@ async function start() {
   // lang
   if(!['en', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
+  if(!program.xlsx) program.openFile = false;
+
   // --json when --upload
   if(program.upload) program.json = true;
 
+  /*console.log('json: ', program.json)
+  console.log('concurrency: ', program.concurrency)
+  console.log('lang: ', program.lang)
+  console.log('outDir: ', program.outDir)
+  console.log('openFile: ', program.openFile)
+  console.log('xlsx: ', program.xlsx)*/
+
   if(program.csv) {
+    program.removeCsv = false;
     const csvPath = program.csv
     const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
     let jsonPath = csvPath.replace(/\.csv$/, '.json');
     let webPath;
     try {
-      saveAsXlsx(csvPath, xlsxPath);
+      if (program.xlsx) {
+        saveAsXlsx(csvPath, xlsxPath);
+        if (program.web) await publishGoogleSheets(xlsxPath);
+        console.log(`${color.yellow}${xlsxPath} saved${color.reset}`);
+        if (program.openFile) exec(`"${xlsxPath}"`);
+      }
+
       if (program.json) await saveAsJson(csvPath, jsonPath, program.lang);
       if (program.upload) webPath = await uploadJson(jsonPath, program);
-      if (program.web) await publishGoogleSheets(xlsxPath);
+
       if (program.json) await startViewer(jsonPath, webPath);
-      console.log(`${xlsxPath} saved`);
-      if(program.openFile) exec(`"${xlsxPath}"`);
+
+      if (program.removeCsv) {
+        fs.unlinkSync(csvPath);
+      }
     } catch(e) {
       console.error(e)
     }
     return;
   }
+
+
+
 
   if(!program.urls) {
     console.log(`${program.name()} ${program.version()}`);
@@ -113,7 +156,7 @@ async function start() {
   }
 
   if(program.docsExtensions === undefined) {
-    program.docsExtensions = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip'];
+    program.docsExtensions = getConfigVal('docsExtensions', defaultDocs);
   }
 
   if(program.preset === 'lighthouse' || program.preset === 'lighthouse-all') {
@@ -123,84 +166,7 @@ async function start() {
   // c = 2, when lighthouse c = 1
   if(!program.concurrency) program.concurrency = program.lighthouse ? 1 : 2;
 
-  const brief = [
-    {
-      name: 'Preset',
-      value: program.preset,
-      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]'
-    },
-    {
-      name: 'Threads',
-      value: program.concurrency,
-      comment: '-c threads' +
-          (program.concurrency > 1 && program.lighthouse ?
-          `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
-          : '')
-    },
-    {
-      name: 'Delay',
-      value: program.delay,
-      comment: '--delay ms'
-    },
-    {
-      name: 'Ignore robots.txt',
-      value: (program.ignoreRobotsTxt ? 'yes' : 'no'),
-      comment: (!program.ignoreRobotsTxt ? '--ignore-robots-txt' : '')
-    },
-    {
-      name: 'Follow sitemap.xml',
-      value: (program.followSitemapXml ? 'yes' : 'no'),
-      comment: (!program.followSitemapXml ? '--follow-xml-sitemap' : '')
-    },
-    {
-      name: 'Max depth',
-      value: program.maxDepth,
-      comment: '-d 8'
-    },
-    {
-      name: 'Max requests',
-      value: program.maxRequests ? program.maxRequests : 'unlimited',
-      comment: '-m 123'
-    },
-    /*{
-      name: 'Lighthouse',
-      value: (program.lighthouse ? 'yes' : 'no'),
-    },*/
-    {
-      name: 'Headless',
-      value: (program.headless ? 'yes' : 'no'),
-      comment: (program.headless ? '--no-headless' : '')
-    },
-    {
-      name: 'Save as JSON',
-      value: (program.json ? 'yes' : 'no'),
-      comment: (!program.json ? '--json' : '')
-    },
-    {
-      name: 'Upload JSON',
-      value: (program.upload ? 'yes' : 'no'),
-      comment: (!program.upload ? '--upload' : '')
-    },
-    {
-      name: 'Language',
-      value: program.lang,
-      comment: '--lang ' + (program.lang == 'ru' ? 'en' : 'ru')
-    },
-    {
-      name: 'Docs extensions',
-      value: program.docsExtensions.join(','),
-      comment: '--docs-extensions zip,rar'
-    },
-  ];
-
-  console.log('');
-  for (let line of brief) {
-    const nameCol = line.name.padEnd(20, ' ');
-    const valueCol = `${line.value}`.padEnd(10, ' ')
-    console.log(color.white + nameCol + valueCol + color.reset
-        + (line.comment ? ` ${line.comment}` : ''))
-  }
-  console.log('');
+  outBrief(program);
 
   for (let site of sites) {
     // console.log('program: ', program);
@@ -223,13 +189,100 @@ async function start() {
       openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
-      web: program.web,                           // публиковать на google docs
+      xlsx: program.xlsx,                         // сохранять в XLSX
+      gdrive: program.gdrive,                     // публиковать на google docs
       json: program.json,                         // сохранять json файл
       upload: program.upload,                     // выгружать json на сервер
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     });
   }
+}
+
+function outBrief(options) {
+  const brief = [
+    {
+      name: 'Preset',
+      value: options.preset,
+      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]'
+    },
+    {
+      name: 'Threads',
+      value: options.concurrency,
+      comment: '-c threads' +
+          (options.concurrency > 1 && options.lighthouse ?
+              `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
+              : '')
+    },
+    {
+      name: 'Delay',
+      value: options.delay,
+      comment: '--delay ms'
+    },
+    {
+      name: 'Ignore robots.txt',
+      value: (options.ignoreRobotsTxt ? 'yes' : 'no'),
+      comment: (!options.ignoreRobotsTxt ? '--ignore-robots-txt' : '')
+    },
+    {
+      name: 'Follow sitemap.xml',
+      value: (options.followSitemapXml ? 'yes' : 'no'),
+      comment: (!options.followSitemapXml ? '--follow-xml-sitemap' : '')
+    },
+    {
+      name: 'Max depth',
+      value: options.maxDepth,
+      comment: '-d 8'
+    },
+    {
+      name: 'Max requests',
+      value: options.maxRequests ? options.maxRequests : 'unlimited',
+      comment: '-m 123'
+    },
+    /*{
+      name: 'Lighthouse',
+      value: (options.lighthouse ? 'yes' : 'no'),
+    },*/
+    {
+      name: 'Headless',
+      value: (options.headless ? 'yes' : 'no'),
+      comment: (options.headless ? '--no-headless' : '')
+    },
+    {
+      name: 'Save as XLSX',
+      value: (options.xlsx ? 'yes' : 'no'),
+      comment: (!options.xlsx ? '--xlsx' : '')
+    },
+    {
+      name: 'Save as JSON',
+      value: (options.json ? 'yes' : 'no'),
+      comment: (!options.json ? '--json' : '')
+    },
+    {
+      name: 'Upload JSON',
+      value: (options.upload ? 'yes' : 'no'),
+      comment: (!options.upload ? '--upload' : '')
+    },
+    {
+      name: 'Language',
+      value: options.lang,
+      comment: '--lang ' + (options.lang == 'ru' ? 'en' : 'ru')
+    },
+    {
+      name: 'Docs extensions',
+      value: options.docsExtensions.join(','),
+      comment: '--docs-extensions zip,rar'
+    },
+  ];
+
+  console.log('');
+  for (let line of brief) {
+    const nameCol = line.name.padEnd(20, ' ');
+    const valueCol = `${line.value}`.padEnd(10, ' ')
+    console.log(color.white + nameCol + valueCol + color.reset
+        + (line.comment ? ` ${line.comment}` : ''))
+  }
+  console.log('');
 }
 
 // only ru and en, default en

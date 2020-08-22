@@ -40,25 +40,26 @@ Options:
   -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all) (default: "seo")
   -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
-  -c, --concurrency <threads>  Threads number (default: 2)
+  -c, --concurrency <threads>  Threads number (default: by cpu cores)
   --lighthouse                 Appends base Lighthouse fields to preset
   --delay <ms>                 Delay between requests (default: 0)
   -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
   --no-skip-static             Scan static files
   --no-limit-domain            Scan not only current domain
-  --docs-extensions            Comma-separated extensions that will be add to table, default:doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip
-  --follow-xml-sitemap         Follow sitemap.xml
-  --ignore-robots-txt          Ignore disallowed in robots.txt
+  --docs-extensions            Comma-separated extensions that will be add to table (default: doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip)
+  --follow-xml-sitemap         Follow sitemap.xml (default: false)
+  --ignore-robots-txt          Ignore disallowed in robots.txt (default: false)
   -m, --max-requests <num>     Limit max pages scan (default: 0)
   --no-headless                Show browser GUI while scan
   --no-remove-csv              No delete csv after xlsx generate
   --out-dir <dir>              Output directory (default: ".")
   --csv <path>                 Skip scan, only convert csv to xlsx
-  --web                        Publish sheet to google docs
-  --json                       Output results in JSON
-  --upload                     Upload JSON to public web
+  --xlsx                       Save as XLSX (default: false)
+  --gdrive                     Publish sheet to google docs (default: false)
+  --json                       Output results in JSON (default: false)
+  --upload                     Upload JSON to public web (default: false)
   --no-color                   No console colors
-  --lang <lang>                Language (en, ru) (default: "ru")
+  --lang <lang>                Language (en, ru, default: system language)
   --open-file                  Open file after scan (default: yes on Windows and MacOS)
   --no-open-file               Don't open file after scan
   --no-console-validate        Don't output validate messages in console
@@ -92,6 +93,8 @@ Options:
 - Field groups by categories
 - Filters presets (ex. `h1_count != 1`)
 - Color validation
+- Persistent URL to report when `--upload` using
+- Switch between last uploaded reports
 
 
 ### Fields list (18.08.2020):
@@ -166,6 +169,9 @@ site-audit-seo -u https://example.com --preset lighthouse
 ``` bash
 site-audit-seo -u https://example.com --lighthouse
 ```
+
+## Config file
+You can copy [.site-audit-seo.conf.js](.site-audit-seo.conf.js) to your home directory and tune options.
 
 ## Bugs
 1. Sometimes it writes identical pages to csv. This happens in 2 cases:  
