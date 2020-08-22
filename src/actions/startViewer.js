@@ -31,6 +31,7 @@ module.exports = async (jsonPath, webPath = false) => {
     console.log(`JSON file: ${url}`);
     console.log('');
     console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
+    console.log('');
     console.log(`Online viewer: ${onlineViewLink(url)}`);
     console.log('');
   }

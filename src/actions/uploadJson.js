@@ -6,7 +6,9 @@ module.exports = async (jsonPath, options) => {
   const data = fs.readFileSync(jsonPath, 'utf8');
   // const raw = JSON.stringify(data);
 
-  const date = new Date().toISOString().
+  const offset = new Date().getTimezoneOffset() * 60000;
+  const dateLocal = new Date(Date.now() - offset)
+  const date = dateLocal.toISOString().
     replace(/:/g, '-').
     replace('T', '_').
     replace('Z', '');
