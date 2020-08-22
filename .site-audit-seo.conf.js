@@ -8,7 +8,7 @@ module.exports = {
   // headless: true,
   // removeCsv: true,
   // removeJson: true,
-  // outDir: '~/site-audit-seo-reports/.',
+  // outDir: '~/site-audit-seo/.',
   // gdrive: false,
   // json: false,
   // xlsx: false,

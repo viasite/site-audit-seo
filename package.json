@@ -28,6 +28,7 @@
     "chrome-launcher": "^0.13.4",
     "commander": "^5.0.0",
     "csvtojson": "^2.0.10",
+    "expand-home-dir": "0.0.3",
     "express": "^4.17.1",
     "googleapis": "^59.0.0",
     "lighthouse": "^6.2.0",

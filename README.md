@@ -72,10 +72,10 @@ Options:
 - Validation summary after scan
 - Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `ppt`,` pptx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
 - Search pages with SSL mixed content
-- Each site is saved to a file with a domain name
+- Each site is saved to a file with a domain name in `~/site-audit-seo/`
 - Does not follow links outside the scanned domain (configurable)
 - Does not load images, css, js (configurable)
-- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L112))
+- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L98))
 - Analyse each page with Lighthouse (see below)
 
 ### XLSX features
@@ -139,6 +139,7 @@ Options:
 - lighthouse.interactive
 - lighthouse.total-blocking-time
 - lighthouse.cumulative-layout-shift
+- and 150 more lighthouse tests!
 
 
 ## Custom fields
@@ -174,9 +175,9 @@ site-audit-seo -u https://example.com --lighthouse
 You can copy [.site-audit-seo.conf.js](.site-audit-seo.conf.js) to your home directory and tune options.
 
 ## Bugs
-1. Sometimes it writes identical pages to csv. This happens in 2 cases:  
-1.1. Redirect from another page to this (solved by setting `skipRequestedRedirect: true`, hardcoded).  
-1.2. Simultaneous request of the same page in parallel threads.  
+1. Sometimes it writes identical pages to csv. This happens in 2 cases:
+1.1. Redirect from another page to this (solved by setting `skipRequestedRedirect: true`, hardcoded).
+1.2. Simultaneous request of the same page in parallel threads.
 2. Sometimes a number appears instead of the URL, it occurs at the stage of converting csv to xlsx, don't know why.
 
 
@@ -269,9 +270,9 @@ site-audit-seo -u https://example.com --lighthouse
 
 
 ## Баги
-1. Иногда пишет в csv одинаковые страницы. Это бывает в 2 случаях:  
-1.1. Редирект с другой страницы на эту (решается установкой `skipRequestedRedirect: true`, сделано).  
-1.2. Одновременный запрос одной и той же страницы в параллельных потоках.  
+1. Иногда пишет в csv одинаковые страницы. Это бывает в 2 случаях:
+1.1. Редирект с другой страницы на эту (решается установкой `skipRequestedRedirect: true`, сделано).
+1.2. Одновременный запрос одной и той же страницы в параллельных потоках.
 2. Иногда вместо URL появляется цифра, происходит на этапе конвертации csv в xlsx, не знаю почему.
 
 

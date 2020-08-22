@@ -1,5 +1,6 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
+const path = require('path');
 const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = require(
   './actions');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
@@ -9,26 +10,29 @@ const {validateResults, getValidationSum} = require('./validate');
 const {exec} = require('child_process');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+// поля описаны в API по ссылке выше
+const fieldsPresets = require('./presets/scraperFields');
+const color = require('./color');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
-const color = require('./color');
 
 // запреты браузеру на подгрузку статики, ускоряет
 let SKIP_IMAGES = true;
 let SKIP_CSS = true;
 let SKIP_JS = true;
+
+// кол-во попыток выполнить actions
 const finishTries = 5;
 
-// поля описаны в API по ссылке выше
-const fieldsPresets = require('./presets/scraperFields');
-
 module.exports = async (baseUrl, options = {}) => {
+  createDirIfNotExists(options.outDir);
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
-  const csvPath = `${options.outDir}/${domain}.csv`;
-  const xlsxPath = `${options.outDir}/${domain}.xlsx`;
-  const jsonPath = `${options.outDir}/${domain}.json`;
+
+  const csvPath = path.normalize(`${options.outDir}/${domain}.csv`);
+  const xlsxPath = path.normalize(`${options.outDir}/${domain}.xlsx`);
+  const jsonPath = path.normalize(`${options.outDir}/${domain}.json`);
   let webPath;
 
   if (!options.color) color.white = color.red = color.reset = color.yellow = '';
@@ -502,3 +506,15 @@ module.exports = async (baseUrl, options = {}) => {
 
   await tryFinish(finishTries);
 };
+
+function createDirIfNotExists(path) {
+  const exists = fs.existsSync(path);
+  if(exists && fs.statSync(path).isFile()) {
+    throw new Error(`File exists, cannot save here: ${path}`);
+    return false;
+  }
+
+  if(!exists) fs.mkdirSync(path, { recursive: true })
+
+  return path;
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const path = require('path');
 const process = require('process');
 const {program} = require('commander');
 const packageJson = require('../package.json');
@@ -9,6 +10,7 @@ const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleSheets, startViewer} = r
   './actions');
 const {exec} = require('child_process');
 const os = require('os');
+const expandHomedir = require('expand-home-dir');
 const color = require('./color');
 
 const defaultDocs = [
@@ -93,7 +95,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('removeJson', true)).
   option('--no-remove-csv', `No delete csv after xlsx generate`).
   option('--no-remove-json', `No delete json after serve`).
-  option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '.')).
+  option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '~/site-audit-seo/')).
   option('--csv <path>', `Skip scan, only convert csv to xlsx`).
   option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
   option('--gdrive', `Publish sheet to google docs`,
@@ -146,9 +148,9 @@ async function start() {
 
   if (program.csv) {
     program.removeCsv = false;
-    const csvPath = program.csv;
-    const xlsxPath = csvPath.replace(/\.csv$/, '.xlsx');
-    let jsonPath = csvPath.replace(/\.csv$/, '.json');
+    const csvPath = expandHomedir(program.csv);
+    const xlsxPath = path.normalize(csvPath.replace(/\.csv$/, '.xlsx'));
+    let jsonPath = path.normalize(csvPath.replace(/\.csv$/, '.json'));
     let webPath;
     try {
       if (program.xlsx) {
@@ -198,6 +200,8 @@ async function start() {
 
   // c = 2, when lighthouse c = 1
   if (!program.concurrency) program.concurrency = program.lighthouse ? 1 : 2;
+
+  program.outDir = expandHomedir(program.outDir);
 
   outBrief(program);
 
