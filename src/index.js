@@ -42,7 +42,7 @@ program
   .option('-p, --preset <preset>', 'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)', 'seo')
   .option('-e, --exclude <fields>', 'Comma separated fields to exclude from results', list)
   .option('-d, --max-depth <depth>', 'Max scan depth', 10)
-  .option('-c, --concurrency <threads>', 'Threads number', 2)
+  .option('-c, --concurrency <threads>', 'Threads number (default: 2)', )
   .option('--lighthouse', 'Appends base Lighthouse fields to preset')
   .option('--delay <ms>', 'Delay between requests', parseInt, 0)
   .option('-f, --fields <json>', 'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect, [])
@@ -120,6 +120,9 @@ async function start() {
     program.lighthouse = true;
   }
 
+  // c = 2, when lighthouse c = 1
+  if(!program.concurrency) program.concurrency = program.lighthouse ? 1 : 2;
+
   const brief = [
     {
       name: 'Preset',
@@ -129,7 +132,7 @@ async function start() {
     {
       name: 'Threads',
       value: program.concurrency,
-      comment: '-c' +
+      comment: '-c threads' +
           (program.concurrency > 1 && program.lighthouse ?
           `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
           : '')
