@@ -6,7 +6,7 @@ const columns = require('../presets/columns');
 
 const defaultField = 'url';
 
-module.exports = async (csvPath, jsonPath, lang) => {
+module.exports = async (csvPath, jsonPath, lang, preset) => {
   // read csv to workbook
   const data = {};
   data.items = await csv({delimiter: ';'}).fromFile(csvPath);
@@ -89,6 +89,13 @@ module.exports = async (csvPath, jsonPath, lang) => {
 
   data.filters = filters;
   data.columns = columns;
+
+  for (let c in data.columns) {
+    const col = data.columns[c];
+    if (col.presets && col.presets.includes(preset)) {
+      data.columns[c].default = true;
+    }
+  }
 
   const raw = JSON.stringify(data);
   fs.writeFileSync(jsonPath, raw);

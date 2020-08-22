@@ -157,7 +157,7 @@ async function start() {
       }
 
       if (program.json) {
-        await saveAsJson(csvPath, jsonPath, program.lang);
+        await saveAsJson(csvPath, jsonPath, program.lang, program.preset);
         if (!program.removeJson) console.log('Saved to ' + jsonPath);
         if (program.upload) webPath = await uploadJson(jsonPath, program);
         // if (program.gdrive) webPath = await publishGoogleDrive(jsonPath);

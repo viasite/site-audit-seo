@@ -6,6 +6,10 @@ Scraper can scan one or several sites at once.
 
 Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler)
 
+Demo:
+- [Default report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default.json)
+- [Lighthouse report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-lighthouse.json)
+
 Русское описание [ниже](#русский)
 
 ![site-audit-demo](assets/site-audit-demo.gif)

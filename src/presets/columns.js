@@ -39,6 +39,7 @@ module.exports = {
   lighthouse: {
     name: 'lighthouse',
     groups: ['lighthouse'],
+    presets: ['lighthouse', 'lighthouse-all'],
     columns: [
       'url',
       'lighthouse_scores_performance',

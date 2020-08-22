@@ -465,7 +465,7 @@ module.exports = async (baseUrl, options = {}) => {
     }
 
     if (options.json) {
-      await saveAsJson(csvPath, jsonPath, options.lang);
+      await saveAsJson(csvPath, jsonPath, options.lang, options.preset);
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
       if (options.upload) webPath = await uploadJson(jsonPath, options);
       // if (options.gdrive) webPath = await publishGoogleDrive(jsonPath);
