@@ -88,5 +88,4 @@ module.exports = async (csvPath, jsonPath, lang) => {
 
     const raw = JSON.stringify(data);
     fs.writeFileSync(jsonPath, raw);
-    console.log('Saved to ' + jsonPath);
 }

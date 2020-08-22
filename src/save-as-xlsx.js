@@ -2,6 +2,8 @@ const fs = require('fs');
 const xlsx = require('@popstas/xlsx-style');
 const xlsxOrig = require('xlsx');
 const {colsValidate} = require('./validate')
+const color = require('./color');
+
 module.exports = (csvPath, xlsxPath) => {
   // validation functions for fields for xlsx
 
@@ -124,4 +126,6 @@ module.exports = (csvPath, xlsxPath) => {
   // ws['!autofilter'] = { ref: ws['!ref'] };
 
   xlsx.writeFile(wb, xlsxPath);
+
+  console.log(`${color.yellow}${xlsxPath} saved${color.reset}`);
 }

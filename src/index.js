@@ -70,11 +70,15 @@ program
   .option('--ignore-robots-txt', `Ignore disallowed in robots.txt`, getConfigVal('ignoreRobotsTxt', false))
   .option('-m, --max-requests <num>', `Limit max pages scan`, getConfigVal('maxRequests', 0))
   .option('--no-headless', `Show browser GUI while scan`, !getConfigVal('headless', true))
-  .option('--no-remove-csv', `No delete csv after xlsx generate`, !getConfigVal('removeCsv', true))
+  .option('--remove-csv', `No delete csv after xlsx generate`, getConfigVal('removeCsv', true))
+    .option('--remove-json', `No delete json after serve`, getConfigVal('removeJson', true))
+  .option('--no-remove-csv', `No delete csv after xlsx generate`)
+  .option('--no-remove-json', `No delete json after serve`)
   .option('--out-dir <dir>', `Output directory`, getConfigVal('outDir', '.'))
   .option('--csv <path>', `Skip scan, only convert csv to xlsx`)
   .option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false))
   .option('--gdrive', `Publish sheet to google docs`, getConfigVal('gdrive', false))
+  .option('--json', `Save as JSON`, getConfigVal('json', true))
   .option('--no-json', `No save as JSON`, !getConfigVal('json', true))
   .option('--upload', `Upload JSON to public web`, getConfigVal('upload', false))
   .option('--no-color', `No console colors`)
@@ -99,12 +103,17 @@ async function start() {
   // lang
   if(!['en', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
+  // no open file when no xlsx generate
   if(!program.xlsx) program.openFile = false;
 
   // --json when --upload
   if(program.upload) program.json = true;
 
+  // no remove json when --no-json
+  if(!program.json) program.removeJson = false;
+
   /*console.log('json: ', program.json)
+  console.log('removeJson: ', program.removeJson)
   console.log('concurrency: ', program.concurrency)
   console.log('lang: ', program.lang)
   console.log('outDir: ', program.outDir)
@@ -121,17 +130,20 @@ async function start() {
       if (program.xlsx) {
         saveAsXlsx(csvPath, xlsxPath);
         if (program.web) await publishGoogleSheets(xlsxPath);
-        console.log(`${color.yellow}${xlsxPath} saved${color.reset}`);
         if (program.openFile) exec(`"${xlsxPath}"`);
       }
 
       if (program.json) await saveAsJson(csvPath, jsonPath, program.lang);
+      if (!program.removeJson) console.log('Saved to ' + jsonPath);
       if (program.upload) webPath = await uploadJson(jsonPath, program);
 
       if (program.json) await startViewer(jsonPath, webPath);
 
       if (program.removeCsv) {
         fs.unlinkSync(csvPath);
+      }
+      if (program.removeJson) {
+        fs.unlinkSync(jsonPath);
       }
     } catch(e) {
       console.error(e)
@@ -189,6 +201,7 @@ async function start() {
       openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
+      removeJson: program.removeJson,             // удалять json после поднятия сервера
       xlsx: program.xlsx,                         // сохранять в XLSX
       gdrive: program.gdrive,                     // публиковать на google docs
       json: program.json,                         // сохранять json файл

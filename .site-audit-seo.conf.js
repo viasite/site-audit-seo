@@ -7,6 +7,7 @@ module.exports = {
     // ignoreRobotsTxt: false,
     // headless: true,
     // removeCsv: true,
+    // removeJson: true,
     // outDir: '~/site-audit-seo-reports/.',
     // gdrive: false,
     // json: false,
