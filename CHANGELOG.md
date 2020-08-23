@@ -1,3 +1,19 @@
+## [3.2.1](https://github.com/viasite/site-audit-seo/compare/v3.2.0...v3.2.1) (2020-08-23)
+
+
+### Bug Fixes
+
+* add og_image to default, align right for title ([3298147](https://github.com/viasite/site-audit-seo/commit/3298147))
+* og_image type = image ([0c29f78](https://github.com/viasite/site-audit-seo/commit/0c29f78))
+
+
+### Features
+
+* **new filters:** Status != 200, Not canonical, DOM > 1500, Images outer > 0 ([a4f323c](https://github.com/viasite/site-audit-seo/commit/a4f323c))
+* out generated json size in MB ([dbff72d](https://github.com/viasite/site-audit-seo/commit/dbff72d))
+
+
+
 # [3.2.0](https://github.com/viasite/site-audit-seo/compare/v3.1.0...v3.2.0) (2020-08-22)
 
 
