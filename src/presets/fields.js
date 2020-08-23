@@ -101,6 +101,7 @@ const fields = [
     name: 'og_image',
     comment: 'og:image',
     groups: ['metatags'],
+    type: 'image',
   },
   {
     name: 'schema_types',
