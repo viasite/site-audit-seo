@@ -14,4 +14,24 @@ module.exports = [
     q: 'h1_count!=1',
     groups: ['seo'],
   },
+  {
+    name: 'Status != 200',
+    q: 'status!=200',
+    groups: ['seo'],
+  },
+  {
+    name: 'Not canonical',
+    q: 'is_canonical=0',
+    groups: ['seo'],
+  },
+  {
+    name: 'DOM > 1500',
+    q: 'dom_size>1500',
+    groups: ['perf'],
+  },
+  {
+    name: 'Images outer > 0',
+    q: 'images_outer>0',
+    groups: ['perf'],
+  },
 ];
