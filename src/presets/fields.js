@@ -71,6 +71,7 @@ const fields = [
         error: 'len() == 0' // TODO:
     },*/
     groups: ['metatags'],
+    align: 'right',
   },
   {
     name: 'h1',
@@ -160,6 +161,9 @@ const fields = [
     name: 'images_without_alt',
     comment: 'img без alt',
     comment_en: 'img without alt',
+    validate: {
+      warning: '> 0',
+    },
     groups: ['content', 'seo', 'images'],
     type: 'integer',
   },
@@ -167,6 +171,9 @@ const fields = [
     name: 'images_alt_empty',
     comment: 'img с пустым alt',
     comment_en: 'img with empty alt',
+    validate: {
+      warning: '> 0',
+    },
     groups: ['seo', 'images'],
     type: 'integer',
   },
@@ -174,6 +181,9 @@ const fields = [
     name: 'images_outer',
     comment: 'img на внешние URL',
     comment_en: 'img with outer URL',
+    validate: {
+      warning: '> 0',
+    },
     groups: ['seo', 'images'],
     type: 'integer',
   },
@@ -203,6 +213,9 @@ const fields = [
     comment: 'Text ratio, отношение текста к html',
     comment_en: 'Text ratio',
     groups: ['content', 'seo'],
+    validate: {
+      warning: '< 5'
+    },
     type: 'integer',
   },
   {

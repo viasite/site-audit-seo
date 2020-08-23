@@ -5,6 +5,7 @@ module.exports = {
     columns: [
       'url',
       'h1',
+      'og_image',
       'request_time',
       'status',
       'dom_size',
