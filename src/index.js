@@ -159,6 +159,13 @@ async function start() {
       if (program.json) {
         await saveAsJson(csvPath, jsonPath, program.lang, program.preset);
         if (!program.removeJson) console.log('Saved to ' + jsonPath);
+
+        const stats = fs.statSync(jsonPath);
+        const fileSizeInBytes = stats.size;
+        const fileSizeInMegabytes = fileSizeInBytes / 1000000.0
+        const fileSizeRounded = Math.round(fileSizeInMegabytes * 100) / 100;
+        console.log(`Size: ${fileSizeRounded} MB`);
+
         if (program.upload) webPath = await uploadJson(jsonPath, program);
         // if (program.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
