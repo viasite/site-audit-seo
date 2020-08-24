@@ -476,7 +476,8 @@ module.exports = async (baseUrl, options = {}) => {
 
     if (options.removeCsv) fs.unlinkSync(csvPath);
 
-    console.log(`Finish: ${t} sec (${perPage} per page)`);
+    const mins = Number(t / 60).toFixed(1);
+    console.log(`Finish: ${mins} mins (${perPage} sec per page)`);
 
   };
 
