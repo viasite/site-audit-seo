@@ -4,7 +4,9 @@ CLI tool for SEO site audit, crawl site, output to console, csv and xlsx.
 
 Scraper can scan one or several sites at once.
 
-Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler)
+Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
+
+Web view report - [site-audit-seo-viewer](https://viasite.github.io/site-audit-seo-viewer/).
 
 Demo:
 - [Default report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default.json)

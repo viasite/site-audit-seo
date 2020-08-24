@@ -243,20 +243,23 @@ module.exports = async (baseUrl, options = {}) => {
         if (request.notHTTPS) {
           console.error(
             `${color.red}mixed content: ${request.url()}${color.reset}`);
+        } else {
+          const isStatic = ['image', 'script', 'stylesheet'].includes(request.resourceType());
+          if (!isStatic) console.log('Request failed: ', request.url() + ' ' + request.failure().errorText);
         }
       });
 
-      /* page.on('error', function(err) {
+      /*page.on('error', function(err) {
         console.error(`${color.red}Page error:${color.reset} ` + err.toString());
-      }); */
+      });*/
 
       /*page.on('close', function() {
         console.error(`${color.red}Page closed${color.reset} `);
       });*/
 
-      /* page.on('pegeerror', function(err) {
+      /*page.on('pageerror', function(err) {
         console.error(`${color.red}pegeerror:${color.reset} ` + err.toString());
-      }); */
+      });*/
 
       // console.log('co '+ crawler._options.url);
 
