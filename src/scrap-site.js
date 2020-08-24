@@ -51,7 +51,7 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   // custom fields
-  if (options.fields.length > 0) {
+  if (Object.keys(options.fields).length > 0) {
     // console.log('options.fields: ', options.fields);
     const newFields = Object.keys(options.fields).map(f => 'result.' + f);
     fields = [...fields, ...newFields];
