@@ -9,6 +9,7 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 Demo:
 - [Default report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default.json)
 - [Lighthouse report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-lighthouse.json)
+- [Default + Basic Lighthouse report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default-plus-lighthouse.json)
 
 Русское описание [ниже](#русский)
 
@@ -132,17 +133,17 @@ Options:
 - text_ratio_percent
 - dom_size
 - html_size
-- lighthouse.scores.performance
-- lighthouse.scores.pwa
-- lighthouse.scores.accessibility
-- lighthouse.scores.best-practices
-- lighthouse.scores.seo
-- lighthouse.first-contentful-paint
-- lighthouse.speed-index
-- lighthouse.largest-contentful-paint
-- lighthouse.interactive
-- lighthouse.total-blocking-time
-- lighthouse.cumulative-layout-shift
+- lighthouse_scores_performance
+- lighthouse_scores_pwa
+- lighthouse_scores_accessibility
+- lighthouse_scores_best-practices
+- lighthouse_scores_seo
+- lighthouse_first-contentful-paint
+- lighthouse_speed-index
+- lighthouse_largest-contentful-paint
+- lighthouse_interactive
+- lighthouse_total-blocking-time
+- lighthouse_cumulative-layout-shift
 - and 150 more lighthouse tests!
 
 

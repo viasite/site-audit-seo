@@ -303,7 +303,7 @@ const fields = [
     type: 'integer',
   },
   {
-    name: 'lighthouse_scores_interactive',
+    name: 'lighthouse_interactive',
     validate: {
       warning: '> 3800',
       error: '> 7300',
