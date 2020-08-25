@@ -9,11 +9,29 @@ const defaultField = 'url';
 module.exports = async (csvPath, jsonPath, lang, preset) => {
   // read csv to workbook
   const data = {};
-  data.items = await csv({delimiter: ';'}).fromFile(csvPath);
 
+  // items
+  data.items = await csv({delimiter: ';'}).fromFile(csvPath);
+  data.items = flattenItems(data.items);
+
+  // fields
+  data.fields = buildFields(fields, data.items, lang);
+
+  // filters
+  data.filters = filters;
+
+  // columns
+  data.columns = buildColumns(columns, preset);
+
+  // write
+  const raw = JSON.stringify(data);
+  fs.writeFileSync(jsonPath, raw);
+};
+
+function flattenItems(items) {
   // flatten items
-  for (let i in data.items) {
-    const item = data.items[i];
+  for (let i in items) {
+    const item = items[i];
     for (let iName in item) {
       if (['result', 'response', 'lighthouse', 'scores'].includes(iName)) {
         for (let iName2 in item[iName]) {
@@ -43,16 +61,18 @@ module.exports = async (csvPath, jsonPath, lang, preset) => {
         }
       }
 
-      data.items[i] = item;
+      items[i] = item;
     }
   }
 
-  data.fields = fields;
+  return items;
+}
 
+function buildFields(fields, items, lang) {
   // en translation
   if (lang !== 'ru') {
-    for (let i in data.fields) {
-      const field = data.fields[i];
+    for (let i in fields) {
+      const field = fields[i];
       for (let fName of ['comment', 'description', 'groups']) {
         const k = `${fName}_${lang}`;
         if (!field[k]) continue;
@@ -63,8 +83,8 @@ module.exports = async (csvPath, jsonPath, lang, preset) => {
   }
 
   // lighthouse validation 1/0, field values based
-  for (let i in data.fields) {
-    const field = data.fields[i];
+  for (let i in fields) {
+    const field = fields[i];
 
     if (!field.name.includes('lighthouse_')) continue;
 
@@ -72,31 +92,31 @@ module.exports = async (csvPath, jsonPath, lang, preset) => {
       field.validate.error == '== 0';
     if (!isBinValidate) continue;
 
-    const moreThanBin = data.items.filter(
+    const moreThanBin = items.filter(
       item => ![0, 1, NaN].includes(item[field.name]));
     if (moreThanBin.length === 0) continue;
     // const vals = moreThanBin.map(item => item[field.name]);
 
     delete (field.validate);
-    data.fields[i] = field;
+    fields[i] = field;
   }
 
-  for (let i in data.fields) {
-    if (data.fields[i].name === defaultField) {
-      data.fields[i].default = true; // default field in viewer
+  // default field in viewer
+  for (let i in fields) {
+    if (fields[i].name === defaultField) {
+      fields[i].default = true;
     }
   }
 
-  data.filters = filters;
-  data.columns = columns;
+  return fields;
+}
 
-  for (let c in data.columns) {
-    const col = data.columns[c];
+function buildColumns(columns, preset) {
+  for (let c in columns) {
+    const col = columns[c];
     if (col.presets && col.presets.includes(preset)) {
-      data.columns[c].default = true;
+      columns[c].default = true;
     }
   }
-
-  const raw = JSON.stringify(data);
-  fs.writeFileSync(jsonPath, raw);
-};
+  return columns;
+}
