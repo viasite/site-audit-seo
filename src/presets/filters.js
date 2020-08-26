@@ -10,16 +10,6 @@ module.exports = [
     groups: ['main', 'perf'],
   },
   {
-    name: 'H1 != 1',
-    q: 'h1_count!=1',
-    groups: ['seo'],
-  },
-  {
-    name: 'Status != 200',
-    q: 'status!=200',
-    groups: ['seo'],
-  },
-  {
     name: 'Not canonical',
     q: 'is_canonical=0',
     groups: ['seo'],
