@@ -1,3 +1,21 @@
+## [3.2.2](https://github.com/viasite/site-audit-seo/compare/v3.2.1...v3.2.2) (2020-08-26)
+
+
+### Bug Fixes
+
+* **filters:** remove filters H1 != 1, Status != 200 ([dab86a2](https://github.com/viasite/site-audit-seo/commit/dab86a2))
+* --fields was broken, fixed ([23d19c6](https://github.com/viasite/site-audit-seo/commit/23d19c6))
+* output error when request failed ([ebfbd6e](https://github.com/viasite/site-audit-seo/commit/ebfbd6e))
+* **validation:** lighthouse_interactive validation ([3756324](https://github.com/viasite/site-audit-seo/commit/3756324))
+* out total scan time in minutes ([d2a787d](https://github.com/viasite/site-audit-seo/commit/d2a787d))
+
+
+### Features
+
+* add column preset 'default + lighthouse' ([5bd21e5](https://github.com/viasite/site-audit-seo/commit/5bd21e5))
+
+
+
 ## [3.2.1](https://github.com/viasite/site-audit-seo/compare/v3.2.0...v3.2.1) (2020-08-23)
 
 
