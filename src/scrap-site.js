@@ -59,7 +59,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   // lighthouse fields
   if (options.lighthouse) {
-    for (let fName of fieldsPresets.lighthouse) {
+    for (let fName of fieldsPresets['lighthouse-all']) {
       if (fields.indexOf(fName) === -1) {
         fields.push(fName);
       }
