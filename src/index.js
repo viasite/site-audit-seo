@@ -132,6 +132,8 @@ async function start() {
   // --json when --upload
   if (program.upload) program.json = true;
 
+  if (program.preset === 'warm') program.json = false;
+
   // no remove json when --no-json
   if (!program.json) program.removeJson = false;
 
@@ -236,7 +238,7 @@ async function start() {
       removeJson: program.removeJson,             // удалять json после поднятия сервера
       xlsx: program.xlsx,                         // сохранять в XLSX
       gdrive: program.gdrive,                     // публиковать на google docs
-      json: (program.preset !== 'warm') && program.json,                         // сохранять json файл
+      json: program.json,                         // сохранять json файл
       upload: program.upload,                     // выгружать json на сервер
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
