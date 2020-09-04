@@ -1,6 +1,7 @@
 module.exports = {
   default: ['response.url', 'depth'],
   minimal: ['response.url'],
+  warm: ['response.url'],
   seo: [
     'response.url',
     'result.mixed_content_url',

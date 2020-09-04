@@ -236,7 +236,7 @@ async function start() {
       removeJson: program.removeJson,             // удалять json после поднятия сервера
       xlsx: program.xlsx,                         // сохранять в XLSX
       gdrive: program.gdrive,                     // публиковать на google docs
-      json: program.json,                         // сохранять json файл
+      json: (program.preset !== 'warm') && program.json,                         // сохранять json файл
       upload: program.upload,                     // выгружать json на сервер
       consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
       obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
