@@ -124,6 +124,10 @@ module.exports = async (baseUrl, options = {}) => {
         const domain2level = domainParts.slice(domainParts.length - 2).
           join('.');
         const canonical = $('link[rel="canonical"]').attr('href');
+        const relUrl = window.location.href.replace(`${window.location.protocol}//${window.location.host}`, '');
+        const isCanonical = canonical ?
+          (canonical == decodeURI(window.location.href) ||
+          canonical == decodeURI(relUrl) ? 1 : 0) : '';
         const result = {
           request_time:
             window.performance.timing.responseEnd -
@@ -165,8 +169,7 @@ module.exports = async (baseUrl, options = {}) => {
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
           canonical: canonical,
-          is_canonical: canonical ? (canonical ==
-          decodeURI(window.location.href) ? 1 : 0) : '',
+          is_canonical: isCanonical,
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
           schema_types: $.unique($('[itemtype]').
