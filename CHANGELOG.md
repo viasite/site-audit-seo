@@ -1,3 +1,13 @@
+## [3.2.3](https://github.com/viasite/site-audit-seo/compare/v3.2.2...v3.2.3) (2020-09-23)
+
+
+### Bug Fixes
+
+* include all lighthouse fields when --lighthouse used ([0efaa0a](https://github.com/viasite/site-audit-seo/commit/0efaa0a))
+* support relative canonical ([76b5cce](https://github.com/viasite/site-audit-seo/commit/76b5cce))
+
+
+
 ## [3.2.2](https://github.com/viasite/site-audit-seo/compare/v3.2.1...v3.2.2) (2020-08-26)
 
 
