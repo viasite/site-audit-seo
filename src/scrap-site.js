@@ -157,7 +157,7 @@ module.exports = async (baseUrl, options = {}) => {
           links_inner: $(
             'a[href^="/"], a[href*="' + domain2level + '"]').length,
           links_outer: $(
-            'a[href]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="' +
+            'a[href^="http"]:not([href^="javascript"]):not([href^="#"]):not([href^="/"]):not([href*="' +
             domain2level + '"])').length,
           // links_absolute: $('').length,
           description:
