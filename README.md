@@ -40,7 +40,7 @@ Error details [Invalid file descriptor to ICU data received](https://github.com/
 ## Usage:
 ```
 $ site-audit-seo --help
-Usage: site-audit-seo -u https://example.com
+Usage: site-audit-seo -u https://example.com --upload
 
 Options:
   -u --urls <urls>             Comma separated url list for scan
@@ -250,6 +250,12 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 ```
 
 Подробности ошибки [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
+
+
+## Использование
+```
+site-audit-seo -u https://example.com --upload
+```
 
 
 ## Кастомные поля

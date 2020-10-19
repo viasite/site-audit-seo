@@ -115,7 +115,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--no-console-validate', `Don't output validate messages in console`).
   name('site-audit-seo').
   version(packageJson.version).
-  usage('-u https://example.com').
+  usage('-u https://example.com --upload').
   parse(process.argv);
 
 async function start() {
