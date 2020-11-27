@@ -97,6 +97,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--no-remove-json', `No delete json after serve`).
   option('--out-dir <dir>', `Output directory`,
     getConfigVal('outDir', '~/site-audit-seo/')).
+  option('--out-name <name>', `Output file name, default: domain`).
   option('--csv <path>', `Skip scan, only convert csv to xlsx`).
   option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
   option('--gdrive', `Publish sheet to google docs`,
@@ -228,6 +229,7 @@ async function start() {
       headless: program.headless,                 // на десктопе открывает браузер визуально
       docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
       outDir: program.outDir,                     // папка, куда сохраняются csv
+      outName: program.outName,                   // имя файла
       color: program.color,                       // раскрашивать консоль
       lang: program.lang,                         // язык
       openFile: program.openFile,                 // открыть файл после сканирования

@@ -29,9 +29,10 @@ module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
 
-  const csvPath = path.normalize(`${options.outDir}/${domain}.csv`);
-  const xlsxPath = path.normalize(`${options.outDir}/${domain}.xlsx`);
-  const jsonPath = path.normalize(`${options.outDir}/${domain}.json`);
+  const baseName = options.outName || domain;
+  const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
+  const xlsxPath = path.normalize(`${options.outDir}/${baseName}.xlsx`);
+  const jsonPath = path.normalize(`${options.outDir}/${baseName}.json`);
   let webPath;
 
   if (!options.color) color.white = color.red = color.reset = color.yellow = '';

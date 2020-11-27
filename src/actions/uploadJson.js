@@ -13,7 +13,7 @@ module.exports = async (jsonPath, options) => {
     replace('T', '_').
     replace('Z', '');
   // const dateStr = date.slice(0,10);
-  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.]/ig, '');
+  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_-.]/ig, '');
   const uploadName = date + '_' + name;
 
   console.log('\nUploading to https://site-audit.viasite.ru...');
