@@ -125,6 +125,7 @@ Options:
 - h3_count
 - h4_count
 - canonical_count
+- google_amp
 - images
 - images_without_alt
 - images_alt_empty

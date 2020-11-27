@@ -22,6 +22,7 @@ module.exports = {
     'result.h3_count',
     'result.h4_count',
     'result.canonical_count',
+    'result.google_amp',
     'result.images',
     'result.images_without_alt',
     'result.images_alt_empty',

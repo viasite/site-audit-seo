@@ -140,6 +140,7 @@ module.exports = async (baseUrl, options = {}) => {
           h3_count: $('h3').length,
           h4_count: $('h4').length,
           canonical_count: $('link[rel="canonical"]').length,
+          google_amp: $('link[rel="amphtml"]').length,
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
