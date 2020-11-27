@@ -6,7 +6,7 @@ const columns = require('../presets/columns');
 
 const defaultField = 'url';
 
-module.exports = async (csvPath, jsonPath, lang, preset) => {
+module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter) => {
   // read csv to workbook
   const data = {};
 
@@ -19,6 +19,17 @@ module.exports = async (csvPath, jsonPath, lang, preset) => {
 
   // filters
   data.filters = filters;
+  if (defaultFilter) {
+    const found = data.filters.find(f => f.q === defaultFilter);
+    if (found) found.default = true;
+    else {
+      data.filters.push({
+        name: defaultFilter,
+        q: defaultFilter,
+        default: true
+      });
+    }
+  }
 
   // columns
   data.columns = buildColumns(columns, preset);

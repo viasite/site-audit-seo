@@ -76,6 +76,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('-f, --fields <json>',
     'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect,
     []).
+  option('--default-filter <defaultFilter>', 'Default filter when JSON viewed, example: depth>1').
   option('--no-skip-static', `Scan static files`).
   option('--no-limit-domain', `Scan not only current domain`).
   option('--docs-extensions',
@@ -234,6 +235,7 @@ async function start() {
       lang: program.lang,                         // язык
       openFile: program.openFile,                 // открыть файл после сканирования
       fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
+      defaultFilter: program.defaultFilter,       //
       removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
       removeJson: program.removeJson,             // удалять json после поднятия сервера
       xlsx: program.xlsx,                         // сохранять в XLSX
