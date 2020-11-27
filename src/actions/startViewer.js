@@ -31,8 +31,10 @@ module.exports = async (jsonPath, webPath = false) => {
     console.log(`JSON file: ${url}`);
     console.log('');
     console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
+    console.log(`Short link: https://site-audit.viasite.ru/?report=` + url.replace('https://site-audit.viasite.ru/reports/', '').replace('.json', ''));
     console.log('');
     console.log(`Online viewer: ${onlineViewLink(url)}`);
+    //console.log(`Public viewer: ${onlineViewLink(url.replace(`http://localhost:${port}`, 'https://3001.home.popstas.ru'))}`);
     console.log('');
   }
 
