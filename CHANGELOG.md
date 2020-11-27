@@ -1,3 +1,20 @@
+# [3.3.0](https://github.com/viasite/site-audit-seo/compare/v3.2.3...v3.3.0) (2020-11-27)
+
+
+### Bug Fixes
+
+* outer_links: only http, not tel: mailto: etc. ([1d71579](https://github.com/viasite/site-audit-seo/commit/1d71579))
+
+
+### Features
+
+* --default-filter ([02b0129](https://github.com/viasite/site-audit-seo/commit/02b0129))
+* --out-name ([4968cb3](https://github.com/viasite/site-audit-seo/commit/4968cb3))
+* google_amp field ([d79aab0](https://github.com/viasite/site-audit-seo/commit/d79aab0))
+* short link ([3251c3e](https://github.com/viasite/site-audit-seo/commit/3251c3e))
+
+
+
 ## [3.2.3](https://github.com/viasite/site-audit-seo/compare/v3.2.2...v3.2.3) (2020-09-23)
 
 
