@@ -86,6 +86,8 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('followXmlSitemap', false)).
   option('--ignore-robots-txt', `Ignore disallowed in robots.txt`,
     getConfigVal('ignoreRobotsTxt', false)).
+  option('--url-list', `assume that --url contains url list, will set -d 1 --no-limit-domain --ignore-robots-txt`,
+    getConfigVal('ignoreRobotsTxt', false)).
   option('-m, --max-requests <num>', `Limit max pages scan`,
     getConfigVal('maxRequests', 0)).
   option('--no-headless', `Show browser GUI while scan`,
@@ -209,6 +211,13 @@ async function start() {
       os.cpus().length);
   }
 
+  if (program.urlList) {
+    program.maxDepth = 1;
+    program.limitDomain = false;
+    program.ignoreRobotsTxt = true;
+    // program.defaultFilter = 'depth>1';
+  }
+
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
 
@@ -226,6 +235,7 @@ async function start() {
       skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
       followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
       limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)
+      urlList: program.urlList,                   // метка, что передаётся страница со списком url
       maxRequest: program.maxRequests,            // для тестов
       headless: program.headless,                 // на десктопе открывает браузер визуально
       docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу

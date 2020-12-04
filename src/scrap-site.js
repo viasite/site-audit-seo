@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = require(
   './actions');
+const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
 const url = require('url');
@@ -28,6 +29,29 @@ const finishTries = 5;
 module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
+
+  let urls = [];
+  if (options.urlList) {
+    const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
+
+    let content;
+    if (false || fs.existsSync(baseUrl)) { // TODO: url list from file
+      content = fs.readFileSync(options.file, 'utf8');
+    } else {
+      res = await axios.get(baseUrl);
+      content = res.data;
+    }
+
+    while (pageUrl = regex.exec(content)){
+      if (pageUrl[0].match(/\.(png|jpg|js|css)$/)) continue;
+      urls.push(pageUrl[0]);
+    }
+
+    const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+    urls = urls.filter(onlyUnique);
+
+    // console.log('urls: ', urls);
+  }
 
   const baseName = options.outName || domain;
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
@@ -433,14 +457,22 @@ module.exports = async (baseUrl, options = {}) => {
     console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(
       options.url)}${color.reset}`);
   });
-  crawler.on('maxdepthreached', options => {
-    console.log(`${color.yellow}Max depth reached${color.reset}`);
+  crawler.on('maxdepthreached', opts => {
+    if (options.maxDepth > 1) console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
   crawler.on('maxrequestreached', options => {
     console.log(
       `\n\n${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
   });
-  await crawler.queue(baseUrl);
+
+  if (options.urlList) {
+    for (let url of urls) {
+      await crawler.queue(url);
+    }
+  } else {
+    await crawler.queue(baseUrl);
+  }
+
   await crawler.onIdle();
   await crawler.close();
 

@@ -84,6 +84,7 @@ Options:
 - Does not load images, css, js (configurable)
 - Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L98))
 - Analyse each page with Lighthouse (see below)
+- Scan list of urls, `--url-list`
 
 ### XLSX features
 - The first row and the first column are fixed
@@ -222,6 +223,7 @@ You can copy [.site-audit-seo.conf.js](.site-audit-seo.conf.js) to your home dir
 - Не загружает картинки, css, js (настраивается)
 - Некоторые URL игнорируются ([`preRequest` в `src/scrap-site.js`](src/scrap-site.js#L112))
 - Можно прогнать каждую страницу по Lighthouse (см. ниже)
+- Сканирование произвольного списка URL, `--url-list`
 
 ### Особенности XLSX:
 - Первый ряд и первая колонка закрепляются
