@@ -1,3 +1,12 @@
+# [3.4.0](https://github.com/viasite/site-audit-seo/compare/v3.3.0...v3.4.0) (2020-12-04)
+
+
+### Features
+
+* --url-list, able to scan list of urls ([d0985d8](https://github.com/viasite/site-audit-seo/commit/d0985d8))
+
+
+
 # [3.3.0](https://github.com/viasite/site-audit-seo/compare/v3.2.3...v3.3.0) (2020-11-27)
 
 
