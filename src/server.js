@@ -1,23 +1,18 @@
-#!/usr/bin/env node
-const process = require('process');
-const program = require('./program');
-const scrapSite = require('./scrap-site');
-const color = require('./color');
+const express = require("express");
+const program = require("./program");
+const scrapSite = require("./scrap-site");
 
-program.parse(process.argv);
+const app = express();
+const port = 3000;
 
-async function start() {
-  if (!program.urls) {
-    console.log(`${program.name()} ${program.version()}`);
-    console.log(`Usage: ${program.name()} ${program.usage()}`);
-    process.exit(1);
-  }
-
+app.get("/", async (req, res) => {
+  const args = reqQueryToArgs(req);
+  program.parse(args);
   await program.postParse();
+  console.log('program: ', program);
 
-  outBrief(program);
+  const url = program.urls[0]; // TODO: support multiple urls queue
 
-  const sites = program.urls;
   const opts = {
     fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
     fieldsExclude: program.exclude,             // исключить поля
@@ -49,96 +44,48 @@ async function start() {
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
   };
 
-  for (let site of sites) {
-    // console.log('program: ', program);
-    await scrapSite(site, opts);
+  opts.webService = true;
+
+  const data = await scrapSite(url, opts);
+
+  if (data.webPath) {
+    const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
+    res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
   }
-}
-
-function outBrief(options) {
-  const brief = [
-    {
-      name: 'Preset',
-      value: options.preset,
-      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]',
-    },
-    {
-      name: 'Threads',
-      value: options.concurrency,
-      comment: '-c threads' +
-        (options.concurrency > 1 && options.lighthouse ?
-          `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
-          : ''),
-    },
-    {
-      name: 'Delay',
-      value: options.delay,
-      comment: '--delay ms',
-    },
-    {
-      name: 'Ignore robots.txt',
-      value: (options.ignoreRobotsTxt ? 'yes' : 'no'),
-      comment: (!options.ignoreRobotsTxt ? '--ignore-robots-txt' : ''),
-    },
-    {
-      name: 'Follow sitemap.xml',
-      value: (options.followSitemapXml ? 'yes' : 'no'),
-      comment: (!options.followSitemapXml ? '--follow-xml-sitemap' : ''),
-    },
-    {
-      name: 'Max depth',
-      value: options.maxDepth,
-      comment: '-d 8',
-    },
-    {
-      name: 'Max requests',
-      value: options.maxRequests ? options.maxRequests : 'unlimited',
-      comment: '-m 123',
-    },
-    /*{
-      name: 'Lighthouse',
-      value: (options.lighthouse ? 'yes' : 'no'),
-    },*/
-    {
-      name: 'Headless',
-      value: (options.headless ? 'yes' : 'no'),
-      comment: (options.headless ? '--no-headless' : ''),
-    },
-    {
-      name: 'Save as XLSX',
-      value: (options.xlsx ? 'yes' : 'no'),
-      comment: (!options.xlsx ? '--xlsx' : ''),
-    },
-    {
-      name: 'Save as JSON',
-      value: (options.json ? 'yes' : 'no'),
-      comment: (options.json ? '--no-json' : ''),
-    },
-    {
-      name: 'Upload JSON',
-      value: (options.upload ? 'yes' : 'no'),
-      comment: (!options.upload ? '--upload' : ''),
-    },
-    {
-      name: 'Language',
-      value: options.lang,
-      comment: '--lang ' + (options.lang == 'ru' ? 'en' : 'ru'),
-    },
-    {
-      name: 'Docs extensions',
-      value: options.docsExtensions.join(','),
-      comment: '--docs-extensions zip,rar',
-    },
-  ];
-
-  console.log('');
-  for (let line of brief) {
-    const nameCol = line.name.padEnd(20, ' ');
-    const valueCol = `${line.value}`.padEnd(10, ' ');
-    console.log(color.white + nameCol + valueCol + color.reset
-      + (line.comment ? ` ${line.comment}` : ''));
+  else {
+    res.json(data);
   }
-  console.log('');
-}
+});
 
-start();
+app.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}`);
+});
+
+function reqQueryToArgs(req) {
+  if (req.query.url) {
+    req.query.urls = req.query.url;
+    delete(req.query.url);
+  }
+
+  const args = [process.argv[0], process.argv[1]];
+  for (let reqParam in req.query) {
+    for (let opt of program.options) {
+      let argNames = []
+      argNames.push(opt.long.replace(/^--/, ''));
+      if (opt.short) argNames.push(opt.short.replace(/^-/, ''));
+      if (opt.negate) {
+        for (let i in argNames) {
+          argNames[i] = argNames[i].replace(/^no-/, '');
+        }
+      }
+
+      // add arg as in command line
+      if (argNames.includes(reqParam)) {
+        args.push('--' + argNames[0]);
+        args.push(req.query[reqParam]);
+      }
+    }
+  }
+  console.log('args: ', args);
+  return args;
+}

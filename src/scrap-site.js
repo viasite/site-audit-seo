@@ -518,7 +518,6 @@ module.exports = async (baseUrl, options = {}) => {
 
     const mins = Number(t / 60).toFixed(1);
     console.log(`Finish: ${mins} mins (${perPage} sec per page)`);
-
   };
 
   outValidationSummary();
@@ -543,5 +542,20 @@ module.exports = async (baseUrl, options = {}) => {
     }
   };
 
-  await tryFinish(finishTries);
+  if (options.webService) {
+    await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
+    if (options.upload) {
+      webPath = await uploadJson(jsonPath, options);
+      return {
+        webPath
+      }
+    }
+    else {
+      const jsonData = fs.readFileSync(jsonPath, 'utf-8');
+      return JSON.parse(jsonData);
+    }
+  }
+  else {
+    await tryFinish(finishTries);
+  }
 };
