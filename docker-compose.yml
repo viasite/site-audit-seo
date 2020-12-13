@@ -1,9 +1,9 @@
 ---
 services:
 
-  client:
-    image: viasite/site-audit-seo:cli-latest
-    container_name: ${NAMESPACE}-client
+  backend:
+    image: viasite/site-audit-seo:latest-alpine
+    container_name: ${NAMESPACE}-backend
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,9 +14,9 @@ services:
     volumes:
     - ./outputs:/opt/output
 
-  viewer:
+  frontend:
     image: viasite/site-audit-seo-viewer:latest
-    container_name: ${NAMESPACE}-viewer
+    container_name: ${NAMESPACE}-frontend
     build:
       context: .
       dockerfile: Dockerfile.viewer
