@@ -13,8 +13,10 @@ RUN adduser -D node -h /app -s /bin/sh && \
 
 USER node
 
-RUN npm install -g site-audit-seo --unsafe-perm=true && \
-    chown -R "$(id -u):$(id -g)" "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
+COPY . .
+
+RUN npm install --unsafe-perm=true && \
+    chown -R "$(id -u):$(id -g)" "./node_modules/puppeteer/.local-chromium/"
 
 VOLUME ["/app/outputs"]
 EXPOSE 3000
