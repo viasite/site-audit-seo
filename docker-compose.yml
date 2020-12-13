@@ -1,0 +1,32 @@
+---
+services:
+
+  client:
+    image: viasite/site-audit-seo:cli-latest
+    container_name: ${NAMESPACE}-client
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+    - 3000
+    ports:
+    - 3000:3000
+    volumes:
+    - ./outputs:/opt/output
+
+  viewer:
+    image: viasite/site-audit-seo-viewer:latest
+    container_name: ${NAMESPACE}-viewer
+    build:
+      context: .
+      dockerfile: Dockerfile.viewer
+    expose:
+    - 3001
+    ports:
+    - 3001:3001
+    networks:
+    - web
+
+networks:
+  web:
+    external: true
