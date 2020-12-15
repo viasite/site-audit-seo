@@ -1,0 +1,12 @@
+docker-compose.*
+Dockerfile*
+*.md
+*.log
+.git
+.git/
+.git/*
+.git/**
+node_modules
+node_modules/
+node_modules/*
+node_modules/**

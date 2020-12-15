@@ -1,0 +1,62 @@
+---
+services:
+
+  backend:
+    image: viasite/site-audit-seo:latest-alpine
+    container_name: ${NAMESPACE}-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+    - 3000
+    ports:
+    - 3000:3000
+    networks:
+    - internal
+    - web
+    volumes:
+    - reports:/app/reports
+
+  frontend:
+    image: viasite/site-audit-seo-viewer:latest
+    container_name: ${NAMESPACE}-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile.viewer
+    networks:
+    - web
+    expose:
+    - 3001
+    ports:
+    - 3001:3001
+    networks:
+    - web
+    volumes:
+    - reports:/app/reports
+
+  redis:
+    image: redis:6-alpine
+    container_name: redis
+    networks:
+    - internal
+    volumes:
+    - redis-data:/data
+    command:
+    - "redis-server"
+    - "--maxmemory 3G"
+    - "--maxmemory-policy allkeys-lru"
+    restart: unless-stopped
+
+networks:
+  internal:
+    driver: bridge
+  web:
+    external: true
+
+volumes:
+  reports:
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/outputs
+  redis-data:
