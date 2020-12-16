@@ -30,6 +30,11 @@ module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
 
+  const log = (msg) => {
+    if (DEBUG) console.log(msg);
+    if (options.socket) options.socket.emit('status', msg);
+  };
+
   let urls = [];
   if (options.urlList) {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
@@ -446,8 +451,7 @@ module.exports = async (baseUrl, options = {}) => {
   crawler.on('requeststarted', async options => {
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
-    if (DEBUG) console.log(
-      `${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
+    log(`${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
     console.error(
@@ -546,6 +550,10 @@ module.exports = async (baseUrl, options = {}) => {
     await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
     if (options.upload) {
       webPath = await uploadJson(jsonPath, options);
+      if (options.socket) {
+        const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${webPath}`;
+        options.socket.emit('status', `<a target="_blank" href="${webViewer}">${webViewer}</a>`);
+      }
       return {
         webPath
       }

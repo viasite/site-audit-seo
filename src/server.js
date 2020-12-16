@@ -1,9 +1,58 @@
-const express = require("express");
 const program = require("./program");
 const scrapSite = require("./scrap-site");
 
-const app = express();
-const port = 3000;
+const app = require("express")();
+const bodyParser = require('body-parser')
+const http = require('http').createServer(app);
+const io = require('socket.io')(http, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+const port = 3001;
+
+let userSocket;
+
+http.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}`);
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.emit('status', 'connected to server');
+  userSocket = socket;
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
+
+// CORS
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
+app.post("/scan", async (req, res) => {
+  const url = req.body.url;
+  const args = req.body.args.split(" ");
+  if (!url) {
+    userSocket.emit('status', 'URL not defined!')
+    return;
+  }
+  program.parse([...['', ''], ...args]);
+  await program.postParse();
+  scan(url, program);
+  res.send('OK');
+});
 
 app.get("/", async (req, res) => {
   const args = reqQueryToArgs(req);
@@ -13,6 +62,19 @@ app.get("/", async (req, res) => {
 
   const url = program.urls[0]; // TODO: support multiple urls queue
 
+  const data = await scan(url, program);
+
+
+  if (data.webPath) {
+    const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
+    res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
+  }
+  else {
+    res.json(data);
+  }
+});
+
+async function scan(url, program) {
   const opts = {
     fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
     fieldsExclude: program.exclude,             // исключить поля
@@ -45,21 +107,13 @@ app.get("/", async (req, res) => {
   };
 
   opts.webService = true;
+  opts.socket = userSocket;
 
+  userSocket.emit('status', `start audit: ${url}`);
   const data = await scrapSite(url, opts);
-
-  if (data.webPath) {
-    const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
-    res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
-  }
-  else {
-    res.json(data);
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
-});
+  socket.emit('status', `finish audit: ${url}`);
+  return data;
+}
 
 function reqQueryToArgs(req) {
   if (req.query.url) {

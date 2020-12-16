@@ -26,6 +26,7 @@
     "@popstas/headless-chrome-crawler": "^1.8.2",
     "@popstas/xlsx-style": "^0.8.20",
     "axios": "^0.20.0",
+    "body-parser": "^1.19.0",
     "chrome-launcher": "^0.13.4",
     "commander": "^5.0.0",
     "csvtojson": "^2.0.10",
@@ -33,6 +34,7 @@
     "express": "^4.17.1",
     "googleapis": "^59.0.0",
     "lighthouse": "^6.2.0",
+    "socket.io": "^2.3.0",
     "xlsx": "^0.15.6"
   },
   "keywords": [
