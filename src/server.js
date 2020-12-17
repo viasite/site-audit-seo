@@ -6,13 +6,13 @@ const bodyParser = require('body-parser')
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 let userSocket;
 
