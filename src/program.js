@@ -262,11 +262,6 @@ program.outBrief = (options) => {
       comment: '-m 123',
     },
     {
-      name: 'Headless',
-      value: (program.headless ? 'yes' : 'no'),
-      comment: (program.headless ? '--no-headless' : ''),
-    },
-    {
       name: 'Language',
       value: program.lang,
       comment: '--lang ' + (program.lang == 'ru' ? 'en' : 'ru'),
@@ -281,6 +276,11 @@ program.outBrief = (options) => {
   // only for command
   if (!options.webService) {
     brief = [...brief, ...[
+      {
+        name: 'Headless',
+        value: (program.headless ? 'yes' : 'no'),
+        comment: (program.headless ? '--no-headless' : ''),
+      },
       {
         name: 'Save as XLSX',
         value: (program.xlsx ? 'yes' : 'no'),

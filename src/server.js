@@ -68,31 +68,7 @@ app.post("/scan", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-  const args = reqQueryToArgs(req);
-  program.parse(args);
-  await program.postParse();
-
-  const opts = program.getOptions();
-  opts.webService = true;
-  opts.socket = userSocket;
-
-  program.outBrief(opts);
-
-  const url = program.urls[0]; // TODO: support multiple urls queue
-
-  // try {
-    const data = await scan(url, opts);
-    if (data.webPath) {
-      const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
-      res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
-    }
-    else {
-      res.json(data);
-    }
-  // }
-  /* catch(e) {
-    console.warn(e.message)
-  }; */
+  res.send('Use POST /scan');
 });
 
 async function scan(url, opts) {
