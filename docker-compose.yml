@@ -1,62 +1,45 @@
 ---
+version: '3'
+
 services:
 
   backend:
-    image: viasite/site-audit-seo:latest-alpine
+    image: viasite/site-audit-seo:latest
     container_name: ${NAMESPACE}-backend
     build:
       context: .
       dockerfile: Dockerfile
-    expose:
-    - 3000
+    environment:
+      PORT: ${SERVER_PORT}
     ports:
-    - 3000:3000
-    networks:
-    - internal
-    - web
+    - 5301:${SERVER_PORT}
+    # networks:
+    # - internal
+    # - web
     volumes:
-    - reports:/app/reports
+    - ./data/reports:/app/data/reports
 
   frontend:
     image: viasite/site-audit-seo-viewer:latest
     container_name: ${NAMESPACE}-frontend
-    build:
-      context: .
-      dockerfile: Dockerfile.viewer
-    networks:
-    - web
-    expose:
-    - 3001
+    build: data/front
+    # env_file:
+    # - data/popstas-server.env
+    environment:
+      HOST: 0.0.0.0 # for nuxt
+      PORT: ${FRONT_PORT}
+      SERVER_URL: ${SERVER_URL}
+      JSON_URL: ${JSON_URL}
+
     ports:
-    - 3001:3001
-    networks:
-    - web
-    volumes:
-    - reports:/app/reports
+    - 5302:${FRONT_PORT}
+    # networks:
+    # - web
+    # volumes:
+    # - ./data/reports:/app/static/reports
 
-  redis:
-    image: redis:6-alpine
-    container_name: redis
-    networks:
-    - internal
-    volumes:
-    - redis-data:/data
-    command:
-    - "redis-server"
-    - "--maxmemory 3G"
-    - "--maxmemory-policy allkeys-lru"
-    restart: unless-stopped
-
-networks:
-  internal:
-    driver: bridge
-  web:
-    external: true
-
-volumes:
-  reports:
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/outputs
-  redis-data:
+# networks:
+#   internal:
+#     driver: bridge
+#   web:
+#     external: true

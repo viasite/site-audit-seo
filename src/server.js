@@ -1,7 +1,8 @@
 const program = require("./program");
 const scrapSite = require("./scrap-site");
 
-const app = require("express")();
+const express = require("express");
+const app = express();
 const bodyParser = require('body-parser')
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
@@ -12,27 +13,27 @@ const io = require('socket.io')(http, {
   }
 });
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5301;
 
 let userSocket;
 
-http.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
-});
+function log(msg) {
+  console.log(msg);
+  if (userSocket) userSocket.emit('status', msg);
+}
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.emit('status', 'connected to server');
   userSocket = socket;
+  log('user connected to server');
   socket.on('disconnect', () => {
+    userSocket = null;
     console.log('user disconnected');
   });
 });
 
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-  extended: true
-})); 
+http.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}`);
+});
 
 // CORS
 app.use(function(req, res, next) {
@@ -40,6 +41,11 @@ app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/reports', express.static('data/reports'));
 
 app.post("/scan", async (req, res) => {
   const url = req.body.url;
@@ -62,16 +68,19 @@ app.get("/", async (req, res) => {
 
   const url = program.urls[0]; // TODO: support multiple urls queue
 
-  const data = await scan(url, program);
-
-
-  if (data.webPath) {
-    const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
-    res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
-  }
-  else {
-    res.json(data);
-  }
+  // try {
+    const data = await scan(url, program);
+    if (data.webPath) {
+      const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
+      res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
+    }
+    else {
+      res.json(data);
+    }
+  // }
+  /* catch(e) {
+    console.warn(e.message)
+  }; */
 });
 
 async function scan(url, program) {
@@ -109,9 +118,9 @@ async function scan(url, program) {
   opts.webService = true;
   opts.socket = userSocket;
 
-  userSocket.emit('status', `start audit: ${url}`);
+  if (userSocket) userSocket.emit('status', `start audit: ${url}`);
   const data = await scrapSite(url, opts);
-  socket.emit('status', `finish audit: ${url}`);
+  if (userSocket) userSocket.emit('status', `finish audit: ${url}`);
   return data;
 }
 

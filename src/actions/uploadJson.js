@@ -6,15 +6,7 @@ module.exports = async (jsonPath, options) => {
   const data = fs.readFileSync(jsonPath, 'utf8');
   // const raw = JSON.stringify(data);
 
-  const offset = new Date().getTimezoneOffset() * 60000;
-  const dateLocal = new Date(Date.now() - offset)
-  const date = dateLocal.toISOString().
-    replace(/:/g, '-').
-    replace('T', '_').
-    replace('Z', '');
-  // const dateStr = date.slice(0,10);
-  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
-  const uploadName = date + '_' + name;
+  const uploadName = getJsonName(jsonPath);
 
   console.log('\nUploading to https://site-audit.viasite.ru...');
   const res = await axios.post('https://site-audit.viasite.ru/upload/', {
@@ -28,3 +20,16 @@ module.exports = async (jsonPath, options) => {
   }
   return res.data.url;
 };
+
+function getJsonName(jsonPath) {
+  const offset = new Date().getTimezoneOffset() * 60000;
+  const dateLocal = new Date(Date.now() - offset)
+  const date = dateLocal.toISOString().
+    replace(/:/g, '-').
+    replace('T', '_').
+    replace('Z', '');
+  // const dateStr = date.slice(0,10);
+  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
+  const uploadName = date + '_' + name;
+  return uploadName;
+}

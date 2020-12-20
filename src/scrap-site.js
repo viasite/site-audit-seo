@@ -120,7 +120,7 @@ module.exports = async (baseUrl, options = {}) => {
     allowedDomains: options.limitDomain ? [domain] : undefined,
     skipRequestedRedirect: true, // all redirects marks as visited
     depthPriority: false, // without it find not all pages
-    args: ['--no-sandbox'], // puppeteer freezes without it
+    args: ['--no-sandbox', '--disable-dev-shm-usage'], // puppeteer freezes without it
     exporter,
 
     // url ignore rules
@@ -548,22 +548,39 @@ module.exports = async (baseUrl, options = {}) => {
 
   if (options.webService) {
     await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
+    const jsonName = getJsonName(jsonPath);
+
+    // TODO: remove
     if (options.upload) {
       webPath = await uploadJson(jsonPath, options);
+
       if (options.socket) {
-        const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${webPath}`;
-        options.socket.emit('status', `<a target="_blank" href="${webViewer}">${webViewer}</a>`);
-      }
-      return {
-        webPath
+        // const webViewer = `https://popstas-server:5302/?url=${webPath}`;
+        options.socket.emit('result', {json: webPath});
+        // options.socket.emit('status', `<a target="_blank" href="${webViewer}">${webViewer}</a>`);
       }
     }
     else {
-      const jsonData = fs.readFileSync(jsonPath, 'utf-8');
-      return JSON.parse(jsonData);
+      // copy to local reports
+      const localPath = 'data/reports/' + jsonName;
+      fs.copyFileSync(jsonPath, localPath);
+      options.socket.emit('result', {name: jsonName});
     }
   }
   else {
     await tryFinish(finishTries);
   }
 };
+
+function getJsonName(jsonPath) {
+  const offset = new Date().getTimezoneOffset() * 60000;
+  const dateLocal = new Date(Date.now() - offset)
+  const date = dateLocal.toISOString().
+    replace(/:/g, '-').
+    replace('T', '_').
+    replace('Z', '');
+  // const dateStr = date.slice(0,10);
+  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
+  const uploadName = date + '_' + name;
+  return uploadName;
+}
