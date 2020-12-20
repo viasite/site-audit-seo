@@ -56,7 +56,14 @@ app.post("/scan", async (req, res) => {
   }
   program.parse([...['', ''], ...args]);
   await program.postParse();
-  scan(url, program);
+
+  const opts = program.getOptions();
+  opts.webService = true;
+  opts.socket = userSocket;
+
+  program.outBrief(opts);
+
+  scan(url, opts);
   res.send('OK');
 });
 
@@ -64,12 +71,17 @@ app.get("/", async (req, res) => {
   const args = reqQueryToArgs(req);
   program.parse(args);
   await program.postParse();
-  console.log('program: ', program);
+
+  const opts = program.getOptions();
+  opts.webService = true;
+  opts.socket = userSocket;
+
+  program.outBrief(opts);
 
   const url = program.urls[0]; // TODO: support multiple urls queue
 
   // try {
-    const data = await scan(url, program);
+    const data = await scan(url, opts);
     if (data.webPath) {
       const webViewer = `https://viasite.github.io/site-audit-seo-viewer/?url=${data.webPath}`;
       res.send(`<a target="_blank" href="${webViewer}">${webViewer}</a>`);
@@ -83,41 +95,7 @@ app.get("/", async (req, res) => {
   }; */
 });
 
-async function scan(url, program) {
-  const opts = {
-    fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
-    fieldsExclude: program.exclude,             // исключить поля
-    maxDepth: program.maxDepth,                 // глубина сканирования
-    maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
-    lighthouse: program.lighthouse,             // сканировать через lighthouse
-    delay: parseInt(program.delay),             // задержка между запросами
-    skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
-    followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
-    limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)
-    urlList: program.urlList,                   // метка, что передаётся страница со списком url
-    maxRequest: program.maxRequests,            // для тестов
-    headless: program.headless,                 // на десктопе открывает браузер визуально
-    docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
-    outDir: program.outDir,                     // папка, куда сохраняются csv
-    outName: program.outName,                   // имя файла
-    color: program.color,                       // раскрашивать консоль
-    lang: program.lang,                         // язык
-    openFile: program.openFile,                 // открыть файл после сканирования
-    fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
-    defaultFilter: program.defaultFilter,       //
-    removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
-    removeJson: program.removeJson,             // удалять json после поднятия сервера
-    xlsx: program.xlsx,                         // сохранять в XLSX
-    gdrive: program.gdrive,                     // публиковать на google docs
-    json: program.json,                         // сохранять json файл
-    upload: program.upload,                     // выгружать json на сервер
-    consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
-    obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
-  };
-
-  opts.webService = true;
-  opts.socket = userSocket;
-
+async function scan(url, opts) {
   if (userSocket) userSocket.emit('status', `start audit: ${url}`);
   const data = await scrapSite(url, opts);
   if (userSocket) userSocket.emit('status', `finish audit: ${url}`);

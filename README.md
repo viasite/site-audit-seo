@@ -37,11 +37,20 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
 
 #### docker-compose
-`docker-compose up -d`
+``` bash
+git clone https://github.com/viasite/site-audit-seo
+cd site-audit-seo
+docker-compose pull # for skip build step
+docker-compose up -d
+```
+
+Service will available on http://localhost:5302
 
 ##### Default ports:
 - Backend: `5301`
 - Frontend: `5302`
+
+You can change it in `.env` file or in `docker-compose.yml`.
 
 ## Usage:
 ```

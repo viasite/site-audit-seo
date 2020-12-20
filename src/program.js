@@ -4,9 +4,7 @@ const systemLocale = getDefaultLocale(); // should be before scrap-site (before 
 const {program} = require('commander');
 const packageJson = require('../package.json');
 const config = require('./config');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = require(
-  './actions');
-const {exec} = require('child_process');
+const color = require('./color');
 const os = require('os');
 const expandHomedir = require('expand-home-dir');
 
@@ -155,51 +153,6 @@ program.postParse = async () => {
   // no remove json when --no-json
   if (!program.json) program.removeJson = false;
 
-  /*console.log('json: ', program.json)
-  console.log('removeJson: ', program.removeJson)
-  console.log('concurrency: ', program.concurrency)
-  console.log('lang: ', program.lang)
-  console.log('outDir: ', program.outDir)
-  console.log('openFile: ', program.openFile)
-  console.log('xlsx: ', program.xlsx)*/
-
-  if (program.csv) {
-    program.removeCsv = false;
-    const csvPath = expandHomedir(program.csv);
-    const xlsxPath = path.normalize(csvPath.replace(/\.csv$/, '.xlsx'));
-    let jsonPath = path.normalize(csvPath.replace(/\.csv$/, '.json'));
-    let webPath;
-    try {
-      if (program.xlsx) {
-        saveAsXlsx(csvPath, xlsxPath);
-        if (program.gdrive) await publishGoogleDrive(xlsxPath);
-        if (program.openFile) exec(`"${xlsxPath}"`);
-      }
-
-      if (program.json) {
-        await saveAsJson(csvPath, jsonPath, program.lang, program.preset);
-        if (!program.removeJson) console.log('Saved to ' + jsonPath);
-
-        const stats = fs.statSync(jsonPath);
-        const fileSizeInBytes = stats.size;
-        const fileSizeInMegabytes = fileSizeInBytes / 1000000.0
-        const fileSizeRounded = Math.round(fileSizeInMegabytes * 100) / 100;
-        console.log(`Size: ${fileSizeRounded} MB`);
-
-        if (program.upload) webPath = await uploadJson(jsonPath, program);
-        // if (program.gdrive) webPath = await publishGoogleDrive(jsonPath);
-
-        await startViewer(jsonPath, webPath);
-        if (program.removeJson) fs.unlinkSync(jsonPath);
-      }
-
-      if (program.removeCsv) fs.unlinkSync(csvPath);
-    } catch (e) {
-      console.error(e);
-    }
-    return;
-  }
-
   if (program.delay > 0 && program.concurrency !== 1) {
     console.log('Force set concurrency to 1, must be 1 when delay is set');
     program.concurrency = 1;
@@ -219,6 +172,10 @@ program.postParse = async () => {
       os.cpus().length);
   }
 
+  if (program.concurrency > os.cpus().length) {
+    program.concurrency = os.cpus().length;
+  }
+
   if (program.urlList) {
     program.maxDepth = 1;
     program.limitDomain = false;
@@ -228,6 +185,130 @@ program.postParse = async () => {
 
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
+}
+
+program.getOptions = () => {
+  const opts = {
+    fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
+    fieldsExclude: program.exclude,             // исключить поля
+    maxDepth: program.maxDepth,                 // глубина сканирования
+    maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
+    lighthouse: program.lighthouse,             // сканировать через lighthouse
+    delay: parseInt(program.delay),             // задержка между запросами
+    skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
+    followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
+    limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)
+    urlList: program.urlList,                   // метка, что передаётся страница со списком url
+    maxRequest: program.maxRequests,            // для тестов
+    headless: program.headless,                 // на десктопе открывает браузер визуально
+    docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
+    outDir: program.outDir,                     // папка, куда сохраняются csv
+    outName: program.outName,                   // имя файла
+    color: program.color,                       // раскрашивать консоль
+    lang: program.lang,                         // язык
+    openFile: program.openFile,                 // открыть файл после сканирования
+    fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
+    defaultFilter: program.defaultFilter,       //
+    removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
+    removeJson: program.removeJson,             // удалять json после поднятия сервера
+    xlsx: program.xlsx,                         // сохранять в XLSX
+    gdrive: program.gdrive,                     // публиковать на google docs
+    json: program.json,                         // сохранять json файл
+    upload: program.upload,                     // выгружать json на сервер
+    consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
+    obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
+  };
+  return opts;
+}
+
+program.outBrief = (options) => {
+  let brief = [
+    {
+      name: 'Preset',
+      value: program.preset,
+      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]',
+    },
+    {
+      name: 'Threads',
+      value: program.concurrency,
+      comment: '-c threads' +
+        (program.concurrency > 1 && program.lighthouse ?
+          `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
+          : ''),
+    },
+    {
+      name: 'Delay',
+      value: program.delay,
+      comment: '--delay ms',
+    },
+    {
+      name: 'Ignore robots.txt',
+      value: (program.ignoreRobotsTxt ? 'yes' : 'no'),
+      comment: (!program.ignoreRobotsTxt ? '--ignore-robots-txt' : ''),
+    },
+    {
+      name: 'Follow sitemap.xml',
+      value: (program.followSitemapXml ? 'yes' : 'no'),
+      comment: (!program.followSitemapXml ? '--follow-xml-sitemap' : ''),
+    },
+    {
+      name: 'Max depth',
+      value: program.maxDepth,
+      comment: '-d 8',
+    },
+    {
+      name: 'Max requests',
+      value: program.maxRequests ? program.maxRequests : 'unlimited',
+      comment: '-m 123',
+    },
+    {
+      name: 'Headless',
+      value: (program.headless ? 'yes' : 'no'),
+      comment: (program.headless ? '--no-headless' : ''),
+    },
+    {
+      name: 'Language',
+      value: program.lang,
+      comment: '--lang ' + (program.lang == 'ru' ? 'en' : 'ru'),
+    },
+    {
+      name: 'Docs extensions',
+      value: program.docsExtensions.join(','),
+      comment: '--docs-extensions zip,rar',
+    },
+  ];
+
+  // only for command
+  if (!options.webService) {
+    brief = [...brief, ...[
+      {
+        name: 'Save as XLSX',
+        value: (program.xlsx ? 'yes' : 'no'),
+        comment: (!program.xlsx ? '--xlsx' : ''),
+      },
+      {
+        name: 'Save as JSON',
+        value: (program.json ? 'yes' : 'no'),
+        comment: (program.json ? '--no-json' : ''),
+      },
+      {
+        name: 'Upload JSON',
+        value: (program.upload ? 'yes' : 'no'),
+        comment: (!program.upload ? '--upload' : ''),
+      }
+    ]];
+  }
+
+  console.log('');
+  for (let line of brief) {
+    const nameCol = line.name.padEnd(22, ' ');
+    const valueCol = `${line.value}`.padEnd(10, ' ');
+    const comment = line.comment ? ` ${line.comment}` : '';
+    console.log(color.white + nameCol + valueCol + color.reset + comment);
+    if (options.socket) options.socket.emit('status', '<pre>' + nameCol + valueCol + comment + '</pre>');
+  }
+  console.log('');
+  if (options.socket) options.socket.emit('status', '&nbsp;');
 }
 
 module.exports = program;
