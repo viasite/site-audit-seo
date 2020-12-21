@@ -1,7 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const path = require('path');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = require(
+const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer, sendToInfluxDB} = require(
   './actions');
 const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
@@ -547,24 +547,29 @@ module.exports = async (baseUrl, options = {}) => {
   };
 
   if (options.webService) {
-    await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
-    const jsonName = getJsonName(jsonPath);
+    try {
+      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
+      const jsonName = getJsonName(jsonPath);
 
-    // TODO: remove
-    if (options.upload) {
-      webPath = await uploadJson(jsonPath, options);
-
-      if (options.socket) {
-        // const webViewer = `https://popstas-server:5302/?url=${webPath}`;
-        options.socket.emit('result', {json: webPath});
-        // options.socket.emit('status', `<a target="_blank" href="${webViewer}">${webViewer}</a>`);
+      if (options.influxdb) {
+        log('send to InfluxDB...');
+        const points = await sendToInfluxDB(jsonPath, options);
+        log(`sent ${points.length} points`);
       }
-    }
-    else {
+
       // copy to local reports
       const localPath = 'data/reports/' + jsonName;
       fs.copyFileSync(jsonPath, localPath);
-      options.socket.emit('result', {name: jsonName});
+      if (options.socket) options.socket.emit('result', {name: jsonName});
+
+      // TODO: error upload 8MB+
+      if (options.upload) {
+        webPath = await uploadJson(jsonPath, options);
+        if (options.socket) options.socket.emit('result', {json: webPath});
+      }
+    }
+    catch (e) {
+      log('error after scan: ' + e.message);
     }
   }
   else {

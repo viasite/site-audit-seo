@@ -183,6 +183,9 @@ program.postParse = async () => {
     // program.defaultFilter = 'depth>1';
   }
 
+  // influxdb config fron ~/.site-audit-seo.conf.js
+  program.influxdb = getConfigVal('influxdb', false);
+
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
 }
@@ -217,6 +220,7 @@ program.getOptions = () => {
     upload: program.upload,                     // выгружать json на сервер
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
+    influxdb: program.influxdb,                 // конфиг influxdb
   };
   return opts;
 }
@@ -301,7 +305,7 @@ program.outBrief = (options) => {
 
   console.log('');
   for (let line of brief) {
-    const nameCol = line.name.padEnd(22, ' ');
+    const nameCol = line.name.padEnd(20, ' ');
     const valueCol = `${line.value}`.padEnd(10, ' ');
     const comment = line.comment ? ` ${line.comment}` : '';
     console.log(color.white + nameCol + valueCol + color.reset + comment);

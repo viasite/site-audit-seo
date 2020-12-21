@@ -51,10 +51,19 @@ app.post("/scan", async (req, res) => {
   const url = req.body.url;
   const args = req.body.args.split(" ");
   if (!url) {
-    userSocket.emit('status', 'URL not defined!')
+    log('URL not defined!');
     return;
   }
-  program.parse([...['', ''], ...args]);
+
+  program.exitOverride();
+  try {
+    program.parse([...['', ''], ...args]);
+  } catch (e) {
+    log('failed to parse arguments: ' + e.message);
+    res.send('ERROR');
+    return;
+  }
+
   await program.postParse();
 
   const opts = program.getOptions();
@@ -63,7 +72,13 @@ app.post("/scan", async (req, res) => {
 
   program.outBrief(opts);
 
-  scan(url, opts);
+  try {
+    scan(url, opts);
+  }
+  catch(e) {
+    log('error while scan:', e.message);
+  }
+
   res.send('OK');
 });
 
