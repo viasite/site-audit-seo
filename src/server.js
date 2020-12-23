@@ -19,12 +19,18 @@ const q = queue({
   concurrency: maxConcurrency,
   autostart: true,
 });
+let scansTotal = 0;
+
+q.on("success", function (result, job) {
+  scansTotal++;
+});
 
 function sendStats(socket) {
   socketSend(socket, "serverState", {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
     available: Math.max(0, maxConcurrency - q.length),
     pending: Math.max(0, q.length - maxConcurrency),
+    scansTotal: scansTotal
   });
 }
 
