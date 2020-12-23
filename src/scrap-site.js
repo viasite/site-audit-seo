@@ -26,13 +26,20 @@ let SKIP_JS = true;
 // кол-во попыток выполнить actions
 const finishTries = 5;
 
+function socketSend(socket, event, msg) {
+  if (socket) {
+    // console.log(event + socket.uid + ': ', msg);
+    socket.emit(event + (socket.uid || ''), msg);
+  }
+}
+
 module.exports = async (baseUrl, options = {}) => {
   const domain = url.parse(baseUrl).hostname;
   const protocol = url.parse(baseUrl).protocol;
 
   const log = (msg) => {
     if (DEBUG) console.log(msg);
-    if (options.socket) options.socket.emit('status', msg);
+    socketSend(options.socket, 'status', msg);
   };
 
   let urls = [];
@@ -560,12 +567,12 @@ module.exports = async (baseUrl, options = {}) => {
       // copy to local reports
       const localPath = 'data/reports/' + jsonName;
       fs.copyFileSync(jsonPath, localPath);
-      if (options.socket) options.socket.emit('result', {name: jsonName});
+      socketSend(options.socket, 'result', {name: jsonName});
 
       // TODO: error upload 8MB+
       if (options.upload) {
         webPath = await uploadJson(jsonPath, options);
-        if (options.socket) options.socket.emit('result', {json: webPath});
+        socketSend(options.socket, 'result', {json: webPath});
       }
     }
     catch (e) {

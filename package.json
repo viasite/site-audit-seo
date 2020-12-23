@@ -35,6 +35,7 @@
     "googleapis": "^59.0.0",
     "influx": "^5.6.3",
     "lighthouse": "^6.2.0",
+    "queue": "^6.0.1",
     "socket.io": "^2.3.0",
     "xlsx": "^0.15.6"
   },

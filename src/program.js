@@ -309,10 +309,10 @@ program.outBrief = (options) => {
     const valueCol = `${line.value}`.padEnd(10, ' ');
     const comment = line.comment ? ` ${line.comment}` : '';
     console.log(color.white + nameCol + valueCol + color.reset + comment);
-    if (options.socket) options.socket.emit('status', '<pre>' + nameCol + valueCol + comment + '</pre>');
+    if (options.socket) options.socket.emit('status' + (options.socket.uid || ''), '<pre>' + nameCol + valueCol + comment + '</pre>');
   }
   console.log('');
-  if (options.socket) options.socket.emit('status', '&nbsp;');
+  if (options.socket) options.socket.emit('status' + (options.socket.uid || ''), '&nbsp;');
 }
 
 module.exports = program;
