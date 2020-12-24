@@ -1,3 +1,25 @@
+# [4.0.0](https://github.com/viasite/site-audit-seo/compare/v3.4.0...v4.0.0) (2020-12-24)
+
+
+### Bug Fixes
+
+* better report filename ([6b9d264](https://github.com/viasite/site-audit-seo/commit/6b9d264))
+* sanitize upload filename ([24352ee](https://github.com/viasite/site-audit-seo/commit/24352ee))
+* server: CORS allow all, PORT env ([178fd89](https://github.com/viasite/site-audit-seo/commit/178fd89))
+* show anon/user id on auth success message ([d090dc2](https://github.com/viasite/site-audit-seo/commit/d090dc2))
+
+
+### Features
+
+* save reports to user directories ([783214e](https://github.com/viasite/site-audit-seo/commit/783214e))
+* **server:** Google auth, scans queue ([8bd342f](https://github.com/viasite/site-audit-seo/commit/8bd342f)), closes [#6](https://github.com/viasite/site-audit-seo/issues/6)
+* **server:** scansTotal ([e0e4739](https://github.com/viasite/site-audit-seo/commit/e0e4739))
+* **server:** send to InfluxDB ([4ebd31f](https://github.com/viasite/site-audit-seo/commit/4ebd31f)), closes [#9](https://github.com/viasite/site-audit-seo/issues/9)
+* add brief before scan for web interface ([bd97cfa](https://github.com/viasite/site-audit-seo/commit/bd97cfa))
+* working docker-compose ([e9917db](https://github.com/viasite/site-audit-seo/commit/e9917db))
+
+
+
 # [3.4.0](https://github.com/viasite/site-audit-seo/compare/v3.3.0...v3.4.0) (2020-12-04)
 
 
