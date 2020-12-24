@@ -1,10 +1,6 @@
 [![npm](https://img.shields.io/npm/v/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo) [![npm](https://img.shields.io/npm/dt/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo)
 
-CLI tool for SEO site audit, crawl site, output to console, csv and xlsx.
-
-Scraper can scan one or several sites at once.
-
-Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
+Web service and CLI tool for SEO site audit: crawl site, view public reports in browser. Also output to console, csv and xlsx.
 
 Web view report - [site-audit-seo-viewer](https://viasite.github.io/site-audit-seo-viewer/).
 
@@ -17,7 +13,27 @@ Demo:
 
 ![site-audit-demo](assets/site-audit-demo.gif)
 
-## Install:
+## Using without install
+Open https://viasite.github.io/site-audit-seo-viewer/.
+
+## Install with docker-compose
+``` bash
+git clone https://github.com/viasite/site-audit-seo
+cd site-audit-seo
+docker-compose pull # for skip build step
+docker-compose up -d
+```
+
+Service will available on http://localhost:5302
+
+##### Default ports:
+- Backend: `5301`
+- Frontend: `5302`
+
+You can change it in `.env` file or in `docker-compose.yml`.
+
+
+## Install with NPM:
 ``` bash
 npm install -g site-audit-seo
 ```
@@ -35,22 +51,6 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 ```
 
 Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
-
-#### docker-compose
-``` bash
-git clone https://github.com/viasite/site-audit-seo
-cd site-audit-seo
-docker-compose pull # for skip build step
-docker-compose up -d
-```
-
-Service will available on http://localhost:5302
-
-##### Default ports:
-- Backend: `5301`
-- Frontend: `5302`
-
-You can change it in `.env` file or in `docker-compose.yml`.
 
 ## Usage:
 ```
@@ -197,6 +197,9 @@ site-audit-seo -u https://example.com --lighthouse
 
 ## Config file
 You can copy [.site-audit-seo.conf.js](.site-audit-seo.conf.js) to your home directory and tune options.
+
+## Credentials
+Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
 
 ## Bugs
 1. Sometimes it writes identical pages to csv. This happens in 2 cases:
