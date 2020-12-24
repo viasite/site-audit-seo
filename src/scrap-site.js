@@ -11,6 +11,7 @@ const {validateResults, getValidationSum} = require('./validate');
 const {exec} = require('child_process');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
+const sanitize = require("sanitize-filename");
 // поля описаны в API по ссылке выше
 const fieldsPresets = require('./presets/scraperFields');
 const color = require('./color');
@@ -65,7 +66,7 @@ module.exports = async (baseUrl, options = {}) => {
     // console.log('urls: ', urls);
   }
 
-  const baseName = options.outName || domain;
+  const baseName = sanitize(options.outName || domain);
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
   const xlsxPath = path.normalize(`${options.outDir}/${baseName}.xlsx`);
   const jsonPath = path.normalize(`${options.outDir}/${baseName}.json`);
@@ -567,7 +568,7 @@ module.exports = async (baseUrl, options = {}) => {
       // copy to local reports
       let localDir = 'data/reports/';
       if (options.socket.uid) {
-        const userDir = options.socket.uid.slice(0, 5);
+        const userDir = sanitize(options.socket.uid.slice(0, 5));
         localDir += userDir + '/';
         if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
       }
