@@ -557,7 +557,6 @@ module.exports = async (baseUrl, options = {}) => {
   if (options.webService) {
     try {
       await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
-      const jsonName = getJsonName(jsonPath);
 
       if (options.influxdb) {
         log('send to InfluxDB...');
@@ -572,6 +571,11 @@ module.exports = async (baseUrl, options = {}) => {
         localDir += userDir + '/';
         if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
       }
+
+      // remove microseconds if available
+      const jsonNameLong = getJsonName(jsonPath);
+      const jsonNameShort = getJsonName(jsonPath, true);
+      const jsonName = fs.existsSync(localDir + jsonNameShort) ? jsonNameLong : jsonNameShort;
       const localPath = localDir + jsonName;
       fs.copyFileSync(jsonPath, localPath);
 
@@ -592,15 +596,16 @@ module.exports = async (baseUrl, options = {}) => {
   }
 };
 
-function getJsonName(jsonPath) {
+function getJsonName(jsonPath, short = false) {
   const offset = new Date().getTimezoneOffset() * 60000;
   const dateLocal = new Date(Date.now() - offset)
-  const date = dateLocal.toISOString().
+  let date = dateLocal.toISOString().
     replace(/:/g, '-').
-    replace('T', '_').
+    replace('T', '__').
     replace('Z', '');
+  if (short) date = date.replace(/\.\d+/, '');
   // const dateStr = date.slice(0,10);
   const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
-  const uploadName = date + '_' + name;
+  const uploadName = date + '__' + name;
   return uploadName;
 }
