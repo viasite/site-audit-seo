@@ -92,6 +92,8 @@ io.on("connection", (socket) => {
         ? "anonymous user"
         : "user authenticated";
     log(msg, socket);
+
+    sendStats(socket);
   });
 
   socket.on("scan", async ({ url, args }) => {
@@ -115,9 +117,11 @@ io.on("connection", (socket) => {
     opts.webService = true;
     opts.socket = socket;
 
+    // console.log('opts: ', opts);
     program.outBrief(opts);
 
     // try {
+    log('Pending...', socket)
     q.push(async function () {
       return await scan(url, opts);
     });

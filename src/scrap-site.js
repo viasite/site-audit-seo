@@ -565,8 +565,15 @@ module.exports = async (baseUrl, options = {}) => {
       }
 
       // copy to local reports
-      const localPath = 'data/reports/' + jsonName;
+      let localDir = 'data/reports/';
+      if (options.socket.uid) {
+        const userDir = options.socket.uid.slice(0, 5);
+        localDir += userDir + '/';
+        if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
+      }
+      const localPath = localDir + jsonName;
       fs.copyFileSync(jsonPath, localPath);
+
       socketSend(options.socket, 'result', {name: jsonName});
 
       // TODO: error upload 8MB+
