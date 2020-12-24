@@ -89,8 +89,8 @@ io.on("connection", (socket) => {
 
     const msg =
       !socket.uid || socket.uid.includes("anon")
-        ? "anonymous user"
-        : "user authenticated";
+        ? "anonymous user: " + auth.uid
+        : "user authenticated: " + auth.email;
     log(msg, socket);
 
     sendStats(socket);
