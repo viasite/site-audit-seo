@@ -258,8 +258,8 @@ program.outBrief = (options) => {
     },
     {
       name: 'Follow sitemap.xml',
-      value: (program.followSitemapXml ? 'yes' : 'no'),
-      comment: (!program.followSitemapXml ? '--follow-xml-sitemap' : ''),
+      value: (program.followXmlSitemap ? 'yes' : 'no'),
+      comment: (!program.followXmlSitemap ? '--follow-xml-sitemap' : ''),
     },
     {
       name: 'Max depth',

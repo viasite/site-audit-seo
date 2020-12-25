@@ -29,7 +29,7 @@ io.on("connection", onSocketConnection);
 
 
 async function onScan(url, args, socket) {
-  // log(`> site-audit-seo ` + args, socket);
+  log(`> site-audit-seo ` + (url ? `-u ${url} ` : '') + args, socket);
   args = args.split(" ");
   if (!url) {
     log("URL not defined!", socket);
