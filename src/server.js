@@ -60,7 +60,10 @@ q.start((err) => {
 
 const port = process.env.PORT || 5301;
 
-function log(msg, socket) {
+function log(msg, socket, outTime=false) {
+  if (outTime) {
+    msg = new Date().toTimeString().split(' ')[0] + ' ' + msg;
+  }
   console.log(msg);
   socketSend(socket, "status", msg);
 }
@@ -74,7 +77,7 @@ function socketSend(socket, event, msg) {
 }
 
 io.on("connection", (socket) => {
-  log("user connected to server", socket);
+  log("user connected to server", socket, true);
 
   submitQueueEvents(socket);
 
@@ -91,7 +94,7 @@ io.on("connection", (socket) => {
       !socket.uid || socket.uid.includes("anon")
         ? "anonymous user: " + auth.uid
         : "user authenticated: " + auth.email;
-    log(msg, socket);
+    log(msg, socket, true);
 
     sendStats(socket);
   });
@@ -121,9 +124,12 @@ io.on("connection", (socket) => {
     program.outBrief(opts);
 
     // try {
-    log('Pending...', socket)
+    log('Pending...', socket, true)
     q.push(async function () {
-      return await scan(url, opts);
+      log(`Start audit: ${url}`, socket, true);
+      const res = await scan(url, opts);
+      log(`Finish audit: ${url}`, socket, true);
+      return res;
     });
   });
 
@@ -193,9 +199,7 @@ app.get("/", async (req, res) => {
 });
 
 async function scan(url, opts) {
-  socketSend(opts.socket, "status", `start audit: ${url}`);
   const data = await scrapSite(url, opts);
-  socketSend(opts.socket, "status", `finish audit: ${url}`);
   return data;
 }
 

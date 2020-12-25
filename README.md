@@ -1,6 +1,6 @@
 [![npm](https://img.shields.io/npm/v/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo) [![npm](https://img.shields.io/npm/dt/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo)
 
-Web service and CLI tool for SEO site audit: crawl site, view public reports in browser. Also output to console, csv and xlsx.
+Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv, xlsx, Google Drive.
 
 Web view report - [site-audit-seo-viewer](https://viasite.github.io/site-audit-seo-viewer/).
 
