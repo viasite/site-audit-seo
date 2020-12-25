@@ -35,7 +35,7 @@ function socketSend(socket, event, msg) {
 }
 
 module.exports = async (baseUrl, options = {}) => {
-  const domain = url.parse(baseUrl).hostname;
+  const domain = url.parse(baseUrl).hostname || baseUrl;
   const protocol = url.parse(baseUrl).protocol;
 
   const log = (msg) => {
@@ -48,10 +48,10 @@ module.exports = async (baseUrl, options = {}) => {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
 
     let content;
-    if (false || fs.existsSync(baseUrl)) { // TODO: url list from file
+    if (false || fs.existsSync(url)) { // TODO: url list from file
       content = fs.readFileSync(options.file, 'utf8');
     } else {
-      res = await axios.get(baseUrl);
+      res = await axios.get(url);
       content = res.data;
     }
 
@@ -63,8 +63,6 @@ module.exports = async (baseUrl, options = {}) => {
     const onlyUnique = (value, index, self) => self.indexOf(value) === index;
     urls = urls.filter(onlyUnique);
 
-    // console.log('urls: ', urls);
-
     return urls;
   }
 
@@ -74,6 +72,7 @@ module.exports = async (baseUrl, options = {}) => {
     else urls = parseUrls(baseUrl);
   }
 
+  // console.log('urls: ', urls);
   const baseName = sanitize(options.outName || domain);
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
   const xlsxPath = path.normalize(`${options.outDir}/${baseName}.xlsx`);
@@ -154,7 +153,7 @@ module.exports = async (baseUrl, options = {}) => {
       // if (options.url.match(/\?(category|age|usage|madein|season|brand)=/)) return false; // bitrix filter
 
       // http scan while first page was https
-      if (url.parse(options.url).protocol != protocol) return false;
+      if (!options.urlList && url.parse(options.url).protocol != protocol) return false;
 
       return true;
     },
@@ -455,7 +454,7 @@ module.exports = async (baseUrl, options = {}) => {
   // start
   const start = Date.now();
 
-  console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
+  // console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
   try {
@@ -486,6 +485,7 @@ module.exports = async (baseUrl, options = {}) => {
   });
 
   if (options.urlList) {
+    log('Queue ' + urls.length + ' urls', options.socket);
     for (let url of urls) {
       await crawler.queue(url);
     }

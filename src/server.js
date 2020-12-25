@@ -87,7 +87,7 @@ io.on("connection", (socket) => {
 
   socket.on("auth", (auth) => {
     socket.uid = auth && auth.uid ? auth.uid : "";
-    console.log('socket.uid: ', socket.uid);
+    // console.log('socket.uid: ', socket.uid);
     // console.log("auth: ", auth);
 
     const msg =
@@ -100,6 +100,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("scan", async ({ url, args }) => {
+    // log(`> site-audit-seo ` + args, socket);
     args = args.split(" ");
     if (!url) {
       log("URL not defined!", socket);
