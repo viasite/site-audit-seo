@@ -176,6 +176,9 @@ program.postParse = async () => {
     program.concurrency = os.cpus().length;
   }
 
+  if (program.urls.length > 1) program.urlList = true;
+  else program.urls = [];
+
   if (program.urlList) {
     program.maxDepth = 1;
     program.limitDomain = false;
@@ -221,6 +224,7 @@ program.getOptions = () => {
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
     influxdb: program.influxdb,                 // конфиг influxdb
+    urls: program.urls                          // адреса для одиночного сканирования
   };
   return opts;
 }

@@ -43,8 +43,8 @@ module.exports = async (baseUrl, options = {}) => {
     socketSend(options.socket, 'status', msg);
   };
 
-  let urls = [];
-  if (options.urlList) {
+  const parseUrls = async (url) => {
+    const urls = [];
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
 
     let content;
@@ -64,6 +64,14 @@ module.exports = async (baseUrl, options = {}) => {
     urls = urls.filter(onlyUnique);
 
     // console.log('urls: ', urls);
+
+    return urls;
+  }
+
+  let urls = [];
+  if (options.urlList) {
+    if (options.urls) urls = options.urls;
+    else urls = parseUrls(baseUrl);
   }
 
   const baseName = sanitize(options.outName || domain);
