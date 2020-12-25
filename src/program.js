@@ -178,7 +178,7 @@ program.postParse = async () => {
     program.concurrency = os.cpus().length;
   }
 
-  if (program.urls.length > 1) program.urlList = true;
+  if (program.urls && program.urls.length > 1) program.urlList = true;
   else program.urls = [];
 
   if (program.urlList) {

@@ -25,13 +25,17 @@ q.on("success", function (result, job) {
   scansTotal++;
 });
 
-function sendStats(socket) {
-  socketSend(socket, "serverState", {
+function serverState() {
+  return {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
     available: Math.max(0, maxConcurrency - q.length),
     pending: Math.max(0, q.length - maxConcurrency),
     scansTotal: scansTotal
-  });
+  }
+}
+
+function sendStats(socket) {
+  socketSend(socket, "serverState", serverState());
 }
 
 function submitQueueEvents(socket) {
@@ -125,7 +129,9 @@ io.on("connection", (socket) => {
     program.outBrief(opts);
 
     // try {
-    log('Pending...', socket, true)
+    if (serverState()['running'] >= maxConcurrency) {
+      log('Pending...', socket, true);
+    }
     q.push(async function () {
       log(`Start audit: ${url}`, socket, true);
       const res = await scan(url, opts);
