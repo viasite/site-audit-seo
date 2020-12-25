@@ -48,12 +48,11 @@ module.exports = async (baseUrl, options = {}) => {
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
 
     let content;
-    if (false || fs.existsSync(url)) { // TODO: url list from file
+    /* if (fs.existsSync(url)) { // TODO: url list from file
       content = fs.readFileSync(options.file, 'utf8');
-    } else {
-      res = await axios.get(url);
-      content = res.data;
-    }
+    } */
+    res = await axios.get(url);
+    content = res.data;
 
     while (pageUrl = regex.exec(content)){
       if (pageUrl[0].match(/\.(png|jpg|js|css)$/)) continue;
@@ -61,15 +60,13 @@ module.exports = async (baseUrl, options = {}) => {
     }
 
     const onlyUnique = (value, index, self) => self.indexOf(value) === index;
-    urls = urls.filter(onlyUnique);
-
-    return urls;
+    return urls.filter(onlyUnique);
   }
 
   let urls = [];
   if (options.urlList) {
-    if (options.urls) urls = options.urls;
-    else urls = parseUrls(baseUrl);
+    if (options.urls && options.urls.length > 0) urls = options.urls;
+    else urls = await parseUrls(baseUrl);
   }
 
   // console.log('urls: ', urls);
