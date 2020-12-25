@@ -168,8 +168,10 @@ program.postParse = async () => {
 
   // c = 2, when lighthouse c = 1
   if (program.concurrency === undefined) {
-    program.concurrency = program.lighthouse ? 1 : getConfigVal('concurrency',
-      os.cpus().length);
+    program.concurrency = getConfigVal('concurrency', os.cpus().length);
+  }
+  if (program.lighthouse) {
+    program.concurrency = 1;
   }
 
   if (program.concurrency > os.cpus().length) {
