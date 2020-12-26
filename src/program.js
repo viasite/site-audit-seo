@@ -92,67 +92,6 @@ function getDefaultLocale() {
 }
 
 
-program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
-  option('-p, --preset <preset>',
-    'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)',
-    getConfigVal('preset', 'seo')).
-  option('-e, --exclude <fields>',
-    'Comma separated fields to exclude from results', list).
-  option('-d, --max-depth <depth>', 'Max scan depth',
-    getConfigVal('maxDepth', 10)).
-  option('-c, --concurrency <threads>',
-    'Threads number (default: by cpu cores)').
-  option('--lighthouse', 'Appends base Lighthouse fields to preset').
-  option('--delay <ms>', 'Delay between requests', parseInt, 0).
-  option('-f, --fields <json>',
-    'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect,
-    []).
-  option('--default-filter <defaultFilter>', 'Default filter when JSON viewed, example: depth>1').
-  option('--no-skip-static', `Scan static files`).
-  option('--no-limit-domain', `Scan not only current domain`).
-  option('--docs-extensions',
-    `Comma-separated extensions that will be add to table (default: ${defaultDocs.join(
-      ',')})`, list).
-  option('--follow-xml-sitemap', `Follow sitemap.xml`,
-    getConfigVal('followXmlSitemap', false)).
-  option('--ignore-robots-txt', `Ignore disallowed in robots.txt`,
-    getConfigVal('ignoreRobotsTxt', false)).
-  option('--url-list', `assume that --url contains url list, will set -d 1 --no-limit-domain --ignore-robots-txt`,
-    getConfigVal('ignoreRobotsTxt', false)).
-  option('-m, --max-requests <num>', `Limit max pages scan`,
-    getConfigVal('maxRequests', 0)).
-  option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
-    getConfigVal('influxdb.maxSendCount', 5)).
-  option('--no-headless', `Show browser GUI while scan`,
-    !getConfigVal('headless', true)).
-  option('--remove-csv', `No delete csv after xlsx generate`,
-    getConfigVal('removeCsv', true)).
-  option('--remove-json', `No delete json after serve`,
-    getConfigVal('removeJson', true)).
-  option('--no-remove-csv', `No delete csv after xlsx generate`).
-  option('--no-remove-json', `No delete json after serve`).
-  option('--out-dir <dir>', `Output directory`,
-    getConfigVal('outDir', '~/site-audit-seo/')).
-  option('--out-name <name>', `Output file name, default: domain`).
-  option('--csv <path>', `Skip scan, only convert csv to xlsx`).
-  option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
-  option('--gdrive', `Publish sheet to google docs`,
-    getConfigVal('gdrive', false)).
-  option('--json', `Save as JSON`, getConfigVal('json', true)).
-  option('--no-json', `No save as JSON`, !getConfigVal('json', true)).
-  option('--upload', `Upload JSON to public web`,
-    getConfigVal('upload', false)).
-  option('--no-color', `No console colors`).
-  option('--lang <lang>', `Language (en, ru, default: system language)`,
-    getConfigVal('lang', undefined)).
-  option('--open-file',
-    `Open file after scan (default: yes on Windows and MacOS)`,
-    getConfigVal('openFile', undefined)).
-  option('--no-open-file', `Don't open file after scan`).
-  option('--no-console-validate', `Don't output validate messages in console`).
-  name('site-audit-seo').
-  version(packageJson.version).
-  usage('-u https://example.com --upload')
 
 program.postParse = async () => {
   if (program.openFile === undefined) {
@@ -218,20 +157,85 @@ program.postParse = async () => {
   createDirIfNotExists(program.outDir);
 }
 
+
+
+
+program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
+  option('-p, --preset <preset>',
+    'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)',
+    getConfigVal('preset', 'seo')).
+  option('-e, --exclude <fields>',
+    'Comma separated fields to exclude from results', list).
+  option('-d, --max-depth <depth>', 'Max scan depth',
+    getConfigVal('maxDepth', 10)).
+  option('-c, --concurrency <threads>',
+    'Threads number (default: by cpu cores)').
+  option('--lighthouse', 'Appends base Lighthouse fields to preset').
+  option('--delay <ms>', 'Delay between requests', parseInt, 0).
+  option('-f, --fields <json>',
+    'Field in format --field \'title=$("title").text()\'', fieldsCustomCollect,
+    []).
+  option('--default-filter <defaultFilter>', 'Default filter when JSON viewed, example: depth>1').
+  option('--no-skip-static', `Scan static files`).
+  option('--no-limit-domain', `Scan not only current domain`).
+  option('--docs-extensions',
+    `Comma-separated extensions that will be add to table (default: ${defaultDocs.join(
+      ',')})`, list).
+  option('--follow-xml-sitemap', `Follow sitemap.xml`,
+    getConfigVal('followXmlSitemap', false)).
+  option('--ignore-robots-txt', `Ignore disallowed in robots.txt`,
+    getConfigVal('ignoreRobotsTxt', false)).
+  option('--url-list', `assume that --url contains url list, will set -d 1 --no-limit-domain --ignore-robots-txt`,
+    getConfigVal('ignoreRobotsTxt', false)).
+  option('-m, --max-requests <num>', `Limit max pages scan`,
+    parseInt, getConfigVal('maxRequests', 0)).
+  option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
+    getConfigVal('influxdb.maxSendCount', 5)).
+  option('--no-headless', `Show browser GUI while scan`,
+    !getConfigVal('headless', true)).
+  option('--remove-csv', `No delete csv after xlsx generate`,
+    getConfigVal('removeCsv', true)).
+  option('--remove-json', `No delete json after serve`,
+    getConfigVal('removeJson', true)).
+  option('--no-remove-csv', `No delete csv after xlsx generate`).
+  option('--no-remove-json', `No delete json after serve`).
+  option('--out-dir <dir>', `Output directory`,
+    getConfigVal('outDir', '~/site-audit-seo/')).
+  option('--out-name <name>', `Output file name, default: domain`).
+  option('--csv <path>', `Skip scan, only convert csv to xlsx`).
+  option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
+  option('--gdrive', `Publish sheet to google docs`,
+    getConfigVal('gdrive', false)).
+  option('--json', `Save as JSON`, getConfigVal('json', true)).
+  option('--no-json', `No save as JSON`, !getConfigVal('json', true)).
+  option('--upload', `Upload JSON to public web`,
+    getConfigVal('upload', false)).
+  option('--no-color', `No console colors`).
+  option('--lang <lang>', `Language (en, ru, default: system language)`,
+    getConfigVal('lang', undefined)).
+  option('--open-file',
+    `Open file after scan (default: yes on Windows and MacOS)`,
+    getConfigVal('openFile', undefined)).
+  option('--no-open-file', `Don't open file after scan`).
+  option('--no-console-validate', `Don't output validate messages in console`).
+  name('site-audit-seo').
+  version(packageJson.version).
+  usage('-u https://example.com --upload')
+
 program.getOptions = () => {
   const opts = {
     fieldsPreset: program.preset,              // варианты: default, seo, headers, minimal
     fieldsExclude: program.exclude,             // исключить поля
-    maxDepth: program.maxDepth,                 // глубина сканирования
-    maxConcurrency: parseInt(program.concurrency), // параллельно открываемые вкладки
+    maxDepth: program.maxDepth,                 // chrome-crawler, глубина сканирования
+    maxConcurrency: parseInt(program.concurrency), // chrome-crawler, параллельно открываемые вкладки
     lighthouse: program.lighthouse,             // сканировать через lighthouse
     delay: parseInt(program.delay),             // задержка между запросами
     skipStatic: program.skipStatic,             // не пропускать подгрузку браузером статики (картинки, css, js)
-    followSitemapXml: program.followXmlSitemap, // чтобы найти больше страниц
+    followSitemapXml: program.followXmlSitemap, // chrome-crawler, чтобы найти больше страниц
     limitDomain: program.limitDomain,           // не пропускать подгрузку браузером статики (картинки, css, js)
     urlList: program.urlList,                   // метка, что передаётся страница со списком url
-    maxRequest: program.maxRequests,            // для тестов
-    headless: program.headless,                 // на десктопе открывает браузер визуально
+    maxRequest: program.maxRequests,            // chrome-crawler, для тестов
+    headless: program.headless,                 // chrome-crawler, на десктопе открывает браузер визуально
     docsExtensions: program.docsExtensions,     // расширения, которые будут добавлены в таблицу
     outDir: program.outDir,                     // папка, куда сохраняются csv
     outName: program.outName,                   // имя файла
@@ -247,7 +251,7 @@ program.getOptions = () => {
     json: program.json,                         // сохранять json файл
     upload: program.upload,                     // выгружать json на сервер
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
-    obeyRobotsTxt: !program.ignoreRobotsTxt,    // не учитывать блокировки в robots.txt
+    obeyRobotsTxt: !program.ignoreRobotsTxt,    // chrome-crawler, не учитывать блокировки в robots.txt
     influxdb: program.influxdb,                 // конфиг influxdb
     urls: program.urls                          // адреса для одиночного сканирования
   };
@@ -268,6 +272,11 @@ program.outBrief = (options) => {
         (program.concurrency > 1 && program.lighthouse ?
           `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
           : ''),
+    },
+    {
+      name: 'Lighthouse',
+      value: (program.lighthouse ? 'yes' : 'no'),
+      comment: (program.lighthouse ? '' : '--lighthouse')
     },
     {
       name: 'Delay',

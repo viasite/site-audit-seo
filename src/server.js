@@ -1,7 +1,6 @@
 const lowdb = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const program = require("./program");
 const scrapSite = require("./scrap-site");
 
 const queue = require("queue");
@@ -52,6 +51,20 @@ async function onScan(url, args, socket) {
     return;
   }
 
+  const program = require("./program");
+
+  // repeat default, cross-scans global!
+  delete(program.preset);
+  delete(program.concurrency);
+  delete(program.lighthouse);
+  program.delay = 0;
+  delete(program.ignoreRobotsTxt);
+  delete(program.followXmlSitemap);
+  delete(program.maxDepth);
+  delete(program.maxRequests);
+  delete(program.language);
+  delete(program.influxDbMaxSend);
+  
   program.exitOverride();
   try {
     program.parse([...["", ""], ...args]);

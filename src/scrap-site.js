@@ -527,7 +527,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.upload) webPath = await uploadJson(jsonPath, options);
       // if (options.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
-      if (options.influxdb) {
+      if (options.influxdb && options.fieldsPreset == 'seo') {
         log('send to InfluxDB...');
         const points = await sendToInfluxDB(jsonPath, options);
         log(`sent ${points.length} points`);
@@ -571,7 +571,7 @@ module.exports = async (baseUrl, options = {}) => {
       await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
 
       // upload to influxdb
-      if (options.influxdb) {
+      if (options.influxdb && options.fieldsPreset == 'seo') {
         log('send to InfluxDB...');
         const points = await sendToInfluxDB(jsonPath, options);
         log(`sent ${points.length} points`);
