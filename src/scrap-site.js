@@ -570,6 +570,7 @@ module.exports = async (baseUrl, options = {}) => {
     try {
       await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
 
+      // upload to influxdb
       if (options.influxdb) {
         log('send to InfluxDB...');
         const points = await sendToInfluxDB(jsonPath, options);
@@ -591,12 +592,17 @@ module.exports = async (baseUrl, options = {}) => {
       const localPath = localDir + jsonName;
       fs.copyFileSync(jsonPath, localPath);
 
+      // send result json to socket
       socketSend(options.socket, 'result', {name: jsonName});
 
       // TODO: error upload 8MB+
       if (options.upload) {
         webPath = await uploadJson(jsonPath, options);
         socketSend(options.socket, 'result', {json: webPath});
+      }
+      // return stats
+      return {
+        pages: requestedCount,
       }
     }
     catch (e) {

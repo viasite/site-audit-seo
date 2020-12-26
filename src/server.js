@@ -1,3 +1,6 @@
+const lowdb = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
 const program = require("./program");
 const scrapSite = require("./scrap-site");
 
@@ -7,6 +10,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const http = require("http").createServer(app);
 
+initExpress(app);
+
 const io = require("socket.io")(http, {
   cors: {
     origin: "*",
@@ -15,12 +20,22 @@ const io = require("socket.io")(http, {
   },
 });
 
+// state
+const adapter = new FileSync('data/db.json');
+const db = lowdb(adapter);
+db.defaults({ state: {} }).write();
+
+// add reboot
+const stats = db.get('stats').value() || {};
+const reboots = stats.reboots ? stats.reboots + 1 : 1;
+db.set('stats.reboots', reboots).write();
 
 const maxConcurrency = 2;
 let scansTotal = 0;
+let pagesTotal = 0;
 let q;
+const startedTime = Date.now();
 initQueue();
-initExpress(app);
 io.on("connection", onSocketConnection);
 
 
@@ -60,6 +75,15 @@ async function onScan(url, args, socket) {
   q.push(async function () {
     log(`Start audit: ${url}`, socket, true);
     const res = await scrapSite(url, opts);
+
+    if (res && res.pages) pagesTotal += res.pages;
+
+    // update persistant state
+    const stats = db.get('stats').value() || {};
+    db.set('stats.pagesTotal', stats.pagesTotal ? stats.pagesTotal + res.pages : res.pages).write();
+    db.set('stats.scansTotal', stats.scansTotal ? stats.scansTotal + 1 : 1).write();
+    db.write();
+
     log(`Finish audit: ${url}`, socket, true);
     return res;
   });
@@ -80,11 +104,18 @@ function initQueue() {
 }
 
 function serverState() {
+  const stats = db.get('stats').value() || {};
+
   return {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
     available: Math.max(0, maxConcurrency - q.length),
     pending: Math.max(0, q.length - maxConcurrency),
-    scansTotal: scansTotal
+    scansTotal: scansTotal,
+    pagesTotal: pagesTotal,
+    scansTotalAll: stats.scansTotal || 0,
+    pagesTotalAll: stats.pagesTotal || 0,
+    uptime: Math.floor((Date.now() - startedTime) / 1000),
+    reboots: reboots,
   }
 }
 
