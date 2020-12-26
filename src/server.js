@@ -33,6 +33,7 @@ db.set('stats.reboots', reboots).write();
 const maxConcurrency = 2;
 let scansTotal = 0;
 let pagesTotal = 0;
+let connections = 0;
 let q;
 const startedTime = Date.now();
 initQueue();
@@ -110,6 +111,7 @@ function serverState() {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
     available: Math.max(0, maxConcurrency - q.length),
     pending: Math.max(0, q.length - maxConcurrency),
+    connections: connections,
     scansTotal: scansTotal,
     pagesTotal: pagesTotal,
     scansTotalAll: stats.scansTotal || 0,
@@ -125,6 +127,7 @@ function sendStats(socket) {
 
 function onSocketConnection(socket) {
   log("user connected to server", socket, true);
+  connections++;
 
   submitQueueEvents(socket);
 
@@ -152,6 +155,7 @@ function onSocketConnection(socket) {
 
   socket.on("disconnect", () => {
     clearInterval(interval);
+    connections--;
     console.log("user disconnected");
   });
 }
@@ -186,7 +190,7 @@ function log(msg, socket, outTime=false) {
 function socketSend(socket, event, msg) {
   if (socket) {
     // console.log('socket: ' + event, msg);
-    console.log(event + socket.uid + ": ", msg);
+    // console.log(event + socket.uid + ": ", msg);
     socket.emit(event + (socket.uid || ""), msg);
   }
 }
