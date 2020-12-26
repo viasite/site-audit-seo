@@ -66,11 +66,16 @@ module.exports = async (jsonPath, options) => {
   const influx = init(options);
 
   // points list for influx
+  const sendFirstCount = options.influxdb.maxSendCount || 5;
+  let sent = 0;
   const points = [];
   for (let item of data.items) {
     // console.log('item: ', item);
     const point = await getPoint(item, schema);
     points.push(point);
+
+    sent++;
+    if (sent >= sendFirstCount) break;
   }
 
   // console.log('writePoints');

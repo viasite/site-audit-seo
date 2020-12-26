@@ -6,9 +6,9 @@ const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer} = re
   './actions');
 const {exec} = require('child_process');
 
-program.parse(process.argv);
-
 async function start() {
+  program.parse(process.argv);
+
   if (!program.urls) {
     console.log(`${program.name()} ${program.version()}`);
     console.log(`Usage: ${program.name()} ${program.usage()}`);

@@ -198,6 +198,36 @@ site-audit-seo -u https://example.com --lighthouse
 ## Config file
 You can copy [.site-audit-seo.conf.js](.site-audit-seo.conf.js) to your home directory and tune options.
 
+## Send to InfluxDB
+It is beta feature. How to config:
+
+1. Add this to `~/.site-audit-seo.conf`:
+
+``` js
+module.exports = {
+  influxdb: {
+    host: 'influxdb.host',
+    port: 8086,
+    database: 'telegraf',
+    measurement: 'site_audit_seo', // optional
+    username: 'user',
+    password: 'password',
+    maxSendCount: 5, // optional, default send part of pages
+  }
+};
+```
+
+2. Use `--influxdb-max-send` in terminal.
+
+3. Create command for scan your urls:
+
+```
+site-audit-seo -u https://page-with-url-list.txt --url-list --lighthouse --upload --influxdb-max-send 100 >> ~/log/site-audit-seo.log
+```
+
+4. Add command to cron.
+
+
 ## Credentials
 Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
 

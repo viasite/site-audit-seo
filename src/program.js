@@ -43,7 +43,23 @@ const fieldsCustomCollect = (value, previous) => {
 
 function getConfigVal(name, def) {
   let val = undefined;
-  if (config[name] === undefined) val = def;
+  // objects like 'influxdb.maxSendCount'
+  if (name.includes('.')) {
+    const parts = name.split('.');
+    let conf = config;
+    for (let part of parts) {
+      conf = conf[part];
+      if (conf === undefined) {
+        conf = def;
+        break;
+      }
+    }
+
+    if (typeof conf === 'object') val = def;
+    else val = conf;
+  }
+
+  else if (config[name] === undefined) val = def;
   else val = config[name];
   // console.log(`config: ${name}: `, val);
   return val;
@@ -105,6 +121,8 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('ignoreRobotsTxt', false)).
   option('-m, --max-requests <num>', `Limit max pages scan`,
     getConfigVal('maxRequests', 0)).
+  option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
+    getConfigVal('influxdb.maxSendCount', 5)).
   option('--no-headless', `Show browser GUI while scan`,
     !getConfigVal('headless', true)).
   option('--remove-csv', `No delete csv after xlsx generate`,
@@ -178,7 +196,9 @@ program.postParse = async () => {
     program.concurrency = os.cpus().length;
   }
 
-  if (program.urls && program.urls.length > 1) program.urlList = true;
+  if (program.urls) {
+    if (program.urls.length > 1) program.urlList = true;
+  }
   else program.urls = [];
 
   if (program.urlList) {
@@ -190,6 +210,9 @@ program.postParse = async () => {
 
   // influxdb config fron ~/.site-audit-seo.conf.js
   program.influxdb = getConfigVal('influxdb', false);
+  if (program.influxdb && program.influxdbMaxSend) {
+    program.influxdb.maxSendCount = program.influxdbMaxSend;
+  }
 
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
@@ -282,6 +305,16 @@ program.outBrief = (options) => {
       comment: '--docs-extensions zip,rar',
     },
   ];
+
+  if (options.influxdb) {
+    brief = [...brief, ...[
+      {
+        name: 'InfluxDB max send',
+        value: program.influxdbMaxSend,
+        comment: '--influxdb-max-send 10',
+      },
+    ]];
+  }
 
   // only for command
   if (!options.webService) {

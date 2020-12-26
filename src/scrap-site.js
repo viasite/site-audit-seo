@@ -65,7 +65,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   let urls = [];
   if (options.urlList) {
-    if (options.urls && options.urls.length > 0) urls = options.urls;
+    if (options.urls && options.urls.length > 1) urls = options.urls;
     else urls = await parseUrls(baseUrl);
   }
 
@@ -527,7 +527,14 @@ module.exports = async (baseUrl, options = {}) => {
       if (options.upload) webPath = await uploadJson(jsonPath, options);
       // if (options.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
+      if (options.influxdb) {
+        log('send to InfluxDB...');
+        const points = await sendToInfluxDB(jsonPath, options);
+        log(`sent ${points.length} points`);
+      }
+
       await startViewer(jsonPath, webPath);
+
       if (options.removeJson) fs.unlinkSync(jsonPath);
     }
 
