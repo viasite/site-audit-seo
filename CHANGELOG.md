@@ -1,3 +1,12 @@
+## [4.1.1](https://github.com/viasite/site-audit-seo/compare/v4.1.0...v4.1.1) (2020-12-26)
+
+
+### Features
+
+* **server:** more server stats: persistent stats, uptime, reboots count ([4f06cf9](https://github.com/viasite/site-audit-seo/commit/4f06cf910b3a5b46be6f96ff5ffc200e314e96aa))
+
+
+
 # [4.1.0](https://github.com/viasite/site-audit-seo/compare/v4.0.0...v4.1.0) (2020-12-26)
 
 
