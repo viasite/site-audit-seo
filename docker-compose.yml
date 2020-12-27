@@ -29,6 +29,7 @@ services:
       HOST: 0.0.0.0 # for nuxt
       PORT: ${FRONT_PORT}
       SERVER_URL: ${SERVER_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
       JSON_URL: ${JSON_URL}
 
     ports:
