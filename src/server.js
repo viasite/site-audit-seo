@@ -54,17 +54,40 @@ async function onScan(url, args, socket) {
   const program = require("./program");
 
   // repeat default, cross-scans global!
+  // TODO: remove
   delete(program.preset);
+  delete(program.exclude);
+  delete(program.maxDepth);
   delete(program.concurrency);
   delete(program.lighthouse);
+
   program.delay = 0;
-  delete(program.ignoreRobotsTxt);
+  program.skipStatic = false;
   delete(program.followXmlSitemap);
-  delete(program.maxDepth);
+  delete(program.ignoreRobotsTxt);
+  program.limitDomain = true;
+  delete(program.urlList);
   delete(program.maxRequests);
-  delete(program.language);
-  delete(program.influxDbMaxSend);
-  
+  program.headless = true;
+  delete(program.docsExtensions);
+  program.outDir = '~/site-audit-seo/';
+  delete(program.outName);
+  program.color = true;
+
+  delete(program.lang);
+  delete(program.openFile);
+  program.fields = [];
+  delete(program.defaultFilter);
+  delete(program.removeCsv);
+  delete(program.removeJson);
+  delete(program.xlsx);
+  delete(program.gdrive);
+  delete(program.json);
+  delete(program.upload);
+  delete(program.consoleValidate);
+  delete(program.influxdb);
+  delete(program.urls);
+
   program.exitOverride();
   try {
     program.parse([...["", ""], ...args]);
