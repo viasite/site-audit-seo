@@ -1,3 +1,19 @@
+# [4.2.0](https://github.com/viasite/site-audit-seo/compare/v4.1.1...v4.2.0) (2020-12-29)
+
+
+### Bug Fixes
+
+* **scrap:** don't fail page when error in user --field ([74a6ecb](https://github.com/viasite/site-audit-seo/commit/74a6ecb2ed0bd66b9db7b7b27ee9b44949dfe218))
+* **server:** remove all previous program values ([36cca7d](https://github.com/viasite/site-audit-seo/commit/36cca7d953a378837ee07a4cc4ee83c3d50d8081))
+* fixed cross scans program values for main settings, fix send 'minimal' to InfluxDB ([fbc2ff5](https://github.com/viasite/site-audit-seo/commit/fbc2ff5844e4796630aaec04543ae6129e3c9eb2))
+
+
+### Features
+
+* **server:** connections stats ([7845bd8](https://github.com/viasite/site-audit-seo/commit/7845bd80886d7c366dffebe8f9a2353f3b25a526))
+
+
+
 ## [4.1.1](https://github.com/viasite/site-audit-seo/compare/v4.1.0...v4.1.1) (2020-12-26)
 
 
