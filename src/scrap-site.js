@@ -222,7 +222,11 @@ module.exports = async (baseUrl, options = {}) => {
         };
 
         for (let name in customFields) {
-          result[name] = eval(customFields[name].replace(/`/g, '\''));
+          try {
+            result[name] = eval(customFields[name].replace(/`/g, '\''));
+          } catch(e) {
+            result[name] = `fiels ${name}: error parse ${customFields[name]}`;
+          }
           // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
         }
 
@@ -295,17 +299,17 @@ module.exports = async (baseUrl, options = {}) => {
         }
       });
 
-      /*page.on('error', function(err) {
+      /* page.on('error', function(err) {
         console.error(`${color.red}Page error:${color.reset} ` + err.toString());
-      });*/
+      }); */
 
       /*page.on('close', function() {
         console.error(`${color.red}Page closed${color.reset} `);
       });*/
 
-      /*page.on('pageerror', function(err) {
+      /* page.on('pageerror', function(err) {
         console.error(`${color.red}pegeerror:${color.reset} ` + err.toString());
-      });*/
+      }); */
 
       // console.log('co '+ crawler._options.url);
 
