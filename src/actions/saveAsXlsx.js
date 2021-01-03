@@ -61,6 +61,10 @@ module.exports = (csvPath, xlsxPath) => {
 
   // read csv to workbook
   const csvRaw = fs.readFileSync(csvPath, 'utf-8');
+
+  console.log('csvPath', csvPath);
+  // console.log('csvRaw', csvRaw);
+
   // xlsx-style cannot read csv
   const wb = xlsxOrig.read(csvRaw, {type: 'string'});
   const ws = wb.Sheets[wb.SheetNames[0]];

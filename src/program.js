@@ -61,7 +61,7 @@ function getConfigVal(name, def) {
 
   else if (config[name] === undefined) val = def;
   else val = config[name];
-  // console.log(`config: ${name}: `, val);
+  console.log(`config: ${name}: `, val);
   return val;
 }
 
@@ -99,7 +99,7 @@ program.postParse = async () => {
   }
 
   // lang
-  if (!['en', 'ru'].includes(program.lang)) program.lang = systemLocale;
+  if (!['en', 'fr', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
   // no open file when no xlsx generate
   if (!program.xlsx) program.openFile = false;
@@ -147,18 +147,36 @@ program.postParse = async () => {
     // program.defaultFilter = 'depth>1';
   }
 
+  console.log("program.yake", program.yake);
+  console.log("program.languageDetection", program.languageDetection);
+  console.log("program.htmlGrabbr", program.htmlGrabbr);
+  console.log("program.readingTime", program.readingTime);
+  console.log("program.influxdb", program.influxdb);
+
   // influxdb config fron ~/.site-audit-seo.conf.js
-  program.influxdb = getConfigVal('influxdb', false);
+  // program.influxdb = getConfigVal('influxdb', false);
   if (program.influxdb && program.influxdbMaxSend) {
     program.influxdb.maxSendCount = program.influxdbMaxSend;
+  }
+  if (program.influxdb && program.influxdbDatabase) {
+    program.influxdb.database = program.influxdbDatabase;
+  }
+  if (program.influxdb && program.influxdbMeasurement) {
+     program.influxdb.measurement = program.influxdbMeasurement;
+  }
+
+  // program.slack = getConfigVal('slack', false);
+  if (program.slack && program.slack.token && program.slack.conversationId) {
+    program.slack.token = program.slackToken;
+    program.slack.conversationId = program.slackConversationId;
+  }
+  if (program.slack && program.slack.slackSigninSeccret) {
+    program.slack.signinSeccret = program.slackSigninSeccret;
   }
 
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
 }
-
-
-
 
 program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('-p, --preset <preset>',
@@ -189,8 +207,6 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('ignoreRobotsTxt', false)).
   option('-m, --max-requests <num>', `Limit max pages scan`,
     parseInt, getConfigVal('maxRequests', 0)).
-  option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
-    getConfigVal('influxdb.maxSendCount', 5)).
   option('--no-headless', `Show browser GUI while scan`,
     !getConfigVal('headless', true)).
   option('--remove-csv', `No delete csv after xlsx generate`,
@@ -218,6 +234,60 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('openFile', undefined)).
   option('--no-open-file', `Don't open file after scan`).
   option('--no-console-validate', `Don't output validate messages in console`).
+  // language detection
+  option('--language-detection', `Language detection`,
+    getConfigVal('languageDetection', false)).
+  option('--language-whitelist', `Language whitelist`).
+  option('--language-blacklist', `Language blacklist`).
+  // readingTime
+  option('--reading-time', `Estimate reading time`,
+    getConfigVal('readingTime', false)).
+  // htmlGrabbr
+  option('--html-grabbr', `Extract additional fields with htmlGrabbr`,
+    getConfigVal('htmlGrabbr', false)).
+  option('--html-grabbr-debug', `Activate debug mode for htmlGrabbr`,
+    getConfigVal('htmlGrabbr.debug', false)).
+  option('--html-grabbr-pretty', `Activate pretty mode for htmlGrabbr`,
+    getConfigVal('htmlGrabbr.pretty', false)).
+  option('--html-grabbr-exceprt', `Extract text exceprt with htmlGrabbr`,
+    getConfigVal('htmlGrabbr.exceprt', false)).
+  option('--html-grabbr-page-illustration', `Extract page illustration with htmlGrabbr`,
+    getConfigVal('htmlGrabbr.pageIllustration', false)).
+  option('--html-grabbr-read-length', `Extract read length with htmlGrabbr`,
+    getConfigVal('htmlGrabbr.readLength', false)).
+  option('--html-grabbr-embedded-image-urls', `Extract embedded image urls with htmlGrabbr`,
+    getConfigVal('htmlGrabbr.embeddedImageURLs', false)).
+  // Yake
+  option('--yake', `Extract keywords with YAKE`,
+    getConfigVal('yake', false)).
+  option('--yake-server-url <endpoint>', `Yake - Endpoint URL`,
+    getConfigVal('yake.serverUrl', '')).
+  option('--yake-language <auto|iso-2>', `Yake - Language`,
+    getConfigVal('yake.language', 'auto')).
+  option('--yake-ngram-threshold <float>', `Yake - Ngram Score Threshold`,
+    getConfigVal('yake.ngramThreshold', 0.02)).
+  option('--yake-max-ngram-size <num>', `Yake - Max NGRAM Size`,
+    getConfigVal('yake.maxNgramSize', 5)).
+  option('--yake-number-keywords <num>', `Yake - Number of Keywords`,
+    getConfigVal('yake.numberKeywords', 10)).
+  // InfluxDB options
+  option('--influxdb', `Export data to InfluxDB`,
+    getConfigVal('influxdb', false)).
+  option('--influxdb-database <database>', `InfluxDB database name`,
+    getConfigVal('influxdb.database', 'telegraf')).
+  option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
+    getConfigVal('influxdb.maxSendCount', 5)).
+  option('--influxdb-measurement <num>', `InfluxDB Measurement ID`,
+    getConfigVal('influxdb.measurement', 'seoz')).
+  // Slack options
+  option('--slack', `Slack notification when audit is ready`,
+    getConfigVal('slack', false)).
+  option('--slack-conversation-id <conversationId>', `Slack conversation ID`,
+    getConfigVal('slack.conversationId', '')).
+  option('--slack-token <num>', `Slack webhook token`,
+    getConfigVal('slack.token', '')).  
+  option('--slack-signin-secret <num>', `Slack signin-seccret`,
+    getConfigVal('slack.signin.secret', '')).
   name('site-audit-seo').
   version(packageJson.version).
   usage('-u https://example.com --upload')
@@ -252,7 +322,24 @@ program.getOptions = () => {
     upload: program.upload,                     // выгружать json на сервер
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // chrome-crawler, не учитывать блокировки в robots.txt
+    readingTime: program.readingTime,           // конфиг readingTime
+    languageDetection: program.languageDetection, // конфиг language detection
+    languageWhitelist: program.languageWhitelist, // конфиг language detection (whitelist)
+    languageBlakclist: program.languageBlakclist, // конфиг language detection (blacklist)
+    htmlGrabbr: program.htmlGrabbr,             // конфиг htmlGrabbr
+    htmlGrabbrDebug: program.htmlGrabbrDebug,             // конфиг htmlGrabbrDebug
+    htmlGrabbrPretty: program.htmlGrabbrPretty,             // конфиг htmlGrabbrPretty
+    htmlGrabbrExcerpt: program.htmlGrabbrExcerpt,             // конфиг htmlGrabbrExcerpt
+    htmlGrabbrEmbeddedImageURLs: program.htmlGrabbrEmbeddedImageURLs,             // конфиг htmlGrabbrEmbeddedImageURLs
+    htmlGrabbrReadLength: program.htmlGrabbrReadLength,             // конфиг htmlGrabbrReadLength
+    yake: program.yake,                         // конфиг yake
+    yakeLanguage: program.yakeLanguage,                         // конфиг yakeLanguage
+    yakeMaxNgramSize: program.yakeMaxNgramSize,                         // конфиг yakeMaxNgramSize
+    yakeNumberKeywords: program.yakeNumberKeywords,                         // конфиг yakeNumberKeywords
+    yakeServerUrl: program.yakeServerUrl,                         // конфиг yakeNumberKeywords
+    yakeNgramThreshold: program.yakeNgramThreshold, // конфиг yakeNgramThreshold
     influxdb: program.influxdb,                 // конфиг influxdb
+    slack: program.slack,                       // конфиг slack
     urls: program.urls                          // адреса для одиночного сканирования
   };
   return opts;
@@ -315,12 +402,107 @@ program.outBrief = (options) => {
     },
   ];
 
+  if (options.htmlGrabbr) {
+    brief = [...brief, ...[
+      {
+        name: 'htmlGrabbr debug',
+        value: program.htmlGrabbrDebug,
+        comment: '--html-grabbr-debug',
+      },
+      {
+        name: 'htmlGrabbr pretty',
+        value: program.htmlGrabbr.pretty,
+        comment: '--html-grabbr-pretty',
+      },
+      {
+        name: 'htmlGrabbr page illustration',
+        value: program.htmlGrabbrPageIllustration,
+        comment: '--html-grabbr-page-illustration',
+      },
+      {
+        name: 'htmlGrabbr excerpt',
+        value: program.htmlGrabbrExcerpt,
+        comment: '--html-grabbr-excerpt',
+      },
+      {
+        name: 'htmlGrabbr read length',
+        value: program.htmlGrabbrReadLength,
+        comment: '--html-grabbr-read-length',
+      },
+      {
+        name: 'htmlGrabbr embedded image urls',
+        value: program.htmlGrabbrEmbeddedImageURLs,
+        comment: '--html-grabbr-embedded-image-urls',
+      },
+    ]];
+  }
+
+  if (options.yake) {
+    brief = [...brief, ...[
+      {
+        name: 'Yake language',
+        value: program.yakeLanguage,
+        comment: '--yake-language auto',
+      },
+      {
+        name: 'Yake Max Ngram Size',
+        value: program.yakeMaxNgramSize,
+        comment: '--yake-max-ngram-size 3',
+      },
+      {
+        name: 'Yake Ngram Score Threshold',
+        value: program.yakeNgramThreshold,
+        comment: '--yake-ngram-threshold 0.02',
+      },
+      {
+        name: 'Yake Number Keywords',
+        value: program.yakeNumberKeywords,
+        comment: '--yake-number-keywords 10',
+      },
+      {
+        name: 'Yake Server url',
+        value: program.yakeServerUrl,
+        comment: '--yake-server-url http://localhost:5000/yake',
+      },
+    ]];
+  }
+
   if (options.influxdb) {
     brief = [...brief, ...[
       {
         name: 'InfluxDB max send',
         value: program.influxdbMaxSend,
         comment: '--influxdb-max-send 10',
+      },
+      {
+        name: 'InfluxDB database name',
+        value: program.influxdbDatabase,
+        comment: '--influxdb-database telegraph',
+      },
+      {
+        name: 'InfluxDB database name',
+        value: program.influxdbMeasurement,
+        comment: '--influxdb-measurement seoz',
+      },
+    ]];
+  }
+
+  if (options.slack) {
+    brief = [...brief, ...[
+      {
+        name: 'Slack Conversation ID',
+        value: program.slackConversationId,
+        comment: '--slack-conversation-id XXXXXXX',
+      },
+      {
+        name: 'Slack Token',
+        value: program.slackToken,
+        comment: '--slack-token XXXXXXX-XXXXXXX',
+      },
+      {
+        name: 'Slack sign-in secret',
+        value: program.slackSigninSeccret,
+        comment: '--slack-signin-secret XXXXXXX-XXXXXXX',
       },
     ]];
   }

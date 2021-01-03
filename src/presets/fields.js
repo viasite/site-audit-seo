@@ -7,6 +7,11 @@ const fields = [
     groups: ['info'],
   },
   {
+    name: 'html',
+    comment: 'HTML',
+    groups: ['info'],
+  },
+  {
     name: 'mixed_content_url',
     comment: 'URL по HTTP ссылке',
     comment_en: 'URL of mixed content',

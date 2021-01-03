@@ -18,6 +18,9 @@ const warnErrorThresholds = (warn, error, isSuccess = true) => {
 };
 
 const colsValidate = {
+  html: {
+    error: (v) => v === '',
+  },  
   mixed_content_url: {
     error: (v) => !!v,
   },

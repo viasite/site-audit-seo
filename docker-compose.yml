@@ -40,6 +40,11 @@ services:
     # volumes:
     # - ./data/reports:/app/static/reports
 
+  yake:
+    image: liaad/yake-server:latest
+    ports:
+    - 5000:5000
+
 # networks:
 #   internal:
 #     driver: bridge

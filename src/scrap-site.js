@@ -6,6 +6,37 @@ const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer, send
 const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
+
+// const HTMLGrabr = require('htmlgrabr').HTMLGrabr;
+// const htmlGrabrConf = {
+//   debug: true,                     // Print debug logs if true
+//   pretty: true,                    // Beautify HTML content if true
+// }
+// const grabber = new HTMLGrabr(htmlGrabrConf);
+
+// Readability
+var { Readability } = require('@mozilla/readability');
+var JSDOM = require('jsdom').JSDOM;
+const createDOMPurify = require('dompurify');
+
+// 
+var request = require('request-promise');
+
+// convert iso-639-3 to iso-639-1
+const convert3To1 = require('iso-639-3-to-1');
+
+// request (warning deprecated, switch to axios)
+// const request = require('request');
+
+// language detection
+var franc = require('franc');
+
+// stopwords
+var sw = require('stopword');
+
+// reading time
+const readingTime = require('reading-time');
+
 const url = require('url');
 const {validateResults, getValidationSum} = require('./validate');
 const {exec} = require('child_process');
@@ -18,6 +49,7 @@ const color = require('./color');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
+const skipArticleTags = ["script", "style", "noscript", "head", "header", "footer", "nav"];
 
 // запреты браузеру на подгрузку статики, ускоряет
 let SKIP_IMAGES = true;
@@ -25,7 +57,7 @@ let SKIP_CSS = true;
 let SKIP_JS = true;
 
 // кол-во попыток выполнить actions
-const finishTries = 5;
+const finishTries = 1;
 
 function socketSend(socket, event, msg) {
   if (socket) {
@@ -69,6 +101,11 @@ module.exports = async (baseUrl, options = {}) => {
     else urls = await parseUrls(baseUrl);
   }
 
+  console.log('languageDetection:', options.languageDetection);
+  console.log('readingTime:', options.readingTime);
+  console.log('htmlGrabbr:', options.htmlGrabbr);
+  console.log('yake:', options.yake);
+
   // console.log('urls: ', urls);
   const baseName = sanitize(options.outName || domain);
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
@@ -82,6 +119,7 @@ module.exports = async (baseUrl, options = {}) => {
     options.fieldsPreset = 'default';
   }
 
+  //
   let fields = fieldsPresets[options.fieldsPreset];
 
   // exclude fields
@@ -94,7 +132,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   // custom fields
   if (Object.keys(options.fields).length > 0) {
-    // console.log('options.fields: ', options.fields);
+    console.log('options.fields: ', options.fields);
     const newFields = Object.keys(options.fields).map(f => 'result.' + f);
     fields = [...fields, ...newFields];
   }
@@ -107,6 +145,45 @@ module.exports = async (baseUrl, options = {}) => {
       }
     }
   }
+
+  if (options.readingTime) {
+    readingTimeFields = ['result.reading', 'result.readingMinutes', 'result.readingTime', 'result.readingWords'];
+    for (let fName of readingTimeFields) {
+      if (fields.indexOf(fName) === -1) {
+        fields.push(fName);
+      }
+    }
+  }
+
+  if (options.yake) {
+    yakeFields = ['result.yakeKeywords'];
+    for (let fName of yakeFields) {
+      if (fields.indexOf(fName) === -1) {
+        fields.push(fName);
+      }
+    }
+  }
+
+  if (options.htmlGrabbr) {
+    if (options.htmlGrabbrExcerpt) {
+      if (fields.indexOf('result.excerpt') === -1) {
+        fields.push('result.excerpt');
+      }      
+    }
+  }
+
+  if (options.languageDetection || options.yakeLanguage === 'auto') {
+    yakeFields = ['result.detectedLanguageIso639-1','result.detectedLanguageIso639-3'];
+    for (let fName of yakeFields) {
+      if (fields.indexOf(fName) === -1) {
+        fields.push(fName);
+      }
+    }
+  }
+
+  console.log('===================================');
+  console.log('fields --- ', fields);
+  console.log('===================================');
 
   // skip static
   if (options.skipStatic !== undefined) {
@@ -158,6 +235,7 @@ module.exports = async (baseUrl, options = {}) => {
     // сюда можно дописывать сборщики данных со страницы
     // поля надо добавить в fields выше
     evaluatePage: async () => {
+
       try {
         const customFields = await window.__customFields();
         // console.log('window.__customFields(): ', JSON.stringify(customFields));
@@ -170,10 +248,12 @@ module.exports = async (baseUrl, options = {}) => {
         const isCanonical = canonical ?
           (canonical == decodeURI(window.location.href) ||
           canonical == decodeURI(relUrl) ? 1 : 0) : '';
+
         const result = {
           request_time:
             window.performance.timing.responseEnd -
             window.performance.timing.requestStart,
+          content: $('html').prop('outerHTML'),
           title: $('title').text(),
           h1: $('h1').text().trim(),
           h1_count: $('h1').length,
@@ -230,6 +310,8 @@ module.exports = async (baseUrl, options = {}) => {
           // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
         }
 
+        // result["yakeKeywords"] = "test";
+
         return result;
       } catch (e) {
         return {
@@ -237,7 +319,9 @@ module.exports = async (baseUrl, options = {}) => {
         };
       }
     },
-
+    onError: error  => {
+      // console.error('onError:', error);
+    },
     onSuccess: result => {
       if (!result.result) return;
 
@@ -245,7 +329,8 @@ module.exports = async (baseUrl, options = {}) => {
         const msg = `${color.red}Error collect page data: result.result.error${color.reset}`;
         console.error(msg);
       }
-      // console.log(`html_size: ${result.result.html_size}`);
+      return result;
+
     },
 
     customCrawl: async (page, crawl, crawler) => {
@@ -262,7 +347,7 @@ module.exports = async (baseUrl, options = {}) => {
 
       // это событие срабатывает, когда chrome подгружает статику на странице (и саму страницу)
       page.on('request', request => {
-        //console.log('request.url(): ', request.url());
+        // console.log('request.url(): ', request.url());
 
         // check for mixed content, thanks to https://github.com/busterc/mixed-content-crawler/
         if (protocol == 'https:' &&
@@ -367,6 +452,7 @@ module.exports = async (baseUrl, options = {}) => {
           'best-practices',
           'seo',
           'pwa'];
+
         const lighthouseData = {
           scores: {},
         };
@@ -445,6 +531,143 @@ module.exports = async (baseUrl, options = {}) => {
 
       // You can access the page object after requests
       result.content = await page.content();
+
+      console.log('value for options.languageDetection -- ', options.languageDetection);
+      console.log('value for options.readingTime -- ', options.readingTime);
+      console.log('value for options.htmlGrabbr -- ', options.htmlGrabbr);
+      console.log('value for options.yake -- ', options.yake);
+      console.log('value for options.yakeServerUrl -- ', options.yakeServerUrl);
+      console.log('value for options.yakeLanguage -- ', options.yakeLanguage);
+      console.log('value for options.yakeMaxNgramSize -- ', options.yakeMaxNgramSize);
+      console.log('value for options.yakeNumberKeywords -- ', options.yakeNumberKeywords);
+      console.log('value for response.url -- ', result.response.url);
+
+      if (!result.response.url.endsWith('xml')) {
+        try {
+          // todo. rename httmGrabbr to readibility more generic option name
+          // console.log("result.content, --- ", result.content);
+          if (result.content !== '' && options.htmlGrabbr) {
+            console.log('htmlGrabbr -- start');
+            console.log('value for options.htmlGrabbr -- ', options.htmlGrabbr);
+            console.log('value for options.htmlGrabbrDebug -- ', options.htmlGrabbrDebug);
+            console.log('value for options.htmlGrabbrPretty -- ', options.htmlGrabbrPretty);
+            console.log('value for options.htmlGrabbrExcerpt -- ', options.htmlGrabbrExcerpt);
+            console.log('value for options.htmlGrabbrEmbeddedImageURLs -- ', options.htmlGrabbrEmbeddedImageURLs);
+            console.log('value for options.htmlGrabbrReadLength -- ', options.htmlGrabbrReadLength);
+            const window = new JSDOM('').window;
+            const DOMPurify = createDOMPurify(window);
+            const purifiedStr = DOMPurify.sanitize(result.content, {FORBID_TAGS: skipArticleTags});
+            // console.log('clean --- ', Object.keys(clean));
+            const cleanDoc = new JSDOM(purifiedStr, {
+              url: result.response.url,
+            });
+            var reader = new Readability(cleanDoc.window.document);
+            var article = reader.parse();
+            console.debug('typeof article:', typeof article);
+            if (typeof article === 'object' && options.htmlGrabbrExcerpt === true) {
+              result['excerpt'] = article.excerpt;                
+            }
+          }
+        } catch (e) {
+          console.error('htmlGrabbrErr:', e);
+        }
+
+        try {
+          console.debug('typeof article:', typeof article);
+          if (typeof article !== 'undefined' && options.readingTime === true) {
+            const readingStats = readingTime(article.textContent);
+            console.log('readingStats --- ', readingStats);
+            if (typeof readingStats === 'object') {
+              result['reading'] = readingStats.text;
+              result['readingMinutes'] = readingStats.minutes;
+              result['readingTime'] = readingStats.time;
+              result['readingWords'] = readingStats.words;
+            }
+          }      
+        } catch (e) {
+          console.error('readingTimeErr:', e);
+        }
+
+        let detectedLanguageIso639 = options.yakeLanguage
+
+        try {
+          if (typeof article !== 'undefined' && (options.languageDetection === true || (options.yake && options.yakeLanguage === 'auto'))) {
+            const detectedLanguages = franc.all(article.textContent);
+            if (detectedLanguages.length > 0) {
+              detectedLanguageIso639 = convert3To1(detectedLanguages[0][0]);
+              console.log('detectedLanguageIso639-3 --- ', detectedLanguages[0][0]);
+              console.log('detectedLanguageIso639-1 --- ', detectedLanguageIso639);
+              result['detectedLanguageIso639-3'] = detectedLanguages[0][0];
+              result['detectedLanguageIso639-1'] = detectedLanguageIso639;
+            }
+          }      
+        } catch (e) {
+          console.error('francErr:', e);
+        }
+
+        try {
+          console.debug('typeof article:', typeof article);
+          if (typeof article !== 'undefined' && options.yake) {
+            /*
+            console.log('yake -- start');
+            console.log('yake -- detectedLanguageIso639:', detectedLanguageIso639);
+            console.log('yake -- yakeServerUrl:', result.options.yakeServerUrl);
+            console.log('yake -- yakeMaxNgramSize:', result.options.yakeMaxNgramSize);
+            console.log('yake -- yakeNumberKeywords:', result.options.yakeNumberKeywords);
+            console.log(`sw[${detectedLanguageIso639}]`, sw[detectedLanguageIso639]);              
+            */
+            const cleanedArticleArr = sw.removeStopwords(article.textContent.split(' '), sw[detectedLanguageIso639]);
+
+            var yakeKeywords = "";
+            // async function to make http request
+            async function makeSynchronousRequest() {
+              try {
+                // http_promise is a Promise
+                // "response_body" will hold the response if the Promise is resolved 
+                let response_body = await axios.post(options.yakeServerUrl, {
+                  "language": detectedLanguageIso639,
+                  "max_ngram_size": options.yakeMaxNgramSize,
+                  "number_of_keywords": options.yakeNumberKeywords,
+                  "text": cleanedArticleArr.join(' '),
+                });
+                return response_body;
+              }
+              catch(e) {
+                // if the Promise is rejected
+                console.error(e);
+              }
+            }
+
+            // anonymous async function to execute some code synchronously after http request
+            (async function () {
+              // wait to http request to finish
+              let yakeResp = await makeSynchronousRequest();
+              console.log("yakeResp", yakeResp.data);
+              // yakeKeywords = 
+              // below code will be executed after http request is finished
+              // some code
+              var yakeKeywords = [];
+              for (let key in yakeResp.data) {
+                console.log('yakeEntry --- ', yakeResp.data[key]);
+                yakeKeywords.push(yakeResp.data[key]['score']);
+              }
+              result.yakeKeywords = yakeKeywords.toString();
+              console.log("result.yakeKeywords --- ", result['yakeKeywords']);
+            })();
+
+          }
+
+        } catch (e) {
+          console.error('yakeError', e);
+        }
+        // result.result['yakeKeywords'] = data;
+        // result.result['yakeKeywords'] = yakeKeywordsStr;
+      }
+
+      console.log("result.detectedLanguageIso639-1 --- ", result['detectedLanguageIso639-1']);
+      console.log("result.detectedLanguageIso639-3 --- ", result['detectedLanguageIso639-3']);
+      console.log("result.reading --- ", result.reading);
+
       // You need to extend and return the crawled result
       return result;
     },
@@ -455,7 +678,7 @@ module.exports = async (baseUrl, options = {}) => {
   // start
   const start = Date.now();
 
-  // console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
+  console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
   try {
@@ -520,6 +743,7 @@ module.exports = async (baseUrl, options = {}) => {
   const finishScan = async () => {
     console.log('');
     if (options.xlsx) {
+      console.log('finishScan.csvPath --- ', csvPath);
       saveAsXlsx(csvPath, xlsxPath);
       if (options.gdrive) await publishGoogleDrive(xlsxPath);
       if (options.openFile) exec(`"${xlsxPath}"`);
@@ -582,11 +806,16 @@ module.exports = async (baseUrl, options = {}) => {
       }
 
       // copy to local reports
-      let localDir = 'data/reports/';
+      let localDir = '/app/data/reports/';
       if (options.socket.uid) {
         const userDir = sanitize(options.socket.uid.slice(0, 5));
         localDir += userDir + '/';
-        if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
+        log('localDir: ' + localDir);
+        try {        
+          if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
+        } catch (e) {
+          log('error mkdirSync: ' + e.message);
+        }
       }
 
       // remove microseconds if available
