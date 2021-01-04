@@ -6,25 +6,25 @@ services:
   backend:
     image: viasite/site-audit-seo:latest
     container_name: ${NAMESPACE}-backend
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
     environment:
       PORT: ${SERVER_PORT}
     ports:
-    - 5301:${SERVER_PORT}
+    - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+    - ./data/reports:/app/data/reports
+    - ./data/db-docker.json:/app/data/db.json
     # networks:
     # - internal
     # - web
-    volumes:
-    - ./data/reports:/app/data/reports
 
   frontend:
     image: viasite/site-audit-seo-viewer:latest
     container_name: ${NAMESPACE}-frontend
     build: data/front
-    # env_file:
-    # - data/popstas-server.env
     environment:
       HOST: 0.0.0.0 # for nuxt
       PORT: ${FRONT_PORT}
@@ -32,9 +32,8 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
       JSON_URL: ${JSON_URL}
       SCAN_DEFAULT_MAX_REQUESTS: ${SCAN_DEFAULT_MAX_REQUESTS}
-
     ports:
-    - 5302:${FRONT_PORT}
+    - ${FRONT_PORT}:${FRONT_PORT}
     # networks:
     # - web
     # volumes:
