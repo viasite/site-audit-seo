@@ -78,11 +78,11 @@ async function onScan(url, args, socket) {
   delete(program.openFile);
   program.fields = [];
   delete(program.defaultFilter);
-  delete(program.removeCsv);
+  program.removeCsv = true;
   delete(program.removeJson);
   delete(program.xlsx);
   delete(program.gdrive);
-  delete(program.json);
+  program.json = true;
   delete(program.upload);
   delete(program.consoleValidate);
   delete(program.influxdb);
@@ -113,13 +113,15 @@ async function onScan(url, args, socket) {
     log(`Start audit: ${url}`, socket, true);
     const res = await scrapSite(url, opts);
 
-    if (res && res.pages) pagesTotal += res.pages;
+    if (res && res.pages) {
+      pagesTotal += res.pages;
 
-    // update persistant state
-    const stats = db.get('stats').value() || {};
-    db.set('stats.pagesTotal', stats.pagesTotal ? stats.pagesTotal + res.pages : res.pages).write();
-    db.set('stats.scansTotal', stats.scansTotal ? stats.scansTotal + 1 : 1).write();
-    db.write();
+      // update persistent state
+      const stats = db.get('stats').value() || {};
+      db.set('stats.pagesTotal', stats.pagesTotal ? stats.pagesTotal + res.pages : res.pages).write();
+      db.set('stats.scansTotal', stats.scansTotal ? stats.scansTotal + 1 : 1).write();
+      db.write();
+    }
 
     log(`Finish audit: ${url}`, socket, true);
     return res;

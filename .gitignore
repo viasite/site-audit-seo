@@ -7,3 +7,4 @@ data/*
 /*.json
 !package.json
 !package-lock.json
+*.code-workspace

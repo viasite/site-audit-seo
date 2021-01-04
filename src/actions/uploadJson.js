@@ -1,8 +1,8 @@
 const fs = require('fs');
-const path = require('path');
 const axios = require('axios');
+const {getJsonName} = require('../utils');
 
-module.exports = async (jsonPath, options) => {
+module.exports = async (jsonPath) => {
   const data = fs.readFileSync(jsonPath, 'utf8');
   // const raw = JSON.stringify(data);
 
@@ -20,16 +20,3 @@ module.exports = async (jsonPath, options) => {
   }
   return res.data.url;
 };
-
-function getJsonName(jsonPath) {
-  const offset = new Date().getTimezoneOffset() * 60000;
-  const dateLocal = new Date(Date.now() - offset)
-  const date = dateLocal.toISOString().
-    replace(/:/g, '-').
-    replace('T', '_').
-    replace('Z', '');
-  // const dateStr = date.slice(0,10);
-  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
-  const uploadName = date + '_' + name;
-  return uploadName;
-}

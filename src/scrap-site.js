@@ -1,7 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const path = require('path');
-const {saveAsXlsx, saveAsJson, uploadJson, publishGoogleDrive, startViewer, sendToInfluxDB} = require(
+const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer, sendToInfluxDB} = require(
   './actions');
 const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
@@ -519,6 +519,12 @@ module.exports = async (baseUrl, options = {}) => {
 
   const finishScan = async () => {
     console.log('');
+
+    if (!options.webService) {
+      outValidationSummary();
+    }
+
+    // legacy, xlsx don't needed more
     if (options.xlsx) {
       saveAsXlsx(csvPath, xlsxPath);
       if (options.gdrive) await publishGoogleDrive(xlsxPath);
@@ -528,8 +534,6 @@ module.exports = async (baseUrl, options = {}) => {
     if (options.json) {
       await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
-      if (options.upload) webPath = await uploadJson(jsonPath, options);
-      // if (options.gdrive) webPath = await publishGoogleDrive(jsonPath);
 
       if (options.influxdb && options.fieldsPreset == 'seo') {
         log('send to InfluxDB...');
@@ -537,7 +541,28 @@ module.exports = async (baseUrl, options = {}) => {
         log(`sent ${points.length} points`);
       }
 
-      await startViewer(jsonPath, webPath);
+      if (!options.webService) {
+        if (options.upload) webPath = await uploadJson(jsonPath);
+        await startViewer(jsonPath, webPath);
+      }
+
+      if (options.webService) {
+        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid);
+
+        // send result json to socket
+        socketSend(options.socket, 'result', {name: jsonName});
+
+
+        // TODO: error upload 8MB+
+        if (options.upload) {
+          webPath = await uploadJson(jsonPath);
+          socketSend(options.socket, 'result', {json: webPath});
+        }
+        // return stats
+        return {
+          pages: requestedCount,
+        }
+      }
 
       if (options.removeJson) fs.unlinkSync(jsonPath);
     }
@@ -548,11 +573,9 @@ module.exports = async (baseUrl, options = {}) => {
     console.log(`Finish: ${mins} mins (${perPage} sec per page)`);
   };
 
-  outValidationSummary();
-
   const tryFinish = async (tries) => {
     try {
-      await finishScan();
+      return await finishScan();
     } catch (e) {
       if (e.code == 'EBUSY') {
         let msg = `${color.red}${xlsxPath} is busy`;
@@ -565,69 +588,11 @@ module.exports = async (baseUrl, options = {}) => {
           }, 10000);
         }
       } else {
-        console.error(e);
+        log('error after scan: ' + e.message);
+        // console.error(e);
       }
     }
   };
 
-  if (options.webService) {
-    try {
-      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
-
-      // upload to influxdb
-      if (options.influxdb && options.fieldsPreset == 'seo') {
-        log('send to InfluxDB...');
-        const points = await sendToInfluxDB(jsonPath, options);
-        log(`sent ${points.length} points`);
-      }
-
-      // copy to local reports
-      let localDir = 'data/reports/';
-      if (options.socket.uid) {
-        const userDir = sanitize(options.socket.uid.slice(0, 5));
-        localDir += userDir + '/';
-        if (!fs.existsSync(localDir)) fs.mkdirSync(localDir);
-      }
-
-      // remove microseconds if available
-      const jsonNameLong = getJsonName(jsonPath);
-      const jsonNameShort = getJsonName(jsonPath, true);
-      const jsonName = fs.existsSync(localDir + jsonNameShort) ? jsonNameLong : jsonNameShort;
-      const localPath = localDir + jsonName;
-      fs.copyFileSync(jsonPath, localPath);
-
-      // send result json to socket
-      socketSend(options.socket, 'result', {name: jsonName});
-
-      // TODO: error upload 8MB+
-      if (options.upload) {
-        webPath = await uploadJson(jsonPath, options);
-        socketSend(options.socket, 'result', {json: webPath});
-      }
-      // return stats
-      return {
-        pages: requestedCount,
-      }
-    }
-    catch (e) {
-      log('error after scan: ' + e.message);
-    }
-  }
-  else {
-    await tryFinish(finishTries);
-  }
+  return await tryFinish(finishTries);
 };
-
-function getJsonName(jsonPath, short = false) {
-  const offset = new Date().getTimezoneOffset() * 60000;
-  const dateLocal = new Date(Date.now() - offset)
-  let date = dateLocal.toISOString().
-    replace(/:/g, '-').
-    replace('T', '__').
-    replace('Z', '');
-  if (short) date = date.replace(/\.\d+/, '');
-  // const dateStr = date.slice(0,10);
-  const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
-  const uploadName = date + '__' + name;
-  return uploadName;
-}
