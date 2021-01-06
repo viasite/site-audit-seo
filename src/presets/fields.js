@@ -152,6 +152,15 @@ const fields = [
     type: 'integer',
   },
   {
+    name: 'google_amp',
+    comment_en: 'Google AMP',
+    validate: {
+      warning: '< 1',
+    },
+    groups: ['metatags'],
+    type: 'integer',
+  },
+  {
     name: 'images',
     comment: 'img на странице',
     comment_en: 'img on page',
