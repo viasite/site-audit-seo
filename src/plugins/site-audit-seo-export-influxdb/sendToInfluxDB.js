@@ -56,6 +56,12 @@ function buildSchemaByFields(fields, measurement) {
 }
 
 module.exports = async (jsonPath, options) => {
+  if (options.influxdb && options.fieldsPreset == 'seo') {
+    options.log('send to InfluxDB...');
+  } else {
+    return false;
+  }
+
   // console.log('options.influxdb: ', options.influxdb);
   const jsonRaw = fs.readFileSync(jsonPath);
   const data = JSON.parse(jsonRaw);
@@ -82,5 +88,7 @@ module.exports = async (jsonPath, options) => {
   // console.log('points: ', points);
   // console.log('options.influxdb: ', options.influxdb);
   await influx.writePoints(points);
+
+  options.log(`sent ${points.length} points`);
   return points;
 };

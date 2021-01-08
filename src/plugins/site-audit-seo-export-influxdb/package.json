@@ -1,0 +1,8 @@
+{
+  "name": "site-audit-seo-export-influxdb",
+  "site-audit-seo": {
+    "plugins": {
+      "export-influxdb": "sendToInfluxDB.js"
+    }
+  }
+}

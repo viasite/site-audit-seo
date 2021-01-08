@@ -1,13 +1,19 @@
+const path = require('path');
 const lowdb = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
 const scrapSite = require("./scrap-site");
+const registry = require("./registry");
+const utils = require("./utils");
 
 const queue = require("queue");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const http = require("http").createServer(app);
+
+const dataDir = process.env.DATA_DIR || 'data';
+utils.initDataDir(dataDir);
 
 initExpress(app);
 
@@ -20,7 +26,7 @@ const io = require("socket.io")(http, {
 });
 
 // state
-const adapter = new FileSync('data/db.json');
+const adapter = new FileSync(path.join(dataDir, 'db.json'));
 const db = lowdb(adapter);
 db.defaults({ state: {} }).write();
 
@@ -38,7 +44,8 @@ const startedTime = Date.now();
 initQueue();
 io.on("connection", onSocketConnection);
 
-
+// plugins
+registry.load();
 
 
 
@@ -100,6 +107,7 @@ async function onScan(url, args, socket) {
 
   const opts = program.getOptions();
   opts.webService = true;
+  opts.consoleValidate = false; // not needed
   opts.socket = socket;
 
   // console.log('opts: ', opts);
@@ -200,7 +208,8 @@ function onSocketConnection(socket) {
 
 function submitQueueEvents(socket) {
   q.on("success", function (result, job) {
-    console.log("job finished processing:", job.toString().replace(/\n/g, ""));
+    // console.log("job finished processing:", job.toString().replace(/\n/g, ""));
+    console.log("job finished processing");
     sendStats(socket);
   });
   q.on("timeout", function (next, job) {

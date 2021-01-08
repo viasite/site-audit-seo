@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 
 exports.getJsonName = (jsonPath, short = false) => {
@@ -12,4 +13,12 @@ exports.getJsonName = (jsonPath, short = false) => {
   const name = path.basename(jsonPath).replace(/[^0-9a-zа-я_.-]/ig, '');
   const uploadName = date + '__' + name;
   return uploadName;
+}
+
+exports.initDataDir = (dataDir) => {
+  const packageJson = path.join(dataDir, 'package.json');
+  if (!fs.existsSync(packageJson)) {
+    console.log(`Create empty package.json in ${dataDir}`);
+    fs.copyFileSync('./package-data.json', packageJson);
+  }
 }

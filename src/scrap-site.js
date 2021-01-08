@@ -1,7 +1,7 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const path = require('path');
-const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer, sendToInfluxDB} = require(
+const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} = require(
   './actions');
 const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
@@ -15,6 +15,7 @@ const sanitize = require("sanitize-filename");
 // поля описаны в API по ссылке выше
 const fieldsPresets = require('./presets/scraperFields');
 const color = require('./color');
+const registry = require('./registry');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -42,7 +43,11 @@ module.exports = async (baseUrl, options = {}) => {
     if (DEBUG) console.log(msg);
     socketSend(options.socket, 'status', msg);
   };
+  options.log = log;
 
+  // const plugins = registry.getPlugins();
+  // if (plugins) console.log('loaded plugins: ', plugins.map(p => p.name).join(', '));
+  
   const parseUrls = async (url) => {
     const urls = [];
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
@@ -434,14 +439,16 @@ module.exports = async (baseUrl, options = {}) => {
 
       // console validate output
       // was in onSuccess(), but causes exception on docs
-      const msgs = [];
-      const validate = validateResults(result, fields); // TODO: fields declared implicitly
-      for (let name in validate) {
-        const res = validate[name];
-        const msgColor = {warning: color.yellow, error: color.red}[res.type];
-        msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+      if (options.consoleValidate) {
+        const msgs = [];
+        const validate = validateResults(result, fields); // TODO: fields declared implicitly
+        for (let name in validate) {
+          const res = validate[name];
+          const msgColor = {warning: color.yellow, error: color.red}[res.type];
+          msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+        }
+        if (msgs.length > 0) console.log(msgs.join(', '));
       }
-      if (msgs.length > 0) console.log(msgs.join(', '));
 
       // You can access the page object after requests
       result.content = await page.content();
@@ -520,7 +527,7 @@ module.exports = async (baseUrl, options = {}) => {
   const finishScan = async () => {
     console.log('');
 
-    if (!options.webService) {
+    if (options.consoleValidate) {
       outValidationSummary();
     }
 
@@ -535,11 +542,8 @@ module.exports = async (baseUrl, options = {}) => {
       await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
 
-      if (options.influxdb && options.fieldsPreset == 'seo') {
-        log('send to InfluxDB...');
-        const points = await sendToInfluxDB(jsonPath, options);
-        log(`sent ${points.length} points`);
-      }
+      // user plugins
+      await registry.execPlugins(jsonPath, options);
 
       if (!options.webService) {
         if (options.upload) webPath = await uploadJson(jsonPath);

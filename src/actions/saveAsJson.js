@@ -6,6 +6,7 @@ const columns = require('../presets/columns');
 
 const defaultField = 'url';
 
+// return json object
 module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter) => {
   // read csv to workbook
   const data = {};
@@ -37,6 +38,7 @@ module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter) => {
   // write
   const raw = JSON.stringify(data);
   fs.writeFileSync(jsonPath, raw);
+  return data;
 };
 
 function flattenItems(items) {
