@@ -65,6 +65,7 @@ function getPlugins() {
 }
 
 async function execPlugins(jsonPath, options) {
+  load();
   if (!plugins) return;
   console.log(`\n${color.white}exec plugins:${color.reset}`);
   for (let plugin of plugins) {
