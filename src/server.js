@@ -210,6 +210,11 @@ function onSocketConnection(socket) {
     return onScan(url, args, socket)
   });
 
+  socket.on("cancel", () => {
+    log('cancel command...', socket);
+    sockets[socket.id].opts.cancel = true;
+  });
+
   socket.on("disconnect", () => {
     clearInterval(interval);
     connections--;

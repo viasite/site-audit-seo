@@ -497,10 +497,13 @@ module.exports = async (baseUrl, options = {}) => {
     console.log(e);
   }
 
-  crawler.on('requeststarted', async options => {
+  crawler.on('requeststarted', async opts => {
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
-    log(`${requestedCount} ${decodeURI(options.url)} (${queueCount})`);
+    if (options.cancel) {
+      crawler.setMaxRequest(requestedCount); // cancel command
+    }
+    log(`${requestedCount} ${decodeURI(opts.url)} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
     console.error(
