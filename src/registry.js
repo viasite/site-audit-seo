@@ -61,9 +61,10 @@ function loadPluginsFromDir(dir) {
 
 function getModuleInfo(dir) {
   var packageJson = path.join(dir, 'package.json');
+  if (!fs.existsSync(packageJson)) return {};
   // const pkg = require(packageJson);
   const pkg = JSON.parse(fs.readFileSync(packageJson));
-  if (!pkg['site-audit-seo']) return;
+  if (!pkg['site-audit-seo']) return {};
   return pkg['site-audit-seo'];
 }
 
