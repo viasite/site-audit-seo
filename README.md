@@ -228,6 +228,19 @@ site-audit-seo -u https://page-with-url-list.txt --url-list --lighthouse --uploa
 4. Add command to cron.
 
 
+## Plugins
+- [Readability](https://github.com/popstas/site-audit-seo-readability) - main page text length, reading time
+- [Yake](https://github.com/popstas/site-audit-seo-yake) - keywords extraction from main page text
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details about plugin development.
+
+#### Install plugins:
+```
+cd data
+npm install site-audit-seo-readability
+npm install site-audit-seo-yake
+```
+
 ## Credentials
 Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
 
