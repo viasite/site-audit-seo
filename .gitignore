@@ -6,5 +6,6 @@ data/
 .~*
 /*.json
 !package.json
+!package-data.json
 !package-lock.json
 *.code-workspace

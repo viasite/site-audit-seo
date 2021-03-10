@@ -1,0 +1,7 @@
+{
+  "name": "site-audit-seo-project",
+  "description": "User modules for site-audit-seo",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {}
+}

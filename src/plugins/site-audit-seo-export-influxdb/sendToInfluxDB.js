@@ -20,7 +20,7 @@ async function getPoint(item, schema) {
   const point = {
     measurement: schema.measurement,
     tags: {
-      host: os.hostname(),
+      host: os.hostname(), // TODO: fix that if used by docker
       domain: url.parse(item.url).hostname,
       url: item.url
     },
