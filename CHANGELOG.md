@@ -1,3 +1,22 @@
+# [5.0.0](https://github.com/viasite/site-audit-seo/compare/v4.2.0...v5.0.0) (2021-03-10)
+
+
+### Bug Fixes
+
+* **registry:** fix crash when no package.json or site-audit-seo section in user node_modules ([e3e7319](https://github.com/viasite/site-audit-seo/commit/e3e7319a0c082ca02348a0a58498e6fc7e2003a0))
+* add google_amp to metatags group ([21e2e21](https://github.com/viasite/site-audit-seo/commit/21e2e217507595e8dc57d935ee98ae5324c79d65))
+* exec plugins for CLI tool ([af7256c](https://github.com/viasite/site-audit-seo/commit/af7256c157bb6de6657b9e798849d9e8122f623d))
+
+
+### Features
+
+* cancel command ([3db580b](https://github.com/viasite/site-audit-seo/commit/3db580b1055f2261f1488b385fa061bad698652e))
+* plugin types: afterRequest, afterScan ([e7ba5f7](https://github.com/viasite/site-audit-seo/commit/e7ba5f7e7365721de29c70c08ce747ee3c0e6989))
+* restore connection with running scan job ([5cc36fa](https://github.com/viasite/site-audit-seo/commit/5cc36faf38e2bbb6be442ca18be6f0b967680db5))
+* **core:** plugin system for actions after scan ([ac49bb3](https://github.com/viasite/site-audit-seo/commit/ac49bb34786329d7391dda39c683e4827277989d))
+
+
+
 # [4.2.0](https://github.com/viasite/site-audit-seo/compare/v4.1.1...v4.2.0) (2020-12-29)
 
 
