@@ -1,3 +1,7 @@
+## [5.0.1](https://github.com/viasite/site-audit-seo/compare/v5.0.0...v5.0.1) (2021-03-10)
+
+
+
 # [5.0.0](https://github.com/viasite/site-audit-seo/compare/v4.2.0...v5.0.0) (2021-03-10)
 
 
