@@ -350,3 +350,4 @@ site-audit-seo -u https://example.com --lighthouse
 - Breadcrumbs - https://github.com/glitchdigital/structured-data-testing-tool
 - joeyguerra/schema.js - https://gist.github.com/joeyguerra/7740007
 - smhg/microdata-js - https://github.com/smhg/microdata-js
+- indicate page scan error

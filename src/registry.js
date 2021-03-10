@@ -32,17 +32,25 @@ function loadPluginsFromDir(dir) {
     const info = getModuleInfo(dirPath);
 
     if (info.plugins) for (let pluginName in info.plugins) {
-      const pluginFile = info.plugins[pluginName];
+      const pluginInfo = info.plugins[pluginName];
+      const pluginFile = typeof pluginInfo === 'string' ? pluginInfo : pluginInfo.main;
       const pluginPath = path.join(dirPath, pluginFile);
 
       if (!fs.existsSync(pluginPath)) {
         console.log(`plugin ${pluginName} not found: ${pluginPath}`);
         continue;
       }
-      const plugin = {
+      let plugin = {
         name: pluginName,
-        path: pluginPath
+        path: pluginPath,
+        type: pluginInfo.type
       };
+      if (typeof pluginInfo === 'object') {
+        plugin = {...plugin, ...{
+          type: pluginInfo.type,
+          fields: pluginInfo.fields,
+        }}
+      }
       plugins.push(plugin);
       dirPlugins.push(plugin);
     }
@@ -64,16 +72,19 @@ function getPlugins() {
   return plugins;
 }
 
-async function execPlugins(jsonPath, options) {
+async function execPlugins(jsonPath, options, type = 'any') {
   load();
   if (!plugins) return;
-  console.log(`\n${color.white}exec plugins:${color.reset}`);
+  // console.log(`\n${color.white}exec plugins (${type}):${color.reset}`);
   for (let plugin of plugins) {
-    console.log(`exec plugin ${plugin.name}:`);
+    if (type !== 'any' && plugin.type != type) continue;
+
+    // console.log(`exec plugin ${plugin.name} (type ${type}):`);
+    // console.log('plugin: ', plugin);
     const relPath = path.join('..', plugin.path);
     const pluginObj = require(relPath);
     await pluginObj(jsonPath, options);
-    console.log('');
+    // console.log('');
   }
 }
 

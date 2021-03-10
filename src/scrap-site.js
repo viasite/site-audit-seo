@@ -113,6 +113,19 @@ module.exports = async (baseUrl, options = {}) => {
     }
   }
 
+  // plugins fields
+  const plugins = registry.getPlugins();
+  for (let plugin of plugins) {
+    if (plugin.fields) for(let field of plugin.fields) {
+      if (typeof field === 'string') {
+        fields.push(field);
+      } else {
+        fields.push(field.name);
+      }
+      // console.log(`push ${field}`);
+    }
+  }
+
   // skip static
   if (options.skipStatic !== undefined) {
     SKIP_IMAGES = SKIP_CSS = SKIP_JS = options.skipStatic;
@@ -434,8 +447,9 @@ module.exports = async (baseUrl, options = {}) => {
       }
 
       result.result.mixed_content_url = mixedContentUrl;
-      if (result.response.url) result.response.url = decodeURI(
-        result.response.url);
+      if (result.response.url) {
+        result.response.url = decodeURI(result.response.url);
+      }
 
       // console validate output
       // was in onSuccess(), but causes exception on docs
@@ -452,6 +466,18 @@ module.exports = async (baseUrl, options = {}) => {
 
       // You can access the page object after requests
       result.content = await page.content();
+
+      // plugins afterRequest
+      try {
+        await registry.execPlugins(result, options, 'afterRequest');
+      } catch (e) {
+        console.log('Error while plugins afterRequest');
+        console.log(e);
+      }
+      // console.log('result.readability_reading: ', result.readability_reading);
+      // console.log('result.readability_readingMinutes: ', result.readability_readingMinutes);
+      // console.log('result.readability_readingTime: ', result.readability_readingTime);
+
       // You need to extend and return the crawled result
       return result;
     },
@@ -543,7 +569,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
 
       // user plugins
-      await registry.execPlugins(jsonPath, options);
+      await registry.execPlugins(jsonPath, options, 'afterScan');
 
       if (!options.webService) {
         if (options.upload) webPath = await uploadJson(jsonPath);

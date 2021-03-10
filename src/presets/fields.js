@@ -1,3 +1,4 @@
+const registry = require('../registry');
 const fieldsLighthouse = require('./fields-lighthouse');
 const fieldsLighthouseEn = require('./fields-lighthouse-en');
 const fields = [
@@ -382,5 +383,22 @@ for (let lhf of fieldsLighthouse) {
 
   fields.push(lhf);
 }
+
+// plugins fields
+const plugins = registry.getPlugins();
+for (let plugin of plugins) {
+  if (plugin.fields) for(let field of plugin.fields) {
+    if (typeof field === 'string') {
+      fields.push({
+        name: field,
+        groups: [plugin.name]
+      });
+    } else {
+      fields.push(field);
+    }
+    // console.log(`push ${field}`);
+  }
+}
+
 
 module.exports = {fields, getFieldByName};
