@@ -40,7 +40,7 @@ module.exports = async (baseUrl, options = {}) => {
   const protocol = url.parse(baseUrl).protocol;
 
   const log = (msg) => {
-    if (DEBUG) console.log(msg);
+    if (DEBUG) console.log(`${options.socket.id} ${msg}`);
     socketSend(options.socket, 'status', msg);
   };
   options.log = log;

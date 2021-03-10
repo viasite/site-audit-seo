@@ -39,6 +39,7 @@ const maxConcurrency = 2;
 let scansTotal = 0;
 let pagesTotal = 0;
 let connections = 0;
+const sockets = {};
 let q;
 const startedTime = Date.now();
 initQueue();
@@ -110,6 +111,8 @@ async function onScan(url, args, socket) {
   opts.consoleValidate = false; // not needed
   opts.socket = socket;
 
+  sockets[socket.id].opts = opts;
+
   // console.log('opts: ', opts);
   program.outBrief(opts);
 
@@ -174,6 +177,8 @@ function sendStats(socket) {
 function onSocketConnection(socket) {
   log("user connected to server", socket, true);
   connections++;
+  // console.log('socket: ', socket);
+  sockets[socket.id] = { socket, opts: {} };
 
   submitQueueEvents(socket);
 
@@ -191,6 +196,12 @@ function onSocketConnection(socket) {
         ? "anonymous user: " + auth.uid
         : "user authenticated: " + auth.email;
     log(msg, socket, true);
+
+    // restore last connection
+    if (auth.connectionId && sockets[auth.connectionId]) {
+      console.log('restore connection: ', auth.connectionId);
+      sockets[auth.connectionId].opts.socket = socket; // replace socket in scan options
+    }
 
     sendStats(socket);
   });
