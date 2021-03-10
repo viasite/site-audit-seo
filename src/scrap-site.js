@@ -260,7 +260,7 @@ module.exports = async (baseUrl, options = {}) => {
       if (!result.result) return;
 
       if (result.result.error) {
-        const msg = `${color.red}Error collect page data: result.result.error${color.reset}`;
+        const msg = `${color.red}evaluatePage: Error collect page data: result.result.error${color.reset}`;
         console.error(msg);
       }
       // console.log(`html_size: ${result.result.html_size}`);
@@ -319,13 +319,13 @@ module.exports = async (baseUrl, options = {}) => {
 
       /* page.on('error', function(err) {
         console.error(`${color.red}Page error:${color.reset} ` + err.toString());
-      }); */
+      });
 
-      /*page.on('close', function() {
+      page.on('close', function() {
         console.error(`${color.red}Page closed${color.reset} `);
-      });*/
+      });
 
-      /* page.on('pageerror', function(err) {
+      page.on('pageerror', function(err) {
         console.error(`${color.red}pegeerror:${color.reset} ` + err.toString());
       }); */
 

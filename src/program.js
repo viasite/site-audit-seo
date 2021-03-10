@@ -99,7 +99,7 @@ program.postParse = async () => {
   }
 
   // lang
-  if (!['en', 'ru'].includes(program.lang)) program.lang = systemLocale;
+  if (!['en', 'fr', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
   // no open file when no xlsx generate
   if (!program.xlsx) program.openFile = false;
@@ -306,7 +306,7 @@ program.outBrief = (options) => {
     {
       name: 'Language',
       value: program.lang,
-      comment: '--lang ' + (program.lang == 'ru' ? 'en' : 'ru'),
+      comment: '--lang [en, fr, ru]',
     },
     {
       name: 'Docs extensions',
