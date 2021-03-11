@@ -23,7 +23,7 @@
   "author": "Stanislav Popov",
   "license": "ISC",
   "dependencies": {
-    "@popstas/headless-chrome-crawler": "^1.8.2",
+    "@popstas/headless-chrome-crawler": "^1.8.3",
     "@popstas/xlsx-style": "^0.8.20",
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",

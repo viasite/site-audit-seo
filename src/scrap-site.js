@@ -498,14 +498,18 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   crawler.on('requeststarted', async opts => {
+    if (crawler._browser._connection._closed) return; // catch error after scan
+
     const queueCount = await crawler.queueSize();
     requestedCount = crawler.requestedCount() + 1;
     if (options.cancel) {
       crawler.setMaxRequest(requestedCount); // cancel command
     }
+    // console.log('crawler: ', crawler);
     log(`${requestedCount} ${decodeURI(opts.url)} (${queueCount})`);
   });
   crawler.on('requestfailed', error => {
+    if (crawler._browser._connection._closed) return; // catch error after scan
     console.error(
       `${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
   });
@@ -517,8 +521,9 @@ module.exports = async (baseUrl, options = {}) => {
     if (options.maxDepth > 1) console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
   crawler.on('maxrequestreached', options => {
-    console.log(
-      `\n\n${color.yellow}Max requests reached\nPlease, ignore this error:${color.reset}`);
+    if (crawler._browser._connection._closed) return; // catch error after scan
+    console.log(`\n\n${color.yellow}Max requests reached${color.reset}`);
+    // console.log(`${color.yellow}Please, ignore this error:${color.reset}`);
   });
 
   if (options.urlList) {
@@ -591,8 +596,14 @@ module.exports = async (baseUrl, options = {}) => {
           webPath = await uploadJson(jsonPath);
           socketSend(options.socket, 'result', {json: webPath});
         }
+
+        const mins = Number(t / 60).toFixed(1);
+        log(`Finish: ${mins} mins (${perPage} sec per page)`, options.socket);
+
         // return stats
         return {
+          time: t,
+          perPage: perPage,
           pages: requestedCount,
         }
       }
@@ -603,7 +614,7 @@ module.exports = async (baseUrl, options = {}) => {
     if (options.removeCsv) fs.unlinkSync(csvPath);
 
     const mins = Number(t / 60).toFixed(1);
-    console.log(`Finish: ${mins} mins (${perPage} sec per page)`);
+    log(`Finish: ${mins} mins (${perPage} sec per page)`, options.socket);
   };
 
   const tryFinish = async (tries) => {
