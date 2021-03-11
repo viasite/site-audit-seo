@@ -153,6 +153,7 @@ module.exports = async (baseUrl, options = {}) => {
     allowedDomains: options.limitDomain ? [domain] : undefined,
     skipRequestedRedirect: true, // all redirects marks as visited
     depthPriority: false, // without it find not all pages
+    retryCount: 1,
     args: ['--no-sandbox', '--disable-dev-shm-usage'], // puppeteer freezes without it
     exporter,
 
