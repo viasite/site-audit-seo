@@ -246,9 +246,9 @@ module.exports = async (baseUrl, options = {}) => {
         };
 
         // page date from microformat
-        const pageDate = $('[itemprop="datePublished"][datetime]').first();
+        const pageDate = $('[itemprop="datePublished"]').first();
         if (pageDate.length === 1) {
-          const dateStr = pageDate.attr('datetime');
+          const dateStr = pageDate.attr('datetime') || pageDate.attr('content');
           const d = new Date(dateStr);
           if (!isNaN(d.getTime())) {
             result.page_date = dateStr.substring(0, 10);
