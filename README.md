@@ -241,6 +241,9 @@ npm install site-audit-seo-readability
 npm install site-audit-seo-yake
 ```
 
+#### Disable plugins:
+You can add argument such: `--disable-plugins readability,yake`. It more faster, but less data extracted.
+
 ## Credentials
 Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-crawler) (puppeteer). Used forked version [@popstas/headless-chrome-crawler](https://github.com/popstas/headless-chrome-crawler).
 

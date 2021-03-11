@@ -78,6 +78,9 @@ async function execPlugins(jsonPath, options, type = 'any') {
   if (!plugins) return;
   // console.log(`\n${color.white}exec plugins (${type}):${color.reset}`);
   for (let plugin of plugins) {
+    if (options.disablePlugins.includes(plugin.name)){
+      continue;
+    }
     if (type !== 'any' && plugin.type != type) continue;
 
     // console.log(`exec plugin ${plugin.name} (type ${type}):`);

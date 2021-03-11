@@ -116,6 +116,9 @@ module.exports = async (baseUrl, options = {}) => {
   // plugins fields
   const plugins = registry.getPlugins();
   for (let plugin of plugins) {
+    if (options.disablePlugins.includes(plugin.name)){
+      continue;
+    }
     if (plugin.fields) for(let field of plugin.fields) {
       if (typeof field === 'string') {
         fields.push(field);

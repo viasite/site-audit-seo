@@ -218,6 +218,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('openFile', undefined)).
   option('--no-open-file', `Don't open file after scan`).
   option('--no-console-validate', `Don't output validate messages in console`).
+  option('--disable-plugins <plugins>', `Comma-separated plugin list`, list).
   name('site-audit-seo').
   version(packageJson.version).
   usage('-u https://example.com --upload')
@@ -253,7 +254,8 @@ program.getOptions = () => {
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // chrome-crawler, не учитывать блокировки в robots.txt
     influxdb: program.influxdb,                 // конфиг influxdb
-    urls: program.urls                          // адреса для одиночного сканирования
+    urls: program.urls,                         // адреса для одиночного сканирования
+    disablePlugins: program.disablePlugins
   };
   return opts;
 }

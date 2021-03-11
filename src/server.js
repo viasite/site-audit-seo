@@ -95,6 +95,7 @@ async function onScan(url, args, socket) {
   delete(program.consoleValidate);
   delete(program.influxdb);
   delete(program.urls);
+  program.disablePlugins = [];
 
   program.exitOverride();
   try {
