@@ -143,4 +143,17 @@ module.exports = {
       'schema_types',
     ],
   },
+  content: {
+    name: 'content',
+    groups: ['info'],
+    columns: [
+      'url',
+      'page_date',
+      'og_image',
+      'h1',
+      'readability_length',
+      'readability_minutes',
+      'readability_text',
+    ],
+  },
 };
