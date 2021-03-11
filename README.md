@@ -131,6 +131,7 @@ Options:
 - request_time
 - title
 - h1
+- page_date
 - description
 - keywords
 - og_title

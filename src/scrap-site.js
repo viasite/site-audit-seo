@@ -191,11 +191,13 @@ module.exports = async (baseUrl, options = {}) => {
         const isCanonical = canonical ?
           (canonical == decodeURI(window.location.href) ||
           canonical == decodeURI(relUrl) ? 1 : 0) : '';
+
         const result = {
           request_time:
             window.performance.timing.responseEnd -
             window.performance.timing.requestStart,
           title: $('title').text(),
+          page_date: '',
           h1: $('h1').text().trim(),
           h1_count: $('h1').length,
           h2_count: $('h2').length,
@@ -242,11 +244,21 @@ module.exports = async (baseUrl, options = {}) => {
               replace(/https?:\/\/schema\.org\//, ''))).toArray().join(', '),
         };
 
+        // page date from microformat
+        const pageDate = $('[itemprop="datePublished"][datetime]').first();
+        if (pageDate.length === 1) {
+          const dateStr = pageDate.attr('datetime');
+          const d = new Date(dateStr);
+          if (!isNaN(d.getTime())) {
+            result.page_date = dateStr.substring(0, 10);
+          }
+        }
+
         for (let name in customFields) {
           try {
             result[name] = eval(customFields[name].replace(/`/g, '\''));
           } catch(e) {
-            result[name] = `fiels ${name}: error parse ${customFields[name]}`;
+            result[name] = `field ${name}: error parse ${customFields[name]}`;
           }
           // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
         }
@@ -525,7 +537,7 @@ module.exports = async (baseUrl, options = {}) => {
   });
   crawler.on('maxrequestreached', options => {
     if (crawler._browser._connection._closed) return; // catch error after scan
-    console.log(`\n\n${color.yellow}Max requests reached${color.reset}`);
+    console.log(`\n${color.yellow}Max requests reached${color.reset}`);
     // console.log(`${color.yellow}Please, ignore this error:${color.reset}`);
   });
 

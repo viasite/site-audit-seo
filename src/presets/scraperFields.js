@@ -12,6 +12,7 @@ module.exports = {
     'result.request_time',
     'result.title',
     'result.h1',
+    'result.page_date',
     'result.description',
     'result.keywords',
     'result.og_title',

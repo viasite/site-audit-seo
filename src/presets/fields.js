@@ -81,6 +81,12 @@ const fields = [
     groups: ['seo'],
   },
   {
+    name: 'page_date',
+    comment: 'Дата страницы',
+    comment_en: 'Page date',
+    groups: ['content'],
+  },
+  {
     name: 'description',
     comment: 'Description',
     /*validate: {
