@@ -78,7 +78,7 @@ const fields = [
     name: 'h1',
     comment: 'h1',
     comment_en: 'h1',
-    groups: ['seo'],
+    groups: ['seo', 'metatags'],
   },
   {
     name: 'page_date',
