@@ -28,6 +28,9 @@ const fields = [
     validate: {
       error: '== 0',
     },
+    stat: {
+      type: 'enum',
+    },
     groups: ['canonical'],
     type: 'boolean',
   },
@@ -43,6 +46,9 @@ const fields = [
     comment_en: 'Scan depth',
     groups: ['info'],
     type: 'integer',
+    stat: {
+      type: 'enum',
+    },
   },
   {
     name: 'status',
@@ -50,6 +56,9 @@ const fields = [
     comment_en: 'HTTP answer code',
     validate: {
       error: '!= 200',
+    },
+    stat: {
+      type: 'enum',
     },
     groups: ['info'],
     type: 'integer',
@@ -62,6 +71,10 @@ const fields = [
       warning: '> 500',
       error: '> 1000',
     },
+    stat: {
+      type: 'ranges',
+      ranges: ['< 100', '100-499', '500-999', '1000-2000', '> 2000']
+    },
     groups: ['perf'],
     type: 'integer',
   },
@@ -71,6 +84,9 @@ const fields = [
     /*validate: {
         error: 'len() == 0' // TODO:
     },*/
+    stat: {
+      type: 'unique',
+    },
     groups: ['metatags'],
     align: 'right',
   },
@@ -78,6 +94,9 @@ const fields = [
     name: 'h1',
     comment: 'h1',
     comment_en: 'h1',
+    stat: {
+      type: 'unique',
+    },
     groups: ['seo', 'metatags'],
   },
   {
@@ -92,11 +111,17 @@ const fields = [
     /*validate: {
         warning: 'len() > 256',
     },*/
+    stat: {
+      type: 'unique',
+    },
     groups: ['metatags'],
   },
   {
     name: 'keywords',
     comment: 'Keywords',
+    stat: {
+      type: 'unique',
+    },
     groups: ['metatags'],
   },
   {
@@ -123,6 +148,9 @@ const fields = [
     validate: {
       warning: '== 0',
       error: '> 1',
+    },
+    stat: {
+      type: 'enum',
     },
     groups: ['seo'],
     type: 'integer',
@@ -155,6 +183,9 @@ const fields = [
     validate: {
       warning: '> 1',
     },
+    stat: {
+      type: 'enum',
+    },
     groups: ['canonical'],
     type: 'integer',
   },
@@ -163,6 +194,9 @@ const fields = [
     comment_en: 'Google AMP',
     validate: {
       warning: '< 1',
+    },
+    stat: {
+      type: 'enum',
     },
     groups: ['metatags'],
     type: 'integer',
@@ -233,6 +267,9 @@ const fields = [
     validate: {
       warning: '< 5'
     },
+    stat: {
+      type: 'average',
+    },
     type: 'integer',
   },
   {
@@ -242,6 +279,10 @@ const fields = [
     validate: {
       warning: '> 1500',
       error: '> 3000',
+    },
+    stat: {
+      type: 'ranges',
+      ranges: ['< 500', '500-1499', '1500-3000', '> 3000']
     },
     groups: ['perf'],
     type: 'integer',
@@ -254,6 +295,10 @@ const fields = [
       warning: '> 500000',
       error: '> 1000000',
     },
+    stat: {
+      type: 'ranges',
+      ranges: ['< 100000', '100000-500000', '> 500000']
+    },
     groups: ['perf'],
     type: 'integer',
   },
@@ -264,6 +309,10 @@ const fields = [
     comment_en: 'Lighthouse: Performance',
     groups: ['Lighthouse: Main'],
     type: 'integer',
+    stat: {
+      type: 'ranges',
+      ranges: ['< 50', '50-89', '90-100']
+    },
   },
   {
     name: 'lighthouse_scores_pwa',
