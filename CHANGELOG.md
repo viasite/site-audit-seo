@@ -1,3 +1,26 @@
+# [5.1.0](https://github.com/viasite/site-audit-seo/compare/v5.0.1...v5.1.0) (2021-03-13)
+
+
+### Bug Fixes
+
+* add h1 field to metatags group ([bea02da](https://github.com/viasite/site-audit-seo/commit/bea02dabfa77dbd51db34265256c7b5fc57bf736))
+* arg --disable-plugins: set default [] ([9fcf266](https://github.com/viasite/site-audit-seo/commit/9fcf26628007061535f08ae7b02d5279929e5c06))
+* fix command line mode ([dad7d54](https://github.com/viasite/site-audit-seo/commit/dad7d541ba69d57cd526a06f9054d0b66bbc05db))
+* **scan:** page_date when itemprop="datePublished"[content] ([91ee04e](https://github.com/viasite/site-audit-seo/commit/91ee04e6cbc72913b0c7de79e3410792ca2d552e))
+* add package-data.json to git ([e5fef0b](https://github.com/viasite/site-audit-seo/commit/e5fef0b70dd685630a6791bf3fb49c1023965e83))
+* page scan retryCount 3 -> 1 (faster, same result) ([fbf0619](https://github.com/viasite/site-audit-seo/commit/fbf06198bfbaac859c2da15f99e54a457d63a7b0))
+* suppress headless-chrome-crawler exceptions after max requests reached ([ac374b3](https://github.com/viasite/site-audit-seo/commit/ac374b3313886ba04978b529188d7bf05e556aa0))
+
+
+### Features
+
+* **json:** save scan options for rescan ([0d5fd47](https://github.com/viasite/site-audit-seo/commit/0d5fd4791a0b81524e2f39f7bad2bf426fb25749))
+* **presets:** add column preset "content" ([236574d](https://github.com/viasite/site-audit-seo/commit/236574d4eaa1a74769acb4c86c93fd2d1d36822f))
+* **scan:** new field: page_date (from microdata) ([f8eecca](https://github.com/viasite/site-audit-seo/commit/f8eeccaab1559a3ed9a8efeef12568d94d2b95cc))
+* --disable-plugins command line argument ([3a483c3](https://github.com/viasite/site-audit-seo/commit/3a483c3fb1b6b6ba53017d6e833b03f1abfe472d))
+
+
+
 ## [5.0.1](https://github.com/viasite/site-audit-seo/compare/v5.0.0...v5.0.1) (2021-03-10)
 
 

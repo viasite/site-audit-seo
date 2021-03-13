@@ -1,6 +1,6 @@
 {
   "name": "site-audit-seo",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv, xlsx, Google Drive.",
   "main": "src/index.js",
   "repository": {
