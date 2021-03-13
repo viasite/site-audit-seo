@@ -218,7 +218,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('openFile', undefined)).
   option('--no-open-file', `Don't open file after scan`).
   option('--no-console-validate', `Don't output validate messages in console`).
-  option('--disable-plugins <plugins>', `Comma-separated plugin list`, list).
+  option('--disable-plugins <plugins>', `Comma-separated plugin list`, list, []).
   name('site-audit-seo').
   version(packageJson.version).
   usage('-u https://example.com --upload')
