@@ -7,7 +7,8 @@ const columns = require('../presets/columns');
 const defaultField = 'url';
 
 // return json object
-module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter) => {
+// TODO: too much arguments
+module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, args) => {
   // read csv to workbook
   const data = {};
 
@@ -34,6 +35,12 @@ module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter) => {
 
   // columns
   data.columns = buildColumns(columns, preset);
+
+  data.scan = {
+    url: url,
+    args: args,
+    version: require('../../package.json').version,
+  }
 
   // write
   const raw = JSON.stringify(data);

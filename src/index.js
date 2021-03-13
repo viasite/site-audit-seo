@@ -32,7 +32,7 @@ async function start() {
       }
 
       if (program.json) {
-        await saveAsJson(csvPath, jsonPath, program.lang, program.preset);
+        await saveAsJson(csvPath, jsonPath, program.lang, program.preset, false, program.urls[0], args);
 
         if (program.upload) webPath = await uploadJson(jsonPath);
 
@@ -52,6 +52,7 @@ async function start() {
   }
 
   const opts = program.getOptions();
+  opts.args = process.argv.slice(2);
   program.outBrief(opts);
 
   const sites = program.urls;

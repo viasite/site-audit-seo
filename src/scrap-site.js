@@ -591,7 +591,7 @@ module.exports = async (baseUrl, options = {}) => {
     }
 
     if (options.json) {
-      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter);
+      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter, baseUrl, options.args);
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
 
       // user plugins

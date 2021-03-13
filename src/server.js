@@ -108,6 +108,7 @@ async function onScan(url, args, socket) {
   await program.postParse();
 
   const opts = program.getOptions();
+  opts.args = args;
   opts.webService = true;
   opts.consoleValidate = false; // not needed
   opts.socket = socket;
