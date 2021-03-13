@@ -40,7 +40,8 @@ module.exports = async (baseUrl, options = {}) => {
   const protocol = url.parse(baseUrl).protocol;
 
   const log = (msg) => {
-    if (DEBUG) console.log(`${options.socket.id} ${msg}`);
+    const socketId = options.socket ? `options.socket.id ` : '';
+    if (DEBUG) console.log(`${socketId}${msg}`);
     socketSend(options.socket, 'status', msg);
   };
   options.log = log;
@@ -326,7 +327,7 @@ module.exports = async (baseUrl, options = {}) => {
       page.on('requestfailed', request => {
         if (request.notHTTPS) {
           console.error(
-            `${color.red}mixed content: ${request.url()}${color.reset}`);
+            `${color.red}${crawler._options.url}: mixed content: ${request.url()}${color.reset}`);
         } else {
           const isStatic = ['image', 'script', 'stylesheet'].includes(request.resourceType());
           if (!isStatic) console.log('Request failed: ', request.url() + ' ' + request.failure().errorText);
@@ -530,6 +531,7 @@ module.exports = async (baseUrl, options = {}) => {
       `${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
   });
   crawler.on('requestdisallowed', options => {
+    log(`Disallowed in robots.txt: ${decodeURI(options.url)}`, options.socket);
     console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(
       options.url)}${color.reset}`);
   });
