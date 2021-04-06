@@ -16,6 +16,7 @@ services:
     ports:
     - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
+    # - .:/app
     - ./data:/app/data
     - ./data/reports:/app/data/reports
     - ./data/db-docker.json:/app/data/db.json
@@ -44,6 +45,7 @@ services:
   yake:
     image: liaad/yake-server
     container_name: ${NAMESPACE}-yake
+    restart: always
     ports:
     - 5303:5000
 

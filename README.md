@@ -16,90 +16,21 @@ Demo:
 ## Using without install
 Open https://viasite.github.io/site-audit-seo-viewer/.
 
-## Install with docker-compose
-``` bash
-git clone https://github.com/viasite/site-audit-seo
-cd site-audit-seo
-docker-compose pull # for skip build step
-docker-compose up -d
-```
-
-Service will available on http://localhost:5302
-
-##### Default ports:
-- Backend: `5301`
-- Frontend: `5302`
-
-You can change it in `.env` file or in `docker-compose.yml`.
-
-
-## Install with NPM:
-``` bash
-npm install -g site-audit-seo
-```
-
-#### For linux users
-``` bash
-npm install -g site-audit-seo --unsafe-perm=true
-```
-
-After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user.
-
-Run this (replace `$USER` to your username or run from your user, not from `root`):
-``` bash
-sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
-```
-
-Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
-
-## Usage:
-```
-$ site-audit-seo --help
-Usage: site-audit-seo -u https://example.com --upload
-
-Options:
-  -u --urls <urls>             Comma separated url list for scan
-  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all) (default: "seo")
-  -e, --exclude <fields>       Comma separated fields to exclude from results
-  -d, --max-depth <depth>      Max scan depth (default: 10)
-  -c, --concurrency <threads>  Threads number (default: by cpu cores)
-  --lighthouse                 Appends base Lighthouse fields to preset
-  --delay <ms>                 Delay between requests (default: 0)
-  -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
-  --no-skip-static             Scan static files
-  --no-limit-domain            Scan not only current domain
-  --docs-extensions            Comma-separated extensions that will be add to table (default: doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip)
-  --follow-xml-sitemap         Follow sitemap.xml (default: false)
-  --ignore-robots-txt          Ignore disallowed in robots.txt (default: false)
-  -m, --max-requests <num>     Limit max pages scan (default: 0)
-  --no-headless                Show browser GUI while scan
-  --no-remove-csv              No delete csv after xlsx generate
-  --out-dir <dir>              Output directory (default: ".")
-  --csv <path>                 Skip scan, only convert csv to xlsx
-  --xlsx                       Save as XLSX (default: false)
-  --gdrive                     Publish sheet to google docs (default: false)
-  --json                       Output results in JSON (default: false)
-  --upload                     Upload JSON to public web (default: false)
-  --no-color                   No console colors
-  --lang <lang>                Language (en, ru, default: system language)
-  --open-file                  Open file after scan (default: yes on Windows and MacOS)
-  --no-open-file               Don't open file after scan
-  --no-console-validate        Don't output validate messages in console
-  -V, --version                output the version number
-  -h, --help                   display help for command
-```
-
 ## Features:
 - Crawls the entire site, collects links to pages and documents
-- Validation summary after scan
-- Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `ppt`,` pptx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
-- Search pages with SSL mixed content
-- Each site is saved to a file with a domain name in `~/site-audit-seo/`
 - Does not follow links outside the scanned domain (configurable)
-- Does not load images, css, js (configurable)
-- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L98))
 - Analyse each page with Lighthouse (see below)
+- Analyse main page text with Mozilla Readability and Yake
+- Search pages with SSL mixed content
 - Scan list of urls, `--url-list`
+- Set default report fields and filters
+- Scan presets
+- Documents with the extensions `doc`,` docx`, `xls`,` xlsx`, `ppt`,` pptx`, `pdf`,` rar`, `zip` are added to the list with a depth == 0
+
+## Technical details:
+- Does not load images, css, js (configurable)
+- Each site is saved to a file with a domain name in `~/site-audit-seo/`
+- Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L98))
 
 ### XLSX features
 - The first row and the first column are fixed
@@ -116,8 +47,12 @@ Options:
 - Field groups by categories
 - Filters presets (ex. `h1_count != 1`)
 - Color validation
+- Verbose page details (`+` button)
+- Direct URL to same report with selected fields, filters, sort
+- Stats for whole scanned pages, validation summary
 - Persistent URL to report when `--upload` using
 - Switch between last uploaded reports
+- Rescan current report
 
 
 ### Fields list (18.08.2020):
@@ -165,6 +100,84 @@ Options:
 - lighthouse_total-blocking-time
 - lighthouse_cumulative-layout-shift
 - and 150 more lighthouse tests!
+
+
+## Install
+
+## Install with docker-compose
+``` bash
+git clone https://github.com/viasite/site-audit-seo
+cd site-audit-seo
+docker-compose pull # for skip build step
+docker-compose up -d
+```
+
+Service will available on http://localhost:5302
+
+##### Default ports:
+- Backend: `5301`
+- Frontend: `5302`
+- Yake: `5303`
+
+You can change it in `.env` file or in `docker-compose.yml`.
+
+
+## Install with NPM:
+``` bash
+npm install -g site-audit-seo
+```
+
+#### For linux users
+``` bash
+npm install -g site-audit-seo --unsafe-perm=true
+```
+
+After installing on Ubuntu, you may need to change the owner of the Chrome directory from root to user.
+
+Run this (replace `$USER` to your username or run from your user, not from `root`):
+``` bash
+sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
+```
+
+Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
+
+## Command line usage:
+```
+$ site-audit-seo --help
+Usage: site-audit-seo -u https://example.com --upload
+
+Options:
+  -u --urls <urls>             Comma separated url list for scan
+  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all) (default: "seo")
+  -e, --exclude <fields>       Comma separated fields to exclude from results
+  -d, --max-depth <depth>      Max scan depth (default: 10)
+  -c, --concurrency <threads>  Threads number (default: by cpu cores)
+  --lighthouse                 Appends base Lighthouse fields to preset
+  --delay <ms>                 Delay between requests (default: 0)
+  -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
+  --no-skip-static             Scan static files
+  --no-limit-domain            Scan not only current domain
+  --docs-extensions            Comma-separated extensions that will be add to table (default: doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip)
+  --follow-xml-sitemap         Follow sitemap.xml (default: false)
+  --ignore-robots-txt          Ignore disallowed in robots.txt (default: false)
+  -m, --max-requests <num>     Limit max pages scan (default: 0)
+  --no-headless                Show browser GUI while scan
+  --no-remove-csv              No delete csv after xlsx generate
+  --out-dir <dir>              Output directory (default: ".")
+  --csv <path>                 Skip scan, only convert csv to xlsx
+  --xlsx                       Save as XLSX (default: false)
+  --gdrive                     Publish sheet to google docs (default: false)
+  --json                       Output results in JSON (default: false)
+  --upload                     Upload JSON to public web (default: false)
+  --no-color                   No console colors
+  --lang <lang>                Language (en, ru, default: system language)
+  --open-file                  Open file after scan (default: yes on Windows and MacOS)
+  --no-open-file               Don't open file after scan
+  --no-console-validate        Don't output validate messages in console
+  -V, --version                output the version number
+  -h, --help                   display help for command
+```
+
 
 
 ## Custom fields
@@ -362,6 +375,7 @@ site-audit-seo -u https://example.com --lighthouse
 - [Offline w3c validation](https://www.npmjs.com/package/html-validator)
 - [Words count](https://github.com/IonicaBizau/count-words)
 - [Sentences count](https://github.com/NaturalNode/natural)
+- Do not load image with non-standard URL, like [this](https://lh3.googleusercontent.com/pw/ACtC-3dd9Ng2Jdq713vsFqqTrNT6j_nyH3mFsRAzPbIAzWvDoRkiKSW2MIQOxrtpPVab4e9BElcL_Rlr8eGT68R7ZBnLCHpnHHJNRcd8JadddrxpVVClu1iOnkxPUQXOx-7OoNDmeEtH0xyg7NkEI8VF0oJRXQ=w1423-h1068-no?authuser=0)
 - External follow links
 - Broken images
 - Breadcrumbs - https://github.com/glitchdigital/structured-data-testing-tool

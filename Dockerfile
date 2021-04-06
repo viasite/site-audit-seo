@@ -1,6 +1,7 @@
-FROM buildkite/puppeteer:latest
+FROM buildkite/puppeteer:8.0.0
 
 # ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-"false"}
+# ARG PUPPETEER_EXECUTABLE_PATH=/node_modules/puppeteer/.local-chromium/linux-782078/chrome-linux/chrome
 
 # RUN apk update && \
 #     apk upgrade && \

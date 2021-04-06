@@ -155,7 +155,7 @@ module.exports = async (baseUrl, options = {}) => {
     skipRequestedRedirect: true, // all redirects marks as visited
     depthPriority: false, // without it find not all pages
     retryCount: 1,
-    args: ['--no-sandbox', '--disable-dev-shm-usage'], // puppeteer freezes without it
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'], // puppeteer freezes without it
     exporter,
 
     // url ignore rules
@@ -501,6 +501,7 @@ module.exports = async (baseUrl, options = {}) => {
   };
 
   const crawlerOptions = {...defaultOptions, ...options};
+  crawlerOptions.args = defaultOptions.args; // override args for chromium
 
   // start
   const start = Date.now();
