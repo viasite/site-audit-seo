@@ -27,7 +27,11 @@ const fields = [
             "# Lighthouse: Производительность",
             "Производительность: Показатели"
         ],
-        "type": "integer"
+        "type": "integer",
+        stat: {
+            type: 'ranges',
+            ranges: ['< 2500', '2500-4000', '> 4000']
+        }
     },
     {
         "name": "lighthouse_interactive",

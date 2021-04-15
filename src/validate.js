@@ -66,7 +66,7 @@ const colsValidate = {
   // https://web.dev/lighthouse-performance/
   'first-contentful-paint': warnErrorThresholds(2000, 4000),
   'speed-index': warnErrorThresholds(4300, 5800),
-  'largest-contentful-paint': warnErrorThresholds(2000, 4000),
+  'largest-contentful-paint': warnErrorThresholds(2500, 4000),
   'interactive': warnErrorThresholds(3800, 7300),
   'total-blocking-time': warnErrorThresholds(300, 600),
   'cumulative-layout-shift': warnErrorThresholds(100, 250),
