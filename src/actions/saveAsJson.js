@@ -8,7 +8,7 @@ const defaultField = 'url';
 
 // return json object
 // TODO: too much arguments
-module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, args) => {
+module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, args, scanTime) => {
   // read csv to workbook
   const data = {};
 
@@ -40,6 +40,7 @@ module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, arg
     url: url,
     args: args,
     version: require('../../package.json').version,
+    time: scanTime,
   }
 
   // write

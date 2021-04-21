@@ -18,6 +18,7 @@ async function start() {
   await program.postParse();
 
   // convert csv and exit
+  // TODO: legacy, remove it!
   if (program.csv) {
     program.removeCsv = false;
     const csvPath = expandHomedir(program.csv);
@@ -32,7 +33,7 @@ async function start() {
       }
 
       if (program.json) {
-        await saveAsJson(csvPath, jsonPath, program.lang, program.preset, false, program.urls[0], args);
+        await saveAsJson(csvPath, jsonPath, program.lang, program.preset, false, program.urls[0], args, 0);
 
         if (program.upload) webPath = await uploadJson(jsonPath);
 

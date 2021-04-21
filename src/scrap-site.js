@@ -558,8 +558,8 @@ module.exports = async (baseUrl, options = {}) => {
   await crawler.close();
 
   // after scan
-  const t = Math.round((Date.now() - start) / 1000);
-  const perPage = Math.round((t / requestedCount) * 100) / 100;
+  const scanTime = Math.round((Date.now() - start) / 1000);
+  const perPage = Math.round((scanTime / requestedCount) * 100) / 100;
 
   // close lighthouse's chrome
   await chromeLauncher.killAll();
@@ -592,7 +592,7 @@ module.exports = async (baseUrl, options = {}) => {
     }
 
     if (options.json) {
-      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter, baseUrl, options.args);
+      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter, baseUrl, options.args, scanTime);
       if (!options.removeJson) console.log('Saved to ' + jsonPath);
 
       // user plugins
@@ -616,7 +616,7 @@ module.exports = async (baseUrl, options = {}) => {
           socketSend(options.socket, 'result', {json: webPath});
         }
 
-        const mins = Number(t / 60).toFixed(1);
+        const mins = Number(scanTime / 60).toFixed(1);
         log(`Finish: ${mins} mins (${perPage} sec per page)`, options.socket);
 
         // return stats
@@ -632,7 +632,7 @@ module.exports = async (baseUrl, options = {}) => {
 
     if (options.removeCsv) fs.unlinkSync(csvPath);
 
-    const mins = Number(t / 60).toFixed(1);
+    const mins = Number(scanTime / 60).toFixed(1);
     log(`Finish: ${mins} mins (${perPage} sec per page)`, options.socket);
   };
 
