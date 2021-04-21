@@ -621,7 +621,7 @@ module.exports = async (baseUrl, options = {}) => {
 
         // return stats
         return {
-          time: t,
+          time: scanTime,
           perPage: perPage,
           pages: requestedCount,
         }
