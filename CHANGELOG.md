@@ -1,3 +1,12 @@
+## [5.1.4](https://github.com/viasite/site-audit-seo/compare/v5.1.3...v5.1.4) (2021-04-21)
+
+
+### Bug Fixes
+
+* was error after save scan time ([2e0b05a](https://github.com/viasite/site-audit-seo/commit/2e0b05a1c405a7ec6109a3efe5c0b99c051d01ce))
+
+
+
 ## [5.1.3](https://github.com/viasite/site-audit-seo/compare/v5.1.2...v5.1.3) (2021-04-21)
 
 
