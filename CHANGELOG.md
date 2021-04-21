@@ -1,3 +1,17 @@
+## [5.1.2](https://github.com/viasite/site-audit-seo/compare/v5.1.1...v5.1.2) (2021-04-21)
+
+
+### Bug Fixes
+
+* lighthouse_largest-contentful-paint validate ([2b752c9](https://github.com/viasite/site-audit-seo/commit/2b752c9))
+
+
+### Features
+
+* save report scan time ([05dc3af](https://github.com/viasite/site-audit-seo/commit/05dc3af))
+
+
+
 ## [5.1.1](https://github.com/viasite/site-audit-seo/compare/v5.1.0...v5.1.1) (2021-04-06)
 
 
