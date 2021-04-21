@@ -2,6 +2,7 @@ const path = require('path');
 const lowdb = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
+const pjson = require('../package.json');
 const scrapSite = require("./scrap-site");
 const registry = require("./registry");
 const utils = require("./utils");
@@ -168,6 +169,7 @@ function serverState() {
     scansTotalAll: stats.scansTotal || 0,
     pagesTotalAll: stats.pagesTotal || 0,
     uptime: Math.floor((Date.now() - startedTime) / 1000),
+    serverVersion: pjson.version,
     reboots: reboots,
   }
 }
@@ -277,7 +279,7 @@ function initExpress(app) {
   app.use("/reports", express.static("data/reports"));
 
   app.get("/", async (req, res) => {
-    res.send("site-audit-seo working");
+    res.send(`site-audit-seo ${pjson.version} working`);
   });
 
   const port = process.env.PORT || 5301;
