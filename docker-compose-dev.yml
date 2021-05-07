@@ -1,0 +1,39 @@
+---
+  version: '3'
+  
+  services:
+
+    backend:
+      image: viasite/site-audit-seo:latest
+      restart: always
+      build:
+        context: .
+        dockerfile: Dockerfile
+      environment:
+        PORT: ${SERVER_PORT}
+      ports:
+        - ${SERVER_PORT}:${SERVER_PORT}
+      volumes:
+        - ./:/app
+        # - ./data/reports/:/app/data/reports
+        # - ./data:/app/data
+      # command:
+      #   npm run server
+
+    frontend:
+      image: viasite/site-audit-seo-viewer:latest
+      build: data/front
+      environment:
+        HOST: 0.0.0.0 # for nuxt
+        PORT: ${FRONT_PORT}
+        SERVER_URL: ${SERVER_URL}
+        FRONTEND_URL: ${FRONTEND_URL}
+        JSON_URL: ${JSON_URL}
+        SCAN_DEFAULT_MAX_REQUESTS: ${SCAN_DEFAULT_MAX_REQUESTS}
+      ports:
+        - ${FRONT_PORT}:${FRONT_PORT}
+      volumes:
+        - ./data/front/:/app
+      # working_dir: /app
+      # command:
+      #   npm run dev-popstas-prod
