@@ -24,6 +24,7 @@ const io = require("socket.io")(http, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+  pingTimeout: 30000, // https://github.com/socketio/socket.io/issues/3025
 });
 
 // state
@@ -114,7 +115,11 @@ async function onScan(url, args, socket) {
   opts.consoleValidate = false; // not needed
   opts.socket = socket;
 
-  sockets[socket.id].opts = opts;
+  const prevSocketId = getKeyBySocketId(socket.id);
+  // console.log('socket.id: ', socket.id);
+  // console.log('sockets: ', sockets);
+  // console.log('prevSocketId: ', prevSocketId);
+  sockets[prevSocketId || socket.id].opts = opts;
 
   // console.log('opts: ', opts);
   program.outBrief(opts);
@@ -125,6 +130,13 @@ async function onScan(url, args, socket) {
   }
   q.push(async function () {
     log(`Start audit: ${url}`, socket, true);
+
+    // https://github.com/socketio/socket.io/issues/3025
+    const pingInterval = setInterval(() => {
+      opts.socket.emit('ping', '1');
+      // log('ping', opts.socket, true);
+    }, 5000);
+
     const res = await scrapSite(url, opts);
 
     if (res && res.pages) {
@@ -136,6 +148,8 @@ async function onScan(url, args, socket) {
       db.set('stats.scansTotal', stats.scansTotal ? stats.scansTotal + 1 : 1).write();
       db.write();
     }
+
+    clearInterval(pingInterval);
 
     log(`Finish audit: ${url}`, socket, true);
     return res;
@@ -156,8 +170,24 @@ function initQueue() {
   });
 }
 
+function getKeyBySocketId(socketId) {
+  for (let sid in sockets) {
+    const s = sockets[sid];
+    if (s.opts && s.opts.socket && s.opts.socket.id == socketId) return sid;
+  }
+}
+
 function serverState() {
   const stats = db.get('stats').value() || {};
+
+  const socketsList = [];
+
+  for (let sid in sockets) {
+    const s = sockets[sid];
+    const msg = s.opts && s.opts.socket && s.opts.socket.id != sid ? `${sid} => ${s.opts.socket.id}` : sid;
+    // const msg = `${sid} => ${sockets[sid].opts.socket.id}`;
+    socketsList.push(msg);
+  }
 
   return {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
@@ -171,6 +201,7 @@ function serverState() {
     uptime: Math.floor((Date.now() - startedTime) / 1000),
     serverVersion: pjson.version,
     reboots: reboots,
+    // sockets: socketsList, // only for debug!
   }
 }
 
@@ -181,7 +212,7 @@ function sendStats(socket) {
 function onSocketConnection(socket) {
   log("user connected to server", socket, true);
   connections++;
-  // console.log('socket: ', socket);
+  // console.log('socket.id: ', socket.id);
   sockets[socket.id] = { socket, opts: {} };
 
   submitQueueEvents(socket);
@@ -202,9 +233,14 @@ function onSocketConnection(socket) {
     log(msg, socket, true);
 
     // restore last connection
-    if (auth.connectionId && sockets[auth.connectionId]) {
-      console.log('restore connection: ', auth.connectionId);
-      sockets[auth.connectionId].opts.socket = socket; // replace socket in scan options
+    if (auth.connectionId) {
+      const prevSocketId = getKeyBySocketId(auth.connectionId);
+
+      if (prevSocketId) {
+        console.log(`restore connection: ${prevSocketId} -> ${socket.id}`);
+        sockets[prevSocketId].opts.socket = socket; // replace socket in scan options
+        delete(sockets[socket.id]);
+      }
     }
 
     sendStats(socket);
@@ -216,13 +252,15 @@ function onSocketConnection(socket) {
 
   socket.on("cancel", () => {
     log('cancel command...', socket);
-    sockets[socket.id].opts.cancel = true;
+    const prevSocketId = getKeyBySocketId(socket.id);
+    if (prevSocketId) sockets[prevSocketId].opts.cancel = true;
   });
 
   socket.on("disconnect", () => {
     clearInterval(interval);
     connections--;
-    console.log("user disconnected");
+    log(`user disconnected: ${socket.id}`, socket, true);
+    // delete(sockets[socket.id]); // TODO: remove for restore connection
   });
 }
 

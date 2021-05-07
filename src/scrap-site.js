@@ -28,10 +28,29 @@ let SKIP_JS = true;
 // кол-во попыток выполнить actions
 const finishTries = 5;
 
+let disconnectedLog = [];
+
+// resend messages while disconnected
+function sendDisconnected(socket) {
+  if (disconnectedLog.length == 0) return;
+  const log = [...disconnectedLog];
+  disconnectedLog = [];
+  for (let item of log) {
+    socketSend(socket, item.event, item.msg);
+  }
+}
+
 function socketSend(socket, event, msg) {
   if (socket) {
-    // console.log(event + socket.uid + ': ', msg);
-    socket.emit(event + (socket.uid || ''), msg);
+    const channel = event + (socket.uid || '')
+    // console.log(channel + ': ', msg);
+
+    if (socket.connected) {
+      sendDisconnected(socket);
+      socket.emit(channel, msg);
+    } else {
+      disconnectedLog.push({ event, msg });
+    }
   }
 }
 
@@ -41,7 +60,8 @@ module.exports = async (baseUrl, options = {}) => {
 
   const log = (msg) => {
     const socketId = options.socket ? `${options.socket.id} ` : '';
-    if (DEBUG) console.log(`${socketId}${msg}`);
+    const disconnected = options.socket && !options.socket.connected ? '(disconnected) ' : '';
+    if (DEBUG) console.log(`${socketId}${disconnected}${msg}`);
     socketSend(options.socket, 'status', msg);
   };
   options.log = log;
@@ -486,6 +506,8 @@ module.exports = async (baseUrl, options = {}) => {
 
       // plugins afterRequest
       try {
+        socketSend(options.socket, 'ping', 'ping'); // https://github.com/socketio/socket.io/issues/3025
+        // log('ping', opts.socket, true);
         await registry.execPlugins(result, options, 'afterRequest');
       } catch (e) {
         console.log('Error while plugins afterRequest');
@@ -608,6 +630,7 @@ module.exports = async (baseUrl, options = {}) => {
 
         // send result json to socket
         socketSend(options.socket, 'result', {name: jsonName});
+        console.log(`Save to ${jsonName}`);
 
 
         // TODO: error upload 8MB+
