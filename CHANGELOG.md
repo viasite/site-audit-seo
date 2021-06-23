@@ -1,3 +1,18 @@
+## [5.1.5](https://github.com/viasite/site-audit-seo/compare/v5.1.4...v5.1.5) (2021-06-23)
+
+
+### Bug Fixes
+
+* docker-compose fix: remove mount data/db-docker.json, add git clone data/front ([a9d5f11](https://github.com/viasite/site-audit-seo/commit/a9d5f1121f012415a0ec2c6ae0c4adc645da678e)), closes [#18](https://github.com/viasite/site-audit-seo/issues/18)
+
+
+### Features
+
+* **scan:** better disconnect survive, resend logs while disconnected with client ([19717df](https://github.com/viasite/site-audit-seo/commit/19717dfcaef9a4cd4fe4fc6d3ad6677be5462226))
+* change default columns: add readability, remove useless links and headers counters ([492c363](https://github.com/viasite/site-audit-seo/commit/492c363cdf80dbea11ef077dbdb75ec4435a948f))
+
+
+
 ## [5.1.4](https://github.com/viasite/site-audit-seo/compare/v5.1.3...v5.1.4) (2021-04-21)
 
 
