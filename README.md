@@ -108,6 +108,7 @@ Open https://viasite.github.io/site-audit-seo-viewer/.
 ``` bash
 git clone https://github.com/viasite/site-audit-seo
 cd site-audit-seo
+git clone https://github.com/viasite/site-audit-seo-viewer data/front
 docker-compose pull # for skip build step
 docker-compose up -d
 ```

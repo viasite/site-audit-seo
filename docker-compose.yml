@@ -19,7 +19,7 @@ services:
     # - .:/app
     - ./data:/app/data
     - ./data/reports:/app/data/reports
-    - ./data/db-docker.json:/app/data/db.json
+    # - ./data/db-docker.json:/app/data/db.json
     # networks:
     # - internal
     # - web
