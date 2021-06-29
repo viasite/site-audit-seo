@@ -33,6 +33,7 @@ const fields = [
     },
     groups: ['canonical'],
     type: 'boolean',
+    filterType: 'enum',
   },
   {
     name: 'previousUrl',
@@ -49,6 +50,7 @@ const fields = [
     stat: {
       type: 'enum',
     },
+    filterType: 'enum',
   },
   {
     name: 'status',
@@ -62,6 +64,7 @@ const fields = [
     },
     groups: ['info'],
     type: 'integer',
+    filterType: 'enum',
   },
   {
     name: 'request_time',
@@ -154,6 +157,7 @@ const fields = [
     },
     groups: ['seo'],
     type: 'integer',
+    filterType: 'enum',
   },
   {
     name: 'h2_count',
@@ -188,6 +192,7 @@ const fields = [
     },
     groups: ['canonical'],
     type: 'integer',
+    filterType: 'enum',
   },
   {
     name: 'google_amp',
@@ -200,6 +205,7 @@ const fields = [
     },
     groups: ['metatags'],
     type: 'integer',
+    filterType: 'enum',
   },
   {
     name: 'images',

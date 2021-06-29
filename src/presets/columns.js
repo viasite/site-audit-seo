@@ -20,7 +20,7 @@ module.exports = {
       'readability_length',
       'readability_links',
       'readability_images',
-      'images',
+      // 'images',
       'images_without_alt',
       'images_alt_empty',
       'images_outer',
