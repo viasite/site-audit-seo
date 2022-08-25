@@ -169,6 +169,8 @@ module.exports = async (baseUrl, options = {}) => {
     separator: ';',
   });
 
+  const failedUrls = [];
+
   let crawler;
   const defaultOptions = {
     allowedDomains: options.limitDomain ? [domain] : undefined,
@@ -345,12 +347,44 @@ module.exports = async (baseUrl, options = {}) => {
       });
 
       page.on('requestfailed', request => {
+        // skip adv errors
+        if (request.url().includes('googlesyndication')
+         || request.url().includes('googleads')
+         || request.url().includes('adfox')
+         || request.url().includes('an.yandex.ru')
+         || request.url().includes('nativeroll.tv')
+        ) {
+          return;
+        }
+
         if (request.notHTTPS) {
           console.error(
             `${color.red}${crawler._options.url}: mixed content: ${request.url()}${color.reset}`);
-        } else {
-          const isStatic = ['image', 'script', 'stylesheet'].includes(request.resourceType());
-          if (!isStatic) console.log('Request failed: ', request.url() + ' ' + request.failure().errorText);
+          return;
+        }
+
+        const isStatic = ['image', 'script', 'stylesheet'].includes(request.resourceType());
+        if (!isStatic) {
+          console.error(`Request failed: ${request.response()?.status()}, ${request.url()}, ${request.failure().errorText}`);
+
+          // add to result table when first error
+          if (!failedUrls.includes(crawler._options.url)) {
+            failedUrls.push(crawler._options.url);
+            const result = {
+              options: {},
+              depth: 0,
+              previousUrl: '',
+              response: {
+                url: crawler._options.url,
+                status: request.response()?.status(),
+              },
+              redirectChain: [],
+              screenshot: null,
+              cookies: [],
+              links: [],
+            };
+            exporter.writeLine(result);
+          }
         }
       });
 
