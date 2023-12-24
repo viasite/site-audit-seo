@@ -123,11 +123,14 @@ program.postParse = async () => {
     program.lighthouse = true;
   }
 
-  // c = 2, when lighthouse c = 1
+  // c = 2, when lighthouse or screenshot -> c = 1
   if (program.concurrency === undefined) {
     program.concurrency = getConfigVal('concurrency', os.cpus().length);
   }
   if (program.lighthouse) {
+    program.concurrency = 1;
+  }
+  if (program.screenshot) {
     program.concurrency = 1;
   }
 
@@ -162,8 +165,11 @@ program.postParse = async () => {
 
 program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('-p, --preset <preset>',
-    'Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all)',
+    'Table preset (minimal, seo, seo-minimal, headers, parse, lighthouse, lighthouse-all)',
     getConfigVal('preset', 'seo')).
+  option('-t, --timeout <timeout>',
+    'Timeout for page request, in ms',
+    getConfigVal('timeout', 10000)).
   option('-e, --exclude <fields>',
     'Comma separated fields to exclude from results', list).
   option('-d, --max-depth <depth>', 'Max scan depth',
@@ -178,7 +184,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--default-filter <defaultFilter>', 'Default filter when JSON viewed, example: depth>1').
   option('--no-skip-static', `Scan static files`).
   option('--no-limit-domain', `Scan not only current domain`).
-  option('--docs-extensions',
+  option('--docs-extensions <ext>',
     `Comma-separated extensions that will be add to table (default: ${defaultDocs.join(
       ',')})`, list).
   option('--follow-xml-sitemap', `Follow sitemap.xml`,
@@ -187,6 +193,8 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('ignoreRobotsTxt', false)).
   option('--url-list', `assume that --url contains url list, will set -d 1 --no-limit-domain --ignore-robots-txt`,
     getConfigVal('ignoreRobotsTxt', false)).
+  option('--remove-selectors <selectors>', `CSS selectors for remove before screenshot, comma separated`,
+    '.matter-after,#matter-1,[data-slug]').
   option('-m, --max-requests <num>', `Limit max pages scan`,
     parseInt, getConfigVal('maxRequests', 0)).
   option('--influxdb-max-send <num>', `Limit send to InfluxDB`,
@@ -219,6 +227,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--no-open-file', `Don't open file after scan`).
   option('--no-console-validate', `Don't output validate messages in console`).
   option('--disable-plugins <plugins>', `Comma-separated plugin list`, list, []).
+  option('--screenshot', `Save page screenshot`, getConfigVal('screenshot', false)).
   name('site-audit-seo').
   version(packageJson.version).
   usage('-u https://example.com --upload')
@@ -254,7 +263,10 @@ program.getOptions = () => {
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
     obeyRobotsTxt: !program.ignoreRobotsTxt,    // chrome-crawler, не учитывать блокировки в robots.txt
     influxdb: program.influxdb,                 // конфиг influxdb
+    screenshot: program.screenshot,             // делать ли скриншот
+    removeSelectors: program.removeSelectors,   // удалить селекторы перед скриншотом
     urls: program.urls,                         // адреса для одиночного сканирования
+    timeout: program.timeout,                   // таймаут запроса одной страницы
     disablePlugins: program.disablePlugins
   };
   return opts;
@@ -265,7 +277,7 @@ program.outBrief = (options) => {
     {
       name: 'Preset',
       value: program.preset,
-      comment: '--preset [minimal, seo, headers, parse, lighthouse, lighthouse-all]',
+      comment: '--preset [minimal, seo, seo-minimal, headers, parse, lighthouse, lighthouse-all]',
     },
     {
       name: 'Threads',
@@ -281,9 +293,24 @@ program.outBrief = (options) => {
       comment: (program.lighthouse ? '' : '--lighthouse')
     },
     {
+      name: 'Screenshot',
+      value: (program.screenshot ? 'yes' : 'no'),
+      comment: (program.screenshot ? '' : '--screenshot')
+    },
+    {
+      name: 'Remove selectors',
+      value: (program.removeSelectors ? program.removeSelectors : 'no'),
+      comment: (program.removeSelectors ? '' : '--remove-selectors .banner')
+    },
+    {
       name: 'Delay',
       value: program.delay,
       comment: '--delay ms',
+    },
+    {
+      name: 'Timeout',
+      value: program.timeout,
+      comment: '--timeout ms',
     },
     {
       name: 'Ignore robots.txt',
@@ -314,6 +341,11 @@ program.outBrief = (options) => {
       name: 'Docs extensions',
       value: program.docsExtensions.join(','),
       comment: '--docs-extensions zip,rar',
+    },
+    {
+      name: 'Fields',
+      value: Object.keys(fieldsCustom).join(', '),
+      comment: '',
     },
   ];
 

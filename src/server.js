@@ -16,6 +16,12 @@ const http = require("http").createServer(app);
 const dataDir = process.env.DATA_DIR || 'data';
 utils.initDataDir(dataDir);
 
+process.uncaughtException = (error, source) => {
+  console.error('Uncaught Exception in server.js:', error);
+  console.error('Source:', source);
+};
+process.on('uncaughtException', process.uncaughtException);
+
 initExpress(app);
 
 const io = require("socket.io")(http, {
@@ -55,7 +61,9 @@ registry.load();
 
 async function onScan(url, args, socket) {
   log(`> site-audit-seo ` + (url ? `-u ${url} ` : '') + args, socket);
-  args = args.split(" ");
+  args = args.trim().split(" ").map(arg => {
+    return arg.replace(/%20/g, ' ');
+  });
   if (!url) {
     log("URL not defined!", socket);
     return;
@@ -70,6 +78,8 @@ async function onScan(url, args, socket) {
   delete(program.maxDepth);
   delete(program.concurrency);
   delete(program.lighthouse);
+  delete(program.screenshot);
+  program.removeSelectors = '.matter-after,#matter-1,[data-slug]'; // TODO: to config
 
   program.delay = 0;
   program.skipStatic = false;
@@ -110,6 +120,9 @@ async function onScan(url, args, socket) {
   await program.postParse();
 
   const opts = program.getOptions();
+
+  // console.log("args:", [...["", ""], ...args]);
+  // console.log("opts:", opts);
   opts.args = args;
   opts.webService = true;
   opts.consoleValidate = false; // not needed
@@ -151,7 +164,6 @@ async function onScan(url, args, socket) {
 
     clearInterval(pingInterval);
 
-    log(`Finish audit: ${url}`, socket, true);
     return res;
   });
 }

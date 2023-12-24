@@ -8,6 +8,12 @@ const fields = [
     groups: ['info'],
   },
   {
+    name: 'screenshot',
+    comment: 'Screenshot',
+    groups: ['info'],
+    type: 'image',
+  },
+  {
     name: 'mixed_content_url',
     comment: 'URL по HTTP ссылке',
     comment_en: 'URL of mixed content',
@@ -79,6 +85,28 @@ const fields = [
       ranges: ['< 100', '100-499', '500-999', '1000-2000', '> 2000']
     },
     groups: ['perf'],
+    type: 'integer',
+  },
+  {
+    name: 'redirected_from',
+    comment: 'Начальный URL страницы (если был редирект)',
+    comment_en: 'Redirected from',
+    groups: ['info'],
+    type: 'string',
+  },
+  {
+    name: 'redirects',
+    comment: 'Кол-во редиректов',
+    comment_en: 'Redirects count',
+    validate: {
+      warning: '> 0',
+      error: '> 1',
+    },
+    stat: {
+      type: 'enum',
+    },
+    filterType: 'enum',
+    groups: ['info'],
     type: 'integer',
   },
   {
@@ -295,11 +323,27 @@ const fields = [
   },
   {
     name: 'html_size',
-    comment: 'Размер HTML, байт',
-    comment_en: 'HTML size, bytes',
+    comment: 'Размер HTML скачанный, байт',
+    comment_en: 'HTML size, downloaded, bytes',
     validate: {
       warning: '> 500000',
       error: '> 1000000',
+    },
+    stat: {
+      type: 'ranges',
+      ranges: ['< 100000', '100000-500000', '> 500000']
+    },
+    groups: ['perf'],
+    type: 'integer',
+  },
+
+  {
+    name: 'html_size_rendered',
+    comment: 'Размер HTML в браузере, байт',
+    comment_en: 'HTML size, rendered, bytes',
+    validate: {
+      warning: '> 200000',
+      error: '> 500000',
     },
     stat: {
       type: 'ranges',

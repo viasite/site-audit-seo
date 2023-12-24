@@ -8,13 +8,17 @@ const defaultField = 'url';
 
 // return json object
 // TODO: too much arguments
-module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, args, scanTime) => {
+
+module.exports = async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args, scanTime, itemsPartial = [], partNum = 0, startTime = 0}) => {
   // read csv to workbook
   const data = {};
 
   // items
   data.items = await csv({delimiter: ';'}).fromFile(csvPath);
   data.items = flattenItems(data.items);
+  if (itemsPartial.length > 0) {
+    data.items = [...itemsPartial, ...data.items];
+  }
 
   // fields
   data.fields = buildFields(fields, data.items, lang);
@@ -39,13 +43,42 @@ module.exports = async (csvPath, jsonPath, lang, preset, defaultFilter, url, arg
   data.scan = {
     url: url,
     args: args,
+    startTime: startTime,
     version: require('../../package.json').version,
     time: scanTime,
+    partNum: partNum,
   }
+
+  // filter empty redirected items
+  console.log("data.items before filter:", data.items.length);
+  data.items = data.items.filter((item, i, self) => {
+    const hasBetter = self.filter((t, i2) => {
+      if (t.redirected_from === item.url) return true;
+
+      if (i < i2) return false; // exclude previous items
+      if (i === i2) return false; // exclude self
+      if (t.url === item.url) return true;
+    });
+    return hasBetter.length === 0;
+    // return last element of hasBetter
+    /*if (hasBetter.length === 0) {
+      return true;
+    } else {
+      const isNotEmpty = data.items.some(i => {
+        return i.redirected_from === item.url
+          || (i.status && i.url === item.url)
+      });
+      return !isNotEmpty;
+    }*/
+  });
 
   // write
   const raw = JSON.stringify(data);
   fs.writeFileSync(jsonPath, raw);
+
+  const msg = `Saved ${data.items.length} items` + (itemsPartial.length > 0 ? `, including ${itemsPartial.length} previous items` : '');
+  console.log("saveAsJson:", msg);
+
   return data;
 };
 

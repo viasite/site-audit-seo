@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const color = require('./color');
+const fieldsPresets = require("./presets/scraperFields");
 const userDir = './data';
 const plugins = [];
 let loaded = false;
@@ -81,6 +82,31 @@ async function execPlugins(jsonPath, options, type = 'any') {
     if (options.disablePlugins.includes(plugin.name)){
       continue;
     }
+
+    // exec only if field exists in preset
+    if (type === "afterRequest" && plugin.type === "afterRequest") {
+      let presetFields = fieldsPresets[options.fieldsPreset];
+      const pluginFieldsNames = plugin.fields.map(f => f.name);
+      const isFieldsInPreset = pluginFieldsNames.some(f => presetFields.includes(f));
+
+      // get pluginFieldsNames and presetFields intersection
+      // const fieldsInPreset = pluginFieldsNames.filter(f => presetFields.includes(f));
+
+      // console.log(`plugin ${plugin.name}:`, isFieldsInPreset);
+      // console.log("fieldsPresets:", fieldsPresets);
+      // console.log("pluginFieldsNames:", pluginFieldsNames);
+      // console.log("options.fieldsPreset:", options.fieldsPreset);
+      // console.log("presetFields:     ", presetFields);
+
+      if (!isFieldsInPreset) {
+        // console.log("skip plugin:", plugin.name, "because plugin's fields not in preset");
+        // console.log("pluginFieldsNames:", pluginFieldsNames);
+        // console.log("presetFields:     ", presetFields);
+        // console.log("fieldsInPreset:   ", fieldsInPreset);
+        continue;
+      }
+    }
+
     if (type !== 'any' && plugin.type != type) continue;
 
     // console.log(`exec plugin ${plugin.name} (type ${type}):`);

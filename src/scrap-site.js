@@ -1,8 +1,8 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
 const fs = require('fs');
 const path = require('path');
-const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} = require(
-  './actions');
+const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} = require('./actions');
+const {getUserDir} = require('./utils');
 const axios = require('axios');
 const HCCrawler = require('@popstas/headless-chrome-crawler');
 const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
@@ -19,7 +19,6 @@ const registry = require('./registry');
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
-
 // запреты браузеру на подгрузку статики, ускоряет
 let SKIP_IMAGES = true;
 let SKIP_CSS = true;
@@ -27,6 +26,7 @@ let SKIP_JS = true;
 
 // кол-во попыток выполнить actions
 const finishTries = 5;
+const saveAfterEvery = 100; // saveProgress after each N requests
 
 let disconnectedLog = [];
 
@@ -61,14 +61,15 @@ module.exports = async (baseUrl, options = {}) => {
   const log = (msg) => {
     const socketId = options.socket ? `${options.socket.id} ` : '';
     const disconnected = options.socket && !options.socket.connected ? '(disconnected) ' : '';
-    if (DEBUG) console.log(`${socketId}${disconnected}${msg}`);
+    const hhmmss = new Date().toTimeString().split(' ')[0];
+    if (DEBUG) console.log(`${hhmmss} ${socketId}${disconnected}${msg}`);
     socketSend(options.socket, 'status', msg);
   };
   options.log = log;
 
   // const plugins = registry.getPlugins();
   // if (plugins) console.log('loaded plugins: ', plugins.map(p => p.name).join(', '));
-  
+
   const parseUrls = async (url) => {
     const urls = [];
     const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
@@ -79,6 +80,7 @@ module.exports = async (baseUrl, options = {}) => {
     } */
     res = await axios.get(url);
     content = res.data;
+    content = content.replace(/^#.*$/gm, ''); // remove comments
 
     while (pageUrl = regex.exec(content)){
       if (pageUrl[0].match(/\.(png|jpg|js|css)$/)) continue;
@@ -90,9 +92,19 @@ module.exports = async (baseUrl, options = {}) => {
   }
 
   let urls = [];
+  let lastSuccessUrl = '';
   if (options.urlList) {
     if (options.urls && options.urls.length > 1) urls = options.urls;
     else urls = await parseUrls(baseUrl);
+
+    if (options.urlsRemain) urls = options.urlsRemain;
+  }
+  let fullUrls = options.urlsRemain ? options.urls : urls;
+
+  // return urls list from url index
+  const getUrlsRemain = (url) => {
+    const index = fullUrls.indexOf(url);
+    return index === -1 ? fullUrls : fullUrls.slice(index + 1);
   }
 
   // console.log('urls: ', urls);
@@ -100,6 +112,23 @@ module.exports = async (baseUrl, options = {}) => {
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
   const xlsxPath = path.normalize(`${options.outDir}/${baseName}.xlsx`);
   const jsonPath = path.normalize(`${options.outDir}/${baseName}.json`);
+  let screenshotPath;
+  const screenshotExt = 'png'; // or jpg
+
+  if (options.screenshot) {
+    screenshotPath = getUserDir(options.socket.uid) + `/${baseName}-screenshots`;
+    console.log("make screenshot directory:", screenshotPath);
+    if (!fs.existsSync(screenshotPath)) fs.mkdirSync(screenshotPath);
+  }
+  function getScreenshotPath(url) {
+    return `${screenshotPath}/${sanitize(url)}.${screenshotExt}`
+  }
+  function getScreenshotUrl(url) {
+    // console.log("process.env:", process.env);
+    return `${screenshotPath}/${sanitize(url)}.${screenshotExt}`.replace('data/reports', './reports');
+  }
+
+
   let webPath;
 
   if (!options.color) color.white = color.red = color.reset = color.yellow = '';
@@ -108,7 +137,7 @@ module.exports = async (baseUrl, options = {}) => {
     options.fieldsPreset = 'default';
   }
 
-  let fields = fieldsPresets[options.fieldsPreset];
+  let fields = [...(fieldsPresets[options.fieldsPreset] || [])];
 
   // exclude fields
   if (options.fieldsExclude && options.fieldsExclude.length > 0) {
@@ -132,6 +161,11 @@ module.exports = async (baseUrl, options = {}) => {
         fields.push(fName);
       }
     }
+  }
+
+  // screenshot fields
+  if (options.screenshot && !fields.includes('screenshot')) {
+    fields.push('screenshot');
   }
 
   // plugins fields
@@ -205,6 +239,7 @@ module.exports = async (baseUrl, options = {}) => {
     evaluatePage: async () => {
       try {
         const customFields = await window.__customFields();
+        const removeSelectors = await window.__removeSelectors();
         // console.log('window.__customFields(): ', JSON.stringify(customFields));
 
         let domainParts = location.host.split('.');
@@ -232,7 +267,7 @@ module.exports = async (baseUrl, options = {}) => {
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
-          html_size: document.head.innerHTML.length +
+          html_size_rendered: document.head.innerHTML.length +
             document.body.innerHTML.length,
           text_ratio_percent: Math.round(
             document.body.innerText.length / document.body.innerHTML.length *
@@ -287,6 +322,12 @@ module.exports = async (baseUrl, options = {}) => {
           // if(name == 'section') result[name] = $('.views-field.views-field-field-section a').text();
         }
 
+        // remove elements before screenshot
+        if (removeSelectors && removeSelectors.length > 0) {
+          const selector = Array.isArray(removeSelectors) ? removeSelectors.join(',') : removeSelectors;
+          $(selector).remove();
+        }
+
         return result;
       } catch (e) {
         return {
@@ -315,7 +356,18 @@ module.exports = async (baseUrl, options = {}) => {
         return options.fields;
       });
 
+      await page.exposeFunction('__removeSelectors', () => {
+        return options.removeSelectors;
+      });
+
       let mixedContentUrl = '';
+
+      /*page.on('requestfinished', async request => {
+        console.log("requestfinished:", request.url());
+        await page.screenshot({
+          path: screenshotPath + sanitize(request.url()) + '.' + screenshotExt,
+        });
+      });*/
 
       // это событие срабатывает, когда chrome подгружает статику на странице (и саму страницу)
       page.on('request', request => {
@@ -349,23 +401,23 @@ module.exports = async (baseUrl, options = {}) => {
       page.on('requestfailed', request => {
         // skip adv errors
         if (request.url().includes('googlesyndication')
-         || request.url().includes('googleads')
-         || request.url().includes('adfox')
-         || request.url().includes('an.yandex.ru')
-         || request.url().includes('nativeroll.tv')
+          || request.url().includes('googleads')
+          || request.url().includes('adfox')
+          || request.url().includes('an.yandex.ru')
+          || request.url().includes('nativeroll.tv')
         ) {
           return;
         }
 
         if (request.notHTTPS) {
-          console.error(
-            `${color.red}${crawler._options.url}: mixed content: ${request.url()}${color.reset}`);
+          // console.error(
+          //   `${color.red}${crawler._options.url}: mixed content: ${request.url()}${color.reset}`);
           return;
         }
 
         const isStatic = ['image', 'script', 'stylesheet'].includes(request.resourceType());
         if (!isStatic) {
-          console.error(`Request failed: ${request.response()?.status()}, ${request.url()}, ${request.failure().errorText}`);
+          // console.error(`Request failed: ${request.response()?.status()}, ${request.url()}, ${request.failure().errorText}`);
 
           // add to result table when first error
           if (!failedUrls.includes(crawler._options.url)) {
@@ -384,21 +436,28 @@ module.exports = async (baseUrl, options = {}) => {
               links: [],
             };
             exporter.writeLine(result);
+            lastSuccessUrl = crawler._options.url;
           }
         }
       });
 
-      /* page.on('error', function(err) {
+      /*page.on('requestfinished', async request => {
+        console.log("requestfinished:", request.url().substring(0, 128));
+      });*/
+
+      /*page.on('error', function(err) {
         console.error(`${color.red}Page error:${color.reset} ` + err.toString());
-      });
+      });*/
 
-      page.on('close', function() {
-        console.error(`${color.red}Page closed${color.reset} `);
-      });
+      /*page.on('close', function() {
+        console.log("Page closed");
+        // console.error(`${color.red}Page closed${color.reset} `);
+      });*/
 
-      page.on('pageerror', function(err) {
+      // js error at requested page
+      /*page.on('pageerror', function(err) {
         console.error(`${color.red}pegeerror:${color.reset} ` + err.toString());
-      }); */
+      });*/
 
       // console.log('co '+ crawler._options.url);
 
@@ -423,169 +482,361 @@ module.exports = async (baseUrl, options = {}) => {
         };
       }
 
-      // The result contains options, links, cookies and etc.
-      const result = await crawl();
+      // The result contains options, links, cookies etc.
+      // log(`before crawl(), url: ${crawler._options.url}`);
+      let result = {};
+      try {
+        result = await crawl();
+        // console.log("after crawl(), result.response.status: ", result?.response?.status); // TODO: remove
 
-      if (options.lighthouse) {
-        const opts = {
-          // extends: 'lighthouse:default',
-          /*onlyAudits: [
-            'first-meaningful-paint',
+        if (options.lighthouse) {
+          const opts = {
+            // extends: 'lighthouse:default',
+            /*onlyAudits: [
+              'first-meaningful-paint',
+              'speed-index',
+              'first-cpu-idle',
+              'interactive',
+            ],*/
+            // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
+            port: lighthouseChrome.port,
+            locale: options.lang,
+          };
+          const res = await lighthouse(crawler._options.url, opts);
+          const data = JSON.parse(res.report);
+
+          const audits = [
+            'first-contentful-paint',
             'speed-index',
-            'first-cpu-idle',
+            'largest-contentful-paint',
             'interactive',
-          ],*/
-          // onlyCategories : [ 'performance'/*, 'pwa', 'accessibility', 'best-practices', 'seo'*/ ],
-          port: lighthouseChrome.port,
-          locale: options.lang,
-        };
-        const res = await lighthouse(crawler._options.url, opts);
-        const data = JSON.parse(res.report);
+            'total-blocking-time',
+            'cumulative-layout-shift',
+          ];
+          const categories = [
+            'performance',
+            'accessibility',
+            'best-practices',
+            'seo',
+            'pwa'];
+          const lighthouseData = {
+            scores: {},
+          };
 
-        const audits = [
-          'first-contentful-paint',
-          'speed-index',
-          'largest-contentful-paint',
-          'interactive',
-          'total-blocking-time',
-          'cumulative-layout-shift',
-        ];
-        const categories = [
-          'performance',
-          'accessibility',
-          'best-practices',
-          'seo',
-          'pwa'];
-        const lighthouseData = {
-          scores: {},
-        };
+          const fieldConfigs = []; // для генерации конфига полей
 
-        const fieldConfigs = []; // для генерации конфига полей
-
-        for (let auditName of audits) {
-          if (!data.audits[auditName]) continue;
-          lighthouseData[auditName] = parseInt(
-            data.audits[auditName].numericValue);
-        }
-
-        for (let categoryId of categories) {
-          if (!data.categories[categoryId]) continue;
-
-          // lighthouse.scores
-          lighthouseData.scores[categoryId] = parseInt(
-            data.categories[categoryId].score * 100);
-
-          // all audits
-          for (let auditRef of data.categories[categoryId].auditRefs) {
-            let value;
-            const auditName = auditRef.id;
-            const audit = data.audits[auditName];
-
-            if (audit.numericValue) value = parseInt(audit.numericValue);
-            else value = audit.score;
-
-            lighthouseData[auditName] = value;
-
-            // add to sheet fields
-            if (options.fieldsPreset === 'lighthouse-all') {
-              const fieldId = 'lighthouse.' + auditName;
-              if (fields.indexOf(fieldId) === -1) {
-                fields.push(fieldId);
-              }
-            }
-
-            // generate field config
-            const fieldConfig = {
-              name: 'lighthouse_' + audit.id,
-              comment: audit.title,
-              description: audit.description,
-              groups: ['# Lighthouse: ' + data.categories[categoryId].title],
-              type: 'integer',
-            };
-            if (auditRef.group) {
-              const groupTitle = data.categories[categoryId].title + ': ' +
-                data.categoryGroups[auditRef.group].title;
-              fieldConfig.groups.push(groupTitle);
-              // fieldConfig.groups = [groupTitle];
-            }
-            fieldConfigs.push(fieldConfig);
+          for (let auditName of audits) {
+            if (!data.audits[auditName]) continue;
+            lighthouseData[auditName] = parseInt(
+              data.audits[auditName].numericValue);
           }
+
+          for (let categoryId of categories) {
+            if (!data.categories[categoryId]) continue;
+
+            // lighthouse.scores
+            lighthouseData.scores[categoryId] = parseInt(
+              data.categories[categoryId].score * 100);
+
+            // all audits
+            for (let auditRef of data.categories[categoryId].auditRefs) {
+              let value;
+              const auditName = auditRef.id;
+              const audit = data.audits[auditName];
+
+              if (audit.numericValue) value = parseInt(audit.numericValue);
+              else value = audit.score;
+
+              lighthouseData[auditName] = value;
+
+              // add to sheet fields
+              if (options.fieldsPreset === 'lighthouse-all') {
+                const fieldId = 'lighthouse.' + auditName;
+                if (fields.indexOf(fieldId) === -1) {
+                  fields.push(fieldId);
+                }
+              }
+
+              // generate field config
+              const fieldConfig = {
+                name: 'lighthouse_' + audit.id,
+                comment: audit.title,
+                description: audit.description,
+                groups: ['# Lighthouse: ' + data.categories[categoryId].title],
+                type: 'integer',
+              };
+              if (auditRef.group) {
+                const groupTitle = data.categories[categoryId].title + ': ' +
+                  data.categoryGroups[auditRef.group].title;
+                fieldConfig.groups.push(groupTitle);
+                // fieldConfig.groups = [groupTitle];
+              }
+              fieldConfigs.push(fieldConfig);
+            }
+          }
+
+          result.lighthouse = lighthouseData;
+          // console.log(JSON.stringify(fieldConfigs)); // copy to fields.js
+          // console.log(lighthouseData);
         }
 
-        result.lighthouse = lighthouseData;
-        // console.log(JSON.stringify(fieldConfigs)); // copy to fields.js
-        // console.log(lighthouseData);
-      }
-
-      result.result.mixed_content_url = mixedContentUrl;
-      if (result.response.url) {
-        result.response.url = decodeURI(result.response.url);
-      }
-
-      // console validate output
-      // was in onSuccess(), but causes exception on docs
-      if (options.consoleValidate) {
-        const msgs = [];
-        const validate = validateResults(result, fields); // TODO: fields declared implicitly
-        for (let name in validate) {
-          const res = validate[name];
-          const msgColor = {warning: color.yellow, error: color.red}[res.type];
-          msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+        if (options.screenshot) {
+          result.screenshot = getScreenshotUrl(result.response.url)
         }
-        if (msgs.length > 0) console.log(msgs.join(', '));
-      }
 
-      // You can access the page object after requests
-      result.content = await page.content();
+        result.result.mixed_content_url = mixedContentUrl;
+        if (result.response.url) {
+          result.response.url = decodeURI(result.response.url);
+        }
+
+        if (result.redirectChain.length > 0) {
+          result.result.redirected_from = result.redirectChain[0]?.url;
+          if (result.response.status === 200) result.response.status = 301;
+        }
+        result.result.redirects = result.redirectChain.length;
+
+        lastSuccessUrl = result.result.redirected_from || result.response.url;
+
+        // console validate output
+        // was in onSuccess(), but causes exception on docs
+        if (options.consoleValidate) {
+          const msgs = [];
+          const validate = validateResults(result, fields); // TODO: fields declared implicitly
+          for (let name in validate) {
+            const res = validate[name];
+            const msgColor = {warning: color.yellow, error: color.red}[res.type];
+            msgs.push(`${name}: ${msgColor}${res.msg}${color.reset}`);
+          }
+          if (msgs.length > 0) console.log(msgs.join(', '));
+        }
+
+        // You can access the page object after requests
+        // TODO: skip depending of fields preset
+        result.content = await page.content();
+      }
+      catch (e) {
+        console.log('Error while customCrawl');
+        console.log(e.message?.substring(0, 512));
+      }
 
       // plugins afterRequest
-      try {
-        socketSend(options.socket, 'ping', 'ping'); // https://github.com/socketio/socket.io/issues/3025
-        // log('ping', opts.socket, true);
-        await registry.execPlugins(result, options, 'afterRequest');
-      } catch (e) {
-        console.log('Error while plugins afterRequest');
-        console.log(e);
+      if (result.response) {
+        try {
+          socketSend(options.socket, 'ping', 'ping'); // https://github.com/socketio/socket.io/issues/3025
+          // log('ping', opts.socket, true);
+          await registry.execPlugins(result, options, 'afterRequest');
+        } catch (e) {
+          console.log('Error while plugins afterRequest');
+          console.log(e);
+        }
       }
+
       // console.log('result.readability_reading: ', result.readability_reading);
       // console.log('result.readability_readingMinutes: ', result.readability_readingMinutes);
       // console.log('result.readability_readingTime: ', result.readability_readingTime);
 
       // You need to extend and return the crawled result
       return result;
-    },
+    }, // /customCrawl
   };
 
   const crawlerOptions = {...defaultOptions, ...options};
+
+  if ('screenshot' in crawlerOptions && crawlerOptions.screenshot) {
+    //delete crawlerOptions.screenshot; // don't send `screenshot` arg to crawler, for custom screenshots
+    crawlerOptions.screenshot = {
+      path: screenshotPath + '/screenshot.' + screenshotExt, // replace bool to screennshot dir
+      fullPage: true,
+    };
+  }
+
   crawlerOptions.args = defaultOptions.args; // override args for chromium
+
 
   // start
   const start = Date.now();
+  if (!options.partialFirstStartTime) options.partialFirstStartTime = start;
+  if (!options.partNum) options.partNum = 0;
 
   // console.log(`${color.yellow}Scrapping ${baseUrl}...${color.reset}`);
   let requestedCount = 0;
 
+  let isSaving = false;
+  let itemsPartial = [];
+
+  const getItemsPartial = () => {
+    if (!options.partialReports) return itemsPartial;
+    if (itemsPartial.length > 0) return itemsPartial;
+    for (const localPath of options.partialReports) {
+      if (!localPath) continue;
+      const partialPath = path.normalize(`${localPath}`);
+      // load partial path
+      const partialJson = fs.readFileSync(partialPath, 'utf8');
+      const partialItems = JSON.parse(partialJson).items;
+      itemsPartial.push(...partialItems);
+    }
+    return itemsPartial;
+  }
+  const saveProgress = async () => {
+    if (isSaving) return {};
+    isSaving = true;
+    const saveStart = Date.now();
+    const scanTime = Math.round((Date.now() - start) / 1000);
+    const startTime = options.partialFirstStartTime;
+    const itemsPartial = getItemsPartial();
+    const { items } = await saveAsJson({
+      csvPath,
+      jsonPath,
+      lang: options.lang,
+      preset: options.preset,
+      defaultFilter: options.defaultFilter,
+      baseUrl,
+      args: options.args,
+      scanTime,
+      itemsPartial,
+      startTime,
+      partNum: options.partNum,
+    })
+    const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, startTime);
+
+    // send result json to socket
+    socketSend(options.socket, 'result', {name: jsonName, isProgress: true, count: items.length});
+    const saveTime = Date.now() - saveStart;
+    console.log(`Save to ${jsonName} (${items.length} items, ${saveTime} ms)`);
+    isSaving = false;
+
+    return { jsonName, localPath };
+  }
+
+  let browserWSEndpoint
   try {
     crawler = await HCCrawler.launch(crawlerOptions);
   } catch (e) {
     console.log(e);
   }
 
-  crawler.on('requeststarted', async opts => {
-    if (crawler._browser._connection._closed) return; // catch error after scan
 
-    const queueCount = await crawler.queueSize();
-    requestedCount = crawler.requestedCount() + 1;
-    if (options.cancel) {
-      crawler.setMaxRequest(requestedCount); // cancel command
+  let tryingRestart = false;
+  let isCancalling = false;
+
+  crawler.on('requeststarted', async opts => {
+    const failedEmulated10Percent = requestedCount > 10 && Math.random() < 0.1;
+
+    // catch error after scan
+    if (crawler._browser._connection._closed /*|| failedEmulated10Percent*/) {
+      // log("Browser connection closed (requeststarted)"); // TODO: remove
+      // 11.03.2021 12:22 fix: suppress headless-chrome-crawler exceptions after max requests reached
+      // but if return it can cause infinite loop
+      // return;
+
+      // start new crawler for remain urls
+      if (urls.length > 0) {
+        if (!tryingRestart) {
+          console.log(`${color.yellow}Trying to restart urls scan from last known url:${color.reset}`);
+          tryingRestart = true;
+          const urlsRemain = getUrlsRemain(lastSuccessUrl);
+          const seconds = 30;
+          log (`Trying to restart scanning of ${fullUrls.length} urls, from: ${lastSuccessUrl}`);
+
+          // save json, pass report to next crawler
+          try {
+            const {jsonName, localPath} = await saveProgress();
+
+            // output next url
+            options.urlsRemain = options.urlsRemain || [];
+            // const itemsPartial = getItemsPartial();
+            let scanned = options.urlsRemain.length ? fullUrls.length - options.urlsRemain.length : 0;
+            let requestedCount = crawler.requestedCount() + scanned + 1;
+            let queueCount = await crawler.queueSize();
+            log(`${requestedCount} ${urlsRemain[0]}, restarting in ${seconds} seconds... (${queueCount})`);
+
+            // start new crawler
+            // socketSend(options.socket, 'status', 'waiting');
+            setTimeout(() => {
+              const newOptions = {
+                ...options, ...{
+                  urls: [...fullUrls],
+                  cancel: false,
+                  urlsRemain: urlsRemain,
+                  partialReports: [localPath],
+                  partNum: options.partNum + 1,
+                  removeCsv: false,
+                  partialFirstStartTime: options.partialFirstStartTime || start,
+                }
+              };
+
+              // console.log("newOptions:", newOptions);
+              module.exports(baseUrl, newOptions);
+            }, seconds * 1000);
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      } else {
+        log("Aborting scan...");
+        socketSend(options.socket, 'status', 'cancel command');
+      }
+
+      // should be after module.exports() recursive call
+      options.cancel = true;
+      options.partial = true;
+      // return;
     }
+
+    // set screenshot path before crarl
+    if (options.screenshot) {
+      const path = getScreenshotPath(opts.url);
+      console.log("save screenshot:", path);
+      crawler._options.screenshot.path = path;
+    }
+
+    let queueCount = await crawler.queueSize();
+    requestedCount = crawler.requestedCount() + 1;
+
+    let requestedCountRelative = requestedCount;
+    if (options.urlList && options.partial && options.urlsRemain?.length) {
+      // const itemsPartial = getItemsPartial();
+      const itemsScannedCount = fullUrls.length - options.urlsRemain.length;
+      requestedCountRelative = requestedCount + itemsScannedCount;
+      // queueCount = options.urls.length;
+    }
+
+    if (options.cancel) {
+      if (!isCancalling) {
+        console.log("cancel scrapping, setMaxRequest:", requestedCount);
+        crawler.setMaxRequest(requestedCount); // cancel command
+        void saveProgress();
+        isCancalling = true;
+      }
+    }
+
     // console.log('crawler: ', crawler);
-    log(`${requestedCount} ${decodeURI(opts.url)} (${queueCount})`);
+    try {
+      const url = new URL(opts.url);
+      // console.log('url: ', url);
+      log(`${requestedCountRelative} ${url.href} (${queueCount})`);
+    } catch(e) {
+      // possible URIError: URI malformed
+      console.error(e);
+      log(`${requestedCountRelative} ${opts.url} (${queueCount})`);
+    }
+
+    if (requestedCountRelative % saveAfterEvery === 0) {
+      void saveProgress();
+    }
   });
   crawler.on('requestfailed', error => {
-    if (crawler._browser._connection._closed) return; // catch error after scan
-    console.error(
-      `${color.red}Failed: ${decodeURI(error.options.url)}${color.reset}`);
+    if (crawler._browser._connection._closed) {
+      // log("Browser connection closed (requestfailed)");
+      return;
+    }
+    try {
+      console.error(
+        `Failed: ${decodeURI(error.options.url)}`);
+    } catch(e) {
+      // possible URIError: URI malformed
+      console.error(e);
+    }
   });
   crawler.on('requestdisallowed', options => {
     log(`Disallowed in robots.txt: ${decodeURI(options.url)}`, options.socket);
@@ -603,6 +854,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   if (options.urlList) {
     log('Queue ' + urls.length + ' urls', options.socket);
+    // console.log(`${urls.join('\n')}`);
     for (let url of urls) {
       await crawler.queue(url);
     }
@@ -648,8 +900,23 @@ module.exports = async (baseUrl, options = {}) => {
     }
 
     if (options.json) {
-      await saveAsJson(csvPath, jsonPath, options.lang, options.preset, options.defaultFilter, baseUrl, options.args, scanTime);
-      if (!options.removeJson) console.log('Saved to ' + jsonPath);
+      const itemsPartial = getItemsPartial();
+      const data = await saveAsJson({
+        csvPath,
+        jsonPath,
+        lang: options.lang,
+        preset: options.preset,
+        defaultFilter: options.defaultFilter,
+        baseUrl,
+        args: options.args,
+        scanTime,
+        itemsPartial,
+        startTime: options.partialFirstStartTime,
+        partNum: options.partNum,
+      });
+
+
+      if (!options.removeJson) console.log(`Saved ${data.items.length} items to ${jsonPath}`);
 
       // user plugins
       await registry.execPlugins(jsonPath, options, 'afterScan');
@@ -660,21 +927,26 @@ module.exports = async (baseUrl, options = {}) => {
       }
 
       if (options.webService) {
-        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid);
+        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, options.partialFirstStartTime);
 
         // send result json to socket
-        socketSend(options.socket, 'result', {name: jsonName});
+        socketSend(options.socket, 'result', {name: jsonName, count: data.items.length});
         console.log(`Save to ${jsonName}`);
+
+        if (!options.cancel) log(`Finish audit: ${jsonName}`);
 
 
         // TODO: error upload 8MB+
         if (options.upload) {
           webPath = await uploadJson(jsonPath);
-          socketSend(options.socket, 'result', {json: webPath});
+          socketSend(options.socket, 'result', {json: webPath, count: data.items.length});
         }
 
         const mins = Number(scanTime / 60).toFixed(1);
-        log(`Finish: ${mins} mins (${perPage} sec per page)`, options.socket);
+        log(
+          `Finish: ${mins} mins, ${data.items.length} items (${perPage} sec per page)` +
+          `${options.partNum > 0 ? `, ${options.partNum} resumes` : ''}`,
+          options.socket);
 
         // return stats
         return {
@@ -708,7 +980,7 @@ module.exports = async (baseUrl, options = {}) => {
           }, 10000);
         }
       } else {
-        log('error after scan: ' + e.message);
+        log('error after scan: ' + e.message.substring(0, 512));
         // console.error(e);
       }
     }

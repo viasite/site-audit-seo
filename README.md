@@ -64,6 +64,8 @@ Open https://viasite.github.io/site-audit-seo-viewer/.
 - depth
 - status
 - request_time
+- redirects
+- redirected_from
 - title
 - h1
 - page_date
@@ -88,6 +90,7 @@ Open https://viasite.github.io/site-audit-seo-viewer/.
 - text_ratio_percent
 - dom_size
 - html_size
+- html_size_rendered
 - lighthouse_scores_performance
 - lighthouse_scores_pwa
 - lighthouse_scores_accessibility
@@ -149,7 +152,7 @@ Usage: site-audit-seo -u https://example.com --upload
 
 Options:
   -u --urls <urls>             Comma separated url list for scan
-  -p, --preset <preset>        Table preset (minimal, seo, headers, parse, lighthouse, lighthouse-all) (default: "seo")
+  -p, --preset <preset>        Table preset (minimal, seo, seo-minimal, headers, parse, lighthouse, lighthouse-all) (default: "seo")
   -e, --exclude <fields>       Comma separated fields to exclude from results
   -d, --max-depth <depth>      Max scan depth (default: 10)
   -c, --concurrency <threads>  Threads number (default: by cpu cores)
@@ -186,6 +189,7 @@ Options:
 ### Linux/Mac:
 ``` bash
 site-audit-seo -d 1 -u https://example -f 'title=$("title").text()' -f 'h1=$("h1").text()'
+site-audit-seo -d 1 -u https://example -f noindex=$('meta[content="noindex,%20nofollow"]').length
 ```
 
 ### Windows:
@@ -383,3 +387,4 @@ site-audit-seo -u https://example.com --lighthouse
 - joeyguerra/schema.js - https://gist.github.com/joeyguerra/7740007
 - smhg/microdata-js - https://github.com/smhg/microdata-js
 - indicate page scan error
+- Find broken encoding like `СЂРµРіРёРѕРЅР°Р»СЊРЅРѕРіРѕ`
