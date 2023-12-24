@@ -23,6 +23,7 @@
     frontend:
       image: viasite/site-audit-seo-viewer:latest
       build: data/front
+      restart: always
       environment:
         HOST: 0.0.0.0 # for nuxt
         PORT: ${FRONT_PORT}

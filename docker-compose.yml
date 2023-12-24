@@ -16,7 +16,7 @@ services:
     ports:
     - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
-    # - .:/app
+    - .:/app
     - ./data:/app/data
     - ./data/reports:/app/data/reports
     # - ./data/db-docker.json:/app/data/db.json
@@ -27,6 +27,7 @@ services:
   frontend:
     image: viasite/site-audit-seo-viewer:latest
     container_name: ${NAMESPACE}-frontend
+    restart: always
     build: data/front
     environment:
       HOST: 0.0.0.0 # for nuxt
@@ -48,9 +49,3 @@ services:
     restart: always
     ports:
     - 5303:5000
-
-# networks:
-#   internal:
-#     driver: bridge
-#   web:
-#     external: true
