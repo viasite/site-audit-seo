@@ -1,17 +1,22 @@
-const fs = require('fs');
-const axios = require('axios');
-const {getJsonName} = require('../utils');
+import fs from 'fs';
+import axios from 'axios';
+import { getJsonName } from '../utils.js';
+import config from "../config.js";
 
-module.exports = async (jsonPath) => {
+export default async (jsonPath) => {
   const data = fs.readFileSync(jsonPath, 'utf8');
-  // const raw = JSON.stringify(data);
 
   const uploadName = getJsonName(jsonPath);
 
-  console.log('\nUploading to https://site-audit.viasite.ru...');
-  const res = await axios.post('https://site-audit.viasite.ru/upload/', {
+  const viewerOrigin = config.viewerOrigin || 'https://site-audit.viasite.ru';
+  const uploadOrigin = config.uploadOrigin || `${viewerOrigin}`;
+  const uploadUrl = `${uploadOrigin}/upload/`;
+
+  console.log(`Uploading to ${uploadUrl}...`);
+  const res = await axios.post(`${uploadUrl}`, {
     name: uploadName,
     data: data,
+    upload_origin: uploadOrigin,
   });
 
   if (res.status !== 200 || !res.data.url) {

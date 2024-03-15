@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   reset: '\x1b[0m',
   white: '\x1b[37m',
   yellow: '\x1b[33m',

@@ -1,8 +1,23 @@
-// actions runs after scan
+import path from 'path';
+import fs from 'fs';
 
-var normalizedPath = require('path').join(__dirname, '.');
+export {default as copyJsonToReports} from './copyJsonToReports.js';
+export {default as publishGoogleDrive} from './publishGoogleDrive.js';
+export {default as saveAsJson} from './saveAsJson.js';
+export {default as saveAsXlsx} from './saveAsXlsx.js';
+export {default as startViewer} from './startViewer.js';
+export {default as uploadJson} from './uploadJson.js';
 
-require('fs').readdirSync(normalizedPath).forEach(function(file) {
+/*const normalizedPath = path.join(import.meta.url, '.');
+console.log("normalizedPath:", normalizedPath);
+const modules = {};
+fs.readdirSync(normalizedPath).forEach(function(file) {
   const moduleName = file.split('.')[0];
-  if (file !== 'index.js') exports[moduleName] = require('./' + file);
+  console.log("moduleName:", moduleName);
+  if (file !== 'index.js') import(`./${file}`).then(module => {
+    modules[moduleName] = module.default;
+  });
 });
+
+console.log("modules:", modules);
+export default modules;*/

@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const sanitize = require('sanitize-filename');
+import fs from 'fs';
+import path from 'path';
+import sanitize from 'sanitize-filename';
 
 const defaultLocalDir = 'data/reports/';
 
-exports.getJsonName = (jsonPath, short = false, timestamp) => {
+export const getJsonName = (jsonPath, short = false, timestamp) => {
   const offset = new Date().getTimezoneOffset() * 60000;
   const ts = timestamp || Date.now();
   const dateLocal = new Date(ts - offset);
@@ -19,7 +19,7 @@ exports.getJsonName = (jsonPath, short = false, timestamp) => {
   return uploadName;
 }
 
-exports.initDataDir = (dataDir) => {
+export const initDataDir = (dataDir) => {
   const packageJson = path.join(dataDir, 'package.json');
   if (!fs.existsSync(packageJson)) {
     console.log(`Create empty package.json in ${dataDir}`);
@@ -27,7 +27,7 @@ exports.initDataDir = (dataDir) => {
   }
 }
 
-exports.getUserDir = (uid = '', localDir = defaultLocalDir) => {
+export const getUserDir = (uid = '', localDir = defaultLocalDir) => {
   // user subdir if uid
   if (uid) {
     const userDir = sanitize(uid.slice(0, 5));
@@ -36,4 +36,10 @@ exports.getUserDir = (uid = '', localDir = defaultLocalDir) => {
   }
 
   return localDir;
+}
+
+export default {
+  getJsonName,
+  initDataDir,
+  getUserDir,
 }

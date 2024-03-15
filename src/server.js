@@ -1,17 +1,30 @@
-const path = require('path');
-const lowdb = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+import path from 'path';
+import { JSONFilePreset } from 'lowdb/node'
 
-const pjson = require('../package.json');
-const scrapSite = require("./scrap-site");
-const registry = require("./registry");
-const utils = require("./utils");
+import pjson from '../package.json' assert { type: "json" };
+import scrapSite from "./scrap-site.js";
+// import { scrapSite } from "./scrap-site";
+import registry from "./registry.js";
+import utils from "./utils.js";
 
-const queue = require("queue");
-const express = require("express");
+import queue from "queue";
+import express from "express";
 const app = express();
-const bodyParser = require("body-parser");
-const http = require("http").createServer(app);
+// import cors from 'cors';
+// app.use(cors());
+import bodyParser from "body-parser";
+import http from "http";
+const server = http.createServer(app);
+
+import { Server } from "socket.io";
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    credentials: true,
+    // methods: ["GET", "POST"],
+  },
+  pingTimeout: 30000, // https://github.com/socketio/socket.io/issues/3025
+});
 
 const dataDir = process.env.DATA_DIR || 'data';
 utils.initDataDir(dataDir);
@@ -24,24 +37,21 @@ process.on('uncaughtException', process.uncaughtException);
 
 initExpress(app);
 
-const io = require("socket.io")(http, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-  pingTimeout: 30000, // https://github.com/socketio/socket.io/issues/3025
-});
-
 // state
-const adapter = new FileSync(path.join(dataDir, 'db.json'));
-const db = lowdb(adapter);
-db.defaults({ state: {} }).write();
+// const adapter = new FileSync();
+const defaultData = { stats: []};
+const dbPath = path.join(dataDir, 'db.json');
+const db = await JSONFilePreset(dbPath, defaultData);
+// const db = new LowSync(new JSONFileSync(dbPath), defaultData);
+// db.defaults({ state: {} }).write();
 
 // add reboot
-const stats = db.get('stats').value() || {};
+const stats = db.data.stats;
 const reboots = stats.reboots ? stats.reboots + 1 : 1;
-db.set('stats.reboots', reboots).write();
+// db.set('stats.reboots', reboots).write();
+db.update(({stats}) => {
+  stats.reboots = reboots;
+});
 
 const maxConcurrency = 2;
 let scansTotal = 0;
@@ -69,7 +79,8 @@ async function onScan(url, args, socket) {
     return;
   }
 
-  const program = require("./program");
+  const programImport = await import("./program.js");
+  const program = programImport.default;
 
   // repeat default, cross-scans global!
   // TODO: remove
@@ -150,22 +161,22 @@ async function onScan(url, args, socket) {
       // log('ping', opts.socket, true);
     }, 5000);
 
-    const res = await scrapSite(url, opts);
+    const res = await scrapSite({baseUrl: url, options: opts});
 
     if (res && res.pages) {
       pagesTotal += res.pages;
 
       // update persistent state
-      const stats = db.get('stats').value() || {};
-      db.set('stats.pagesTotal', stats.pagesTotal ? stats.pagesTotal + res.pages : res.pages).write();
-      db.set('stats.scansTotal', stats.scansTotal ? stats.scansTotal + 1 : 1).write();
-      db.write();
+      db.update(({stats}) => {
+        stats.pagesTotal = stats.pagesTotal ? stats.pagesTotal + res.pages : res.pages;
+        stats.scansTotal = stats.scansTotal ? stats.scansTotal + 1 : 1;
+      });
     }
 
     clearInterval(pingInterval);
 
     return res;
-  });
+  })
 }
 
 function initQueue() {
@@ -190,7 +201,8 @@ function getKeyBySocketId(socketId) {
 }
 
 function serverState() {
-  const stats = db.get('stats').value() || {};
+  const stats = db.data.stats;
+  // const stats = db.get('stats').value() || {};
 
   const socketsList = [];
 
@@ -333,7 +345,7 @@ function initExpress(app) {
   });
 
   const port = process.env.PORT || 5301;
-  http.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Listening at http://localhost:${port}`);
   });
 }

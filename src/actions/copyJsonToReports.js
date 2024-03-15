@@ -1,9 +1,9 @@
-const fs = require('fs');
-const {getJsonName, getUserDir} = require('../utils');
+import fs from 'fs';
+import { getJsonName, getUserDir } from '../utils.js';
 
 const defaultLocalDir = 'data/reports/';
 
-module.exports = (jsonPath, uid = '', localDir = defaultLocalDir, timestamp) => {
+export default (jsonPath, uid = '', localDir = defaultLocalDir, timestamp) => {
   const userDir = getUserDir(uid, localDir);
 
   // remove microseconds if available

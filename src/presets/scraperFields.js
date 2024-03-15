@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   default: ['response.url', 'depth'],
   minimal: ['response.url'],
   "seo-minimal": [

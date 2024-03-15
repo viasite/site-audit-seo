@@ -1,13 +1,16 @@
-const fs = require('fs');
-const express = require('express');
+import fs from 'fs';
+import express from 'express';
+import config from '../config.js'
 
-module.exports = async (jsonPath, webPath = false) => {
+export default async (jsonPath, webPath = false) => {
   const app = express();
   const port = 3001;
 
   const jsonUrl = webPath || `http://localhost:${port}/data.json`;
   const jsonRaw = fs.readFileSync(jsonPath);
 
+  const viewerOrigin = config.viewerOrigin || 'https://site-audit.viasite.ru';
+  // const uploadOrigin = config.uploadOrigin || 'https://site-audit.viasite.ru';
   app.get('/', function(req, res, next) {
     res.redirect(302, onlineViewLink(jsonUrl));
   });
@@ -31,7 +34,7 @@ module.exports = async (jsonPath, webPath = false) => {
     console.log(`JSON file: ${url}`);
     console.log('');
     console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
-    console.log(`Short link: https://site-audit.viasite.ru/?report=` + url.replace('https://site-audit.viasite.ru/reports/', '').replace('.json', ''));
+    console.log(`Short link: ${viewerOrigin}/?url=${url}`);
     console.log('');
     console.log(`Online viewer: ${onlineViewLink(url)}`);
     //console.log(`Public viewer: ${onlineViewLink(url.replace(`http://localhost:${port}`, 'https://3001.home.popstas.ru'))}`);

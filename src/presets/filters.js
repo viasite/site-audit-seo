@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     name: 'PageSpeed < 90%',
     q: 'lighthouse_scores_performance<90',

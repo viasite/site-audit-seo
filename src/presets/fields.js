@@ -1,7 +1,7 @@
-const registry = require('../registry');
-const fieldsLighthouse = require('./fields-lighthouse');
-const fieldsLighthouseEn = require('./fields-lighthouse-en');
-const fields = [
+import registry from '../registry.js';
+import fieldsLighthouse from './fields-lighthouse.js';
+import fieldsLighthouseEn from './fields-lighthouse-en.js';
+export const fields = [
   {
     name: 'url',
     comment: 'URL',
@@ -446,7 +446,7 @@ const fields = [
   },
 ];
 
-function getFieldByName(name) {
+export function getFieldByName(name) {
   return fields[name] || false;
 }
 
@@ -504,6 +504,3 @@ for (let plugin of plugins) {
     // console.log(`push ${field}`);
   }
 }
-
-
-module.exports = {fields, getFieldByName};

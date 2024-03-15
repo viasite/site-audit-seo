@@ -1,4 +1,4 @@
-const {at} = require('lodash');
+import at from 'lodash';
 
 const lighthouseValidateScore = {
   success: (v) => v >= 90,
@@ -17,7 +17,7 @@ const warnErrorThresholds = (warn, error, isSuccess = true) => {
   return rules;
 };
 
-const colsValidate = {
+export const colsValidate = {
   mixed_content_url: {
     error: (v) => !!v,
   },
@@ -32,11 +32,11 @@ const colsValidate = {
     error: (v) => v != 200,
   },
   title: {
-    error: (v) => v.length === 0,
+    error: (v) => v?.length === 0,
     errorMsg: (v) => v.length,
   },
   description: {
-    warning: (v) => v.length > 256,
+    warning: (v) => v?.length > 256,
     warningMsg: (v) => v.length,
   },
   h1_count: {
@@ -74,9 +74,7 @@ const colsValidate = {
 
 const validationSum = {};
 
-exports.colsValidate = colsValidate;
-
-exports.validateResults = (results, fields) => {
+export const validateResults = (results, fields) => {
   const validate = {};
   for (let fName of fields) {
     // get value
@@ -108,4 +106,4 @@ exports.validateResults = (results, fields) => {
   return validate;
 };
 
-exports.getValidationSum = () => validationSum;
+export const getValidationSum = () => validationSum;

@@ -1509,4 +1509,4 @@ const fields = [
     }
 ];
 
-module.exports = fields
+export default fields

@@ -1,10 +1,10 @@
-const fs = require('fs');
-const xlsx = require('@popstas/xlsx-style');
-const xlsxOrig = require('xlsx');
-const {colsValidate} = require('../validate');
-const color = require('../color');
+import fs from 'fs';
+import xlsx from '@popstas/xlsx-style';
+import xlsxOrig from 'xlsx';
+import { colsValidate } from '../validate.js';
+import color from '../color.js';
 
-module.exports = (csvPath, xlsxPath) => {
+export default (csvPath, xlsxPath) => {
   // validation functions for fields for xlsx
 
   // limit max column width

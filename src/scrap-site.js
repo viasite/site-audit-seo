@@ -1,21 +1,24 @@
 // see API - https://github.com/yujiosaka/headless-chrome-crawler/blob/master/docs/API.md#event-requeststarted
-const fs = require('fs');
-const path = require('path');
-const {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} = require('./actions');
-const {getUserDir} = require('./utils');
-const axios = require('axios');
-const HCCrawler = require('@popstas/headless-chrome-crawler');
-const CSVExporter = require('@popstas/headless-chrome-crawler/exporter/csv');
-const url = require('url');
-const {validateResults, getValidationSum} = require('./validate');
-const {exec} = require('child_process');
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
-const sanitize = require("sanitize-filename");
+import fs from 'fs';
+import lighthouse from 'lighthouse';
+import * as chromeLauncher from 'chrome-launcher';
+
+import path from 'path';
+import {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} from './actions/index.js';
+import {getUserDir} from './utils.js';
+import axios from 'axios';
+import HCCrawler from '@popstas/headless-chrome-crawler';
+import CSVExporter from '@popstas/headless-chrome-crawler/exporter/csv.js';
+// console.log("pkg:", pkg);
+// const {CSVExporter} = pkg;
+import url from 'url';
+import {validateResults, getValidationSum} from './validate.js';
+import {exec} from 'child_process';
+import sanitize from "sanitize-filename";
 // поля описаны в API по ссылке выше
-const fieldsPresets = require('./presets/scraperFields');
-const color = require('./color');
-const registry = require('./registry');
+import fieldsPresets from './presets/scraperFields.js';
+import color from './color.js';
+import registry from './registry.js';
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 
@@ -54,7 +57,7 @@ function socketSend(socket, event, msg) {
   }
 }
 
-module.exports = async (baseUrl, options = {}) => {
+async function scrapSite ({baseUrl, options = {}}) {
   const domain = url.parse(baseUrl).hostname || baseUrl;
   const protocol = url.parse(baseUrl).protocol;
 
@@ -82,6 +85,7 @@ module.exports = async (baseUrl, options = {}) => {
     content = res.data;
     content = content.replace(/^#.*$/gm, ''); // remove comments
 
+    let pageUrl;
     while (pageUrl = regex.exec(content)){
       if (pageUrl[0].match(/\.(png|jpg|js|css)$/)) continue;
       urls.push(pageUrl[0]);
@@ -191,6 +195,7 @@ module.exports = async (baseUrl, options = {}) => {
 
   // open second chrome for lighthouse
   let lighthouseChrome;
+  // const chromeLauncher = await import('chrome-launcher');
   if (options.lighthouse) {
     const chromeFlags = ['--no-sandbox'];
     if (options.headless) chromeFlags.push('--headless');
@@ -491,6 +496,8 @@ module.exports = async (baseUrl, options = {}) => {
 
         if (options.lighthouse) {
           const opts = {
+            logLevel: 'info',
+            maxWaitForLoad: 10000,
             // extends: 'lighthouse:default',
             /*onlyAudits: [
               'first-meaningful-paint',
@@ -502,6 +509,9 @@ module.exports = async (baseUrl, options = {}) => {
             port: lighthouseChrome.port,
             locale: options.lang,
           };
+          // console.log("lighthouse:", crawler._options.url);
+          // const lighthouse = await import('lighthouse');
+          // console.log("lighthouse:", lighthouse);
           const res = await lighthouse(crawler._options.url, opts);
           const data = JSON.parse(res.report);
 
@@ -766,7 +776,7 @@ module.exports = async (baseUrl, options = {}) => {
               };
 
               // console.log("newOptions:", newOptions);
-              module.exports(baseUrl, newOptions);
+              module.exports({baseUrl: baseUrl, options: newOptions});
             }, seconds * 1000);
           } catch (e) {
             console.log(e);
@@ -981,10 +991,13 @@ module.exports = async (baseUrl, options = {}) => {
         }
       } else {
         log('error after scan: ' + e.message.substring(0, 512));
-        // console.error(e);
+        console.error(e);
       }
     }
   };
 
   return await tryFinish(finishTries);
-};
+}
+
+// export default {scrapSite};
+export default scrapSite;

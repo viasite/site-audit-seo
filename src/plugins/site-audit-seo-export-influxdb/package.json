@@ -1,5 +1,6 @@
 {
   "name": "site-audit-seo-export-influxdb",
+  "type": "module",
   "site-audit-seo": {
     "plugins": {
       "export-influxdb": {

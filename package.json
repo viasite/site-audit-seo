@@ -3,6 +3,7 @@
   "version": "5.1.5",
   "description": "Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv, xlsx, Google Drive.",
   "main": "src/index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/viasite/site-audit-seo.git"
@@ -27,18 +28,19 @@
     "@popstas/xlsx-style": "^0.8.20",
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",
-    "chrome-launcher": "^0.13.4",
+    "chrome-launcher": "^1.1.0",
     "commander": "^5.0.0",
     "csvtojson": "^2.0.10",
     "expand-home-dir": "0.0.3",
     "express": "^4.17.1",
     "googleapis": "^59.0.0",
     "influx": "^5.6.3",
-    "lighthouse": "^6.2.0",
-    "lowdb": "^1.0.0",
+    "lighthouse": "^11.6.0",
+    "lodash": "^4.17.21",
+    "lowdb": "^7.0.1",
     "queue": "^6.0.1",
     "sanitize-filename": "^1.6.3",
-    "socket.io": "^2.3.0",
+    "socket.io": "^4.7.4",
     "xlsx": "^0.15.6"
   },
   "keywords": [

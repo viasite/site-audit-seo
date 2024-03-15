@@ -1,7 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const color = require('./color');
-const fieldsPresets = require("./presets/scraperFields");
+import fs from 'fs';
+import path from 'path';
+import fieldsPresets from "./presets/scraperFields.js";
 const userDir = './data';
 const plugins = [];
 let loaded = false;
@@ -112,13 +111,14 @@ async function execPlugins(jsonPath, options, type = 'any') {
     // console.log(`exec plugin ${plugin.name} (type ${type}):`);
     // console.log('plugin: ', plugin);
     const relPath = path.join('..', plugin.path);
-    const pluginObj = require(relPath);
-    await pluginObj(jsonPath, options);
+    const pluginObj = await import(relPath);
+    // console.log("pluginObj:", pluginObj);
+    await pluginObj.default(jsonPath, options);
     // console.log('');
   }
 }
 
-module.exports = {
+export default {
   load,
   getPlugins,
   execPlugins,

@@ -1,8 +1,9 @@
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis');
-const path = require('path');
-const color = require('../color');
+import fs from 'fs';
+import os from 'os';
+import readline from 'readline';
+import {google} from 'googleapis';
+import path from 'path';
+import color from '../color.js';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = [
@@ -12,13 +13,13 @@ const SCOPES = [
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
-const homedir = require('os').homedir();
+const homedir = os.homedir();
 const TOKEN_PATH = `${homedir}/.site-audit-seo-gdrive-token.json`;
 const folderName = 'site-audit-seo';
 
 let folderId;
 
-module.exports = async (filePath) => {
+    async function PublishGoogleDrive (filePath){
   // Load client secrets from a local file.
   /*fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
@@ -66,7 +67,7 @@ module.exports = async (filePath) => {
       }
     });
   })
-};
+}
 
 async function createFolderIfNotExists(drive, folderName) {
   // get gdrive folder
@@ -173,3 +174,5 @@ async function uploadFile(drive, filePath) {
 
   return res.data.webViewLink;
 }
+
+export default PublishGoogleDrive;

@@ -16,4 +16,6 @@ module.exports = {
   // lang: 'ru',
   // openFile: true,
   // docsExtensions: ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf', 'rar', 'zip']
+  // uploadOrigin: 'https://site-audit.viasite.ru',
+  // viewerOrigin: 'https://site-audit.viasite.ru',
 };

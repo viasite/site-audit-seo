@@ -1,15 +1,13 @@
-const fs = require('fs');
-const csv = require('csvtojson');
-const {fields} = require('../presets/fields');
-const filters = require('../presets/filters');
-const columns = require('../presets/columns');
+import fs from 'fs';
+import csv from 'csvtojson';
+import { fields } from '../presets/fields.js';
+import filters from '../presets/filters.js';
+import columns from '../presets/columns.js';
+import packageJson from '../../package.json' assert { type: 'json' };
 
 const defaultField = 'url';
 
-// return json object
-// TODO: too much arguments
-
-module.exports = async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args, scanTime, itemsPartial = [], partNum = 0, startTime = 0}) => {
+export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args, scanTime, itemsPartial = [], partNum = 0, startTime = 0}) => {
   // read csv to workbook
   const data = {};
 
@@ -44,7 +42,7 @@ module.exports = async ({csvPath, jsonPath, lang, preset, defaultFilter, url, ar
     url: url,
     args: args,
     startTime: startTime,
-    version: require('../../package.json').version,
+    version: packageJson.version,
     time: scanTime,
     partNum: partNum,
   }

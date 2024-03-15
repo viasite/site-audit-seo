@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 const systemLocale = getDefaultLocale(); // should be before scrap-site (before lighthouse require)
-const {program} = require('commander');
-const packageJson = require('../package.json');
-const config = require('./config');
-const color = require('./color');
-const os = require('os');
-const expandHomedir = require('expand-home-dir');
+import { program } from 'commander';
+import packageJson from '../package.json' assert { type: 'json' };
+import config from './config.js';
+import color from './color.js';
+import os from 'os';
+import expandHomedir from 'expand-home-dir';
 
 const defaultDocs = [
   'doc',
@@ -397,4 +397,4 @@ program.outBrief = (options) => {
   if (options.socket) options.socket.emit('status' + (options.socket.uid || ''), '&nbsp;');
 }
 
-module.exports = program;
+export default program;
