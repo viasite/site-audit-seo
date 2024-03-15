@@ -126,6 +126,9 @@ program.postParse = async () => {
   // c = 2, when lighthouse or screenshot -> c = 1
   if (program.concurrency === undefined) {
     program.concurrency = getConfigVal('concurrency', os.cpus().length);
+    if (config.maxConcurrency && program.concurrency > config.maxConcurrency) {
+      program.concurrency = config.maxConcurrency;
+    }
   }
   if (program.lighthouse) {
     program.concurrency = 1;
@@ -219,6 +222,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--upload', `Upload JSON to public web`,
     getConfigVal('upload', false)).
   option('--no-color', `No console colors`).
+  option('--partial-report <partialReport', ``).
   option('--lang <lang>', `Language (en, ru, default: system language)`,
     getConfigVal('lang', undefined)).
   option('--open-file',
@@ -267,7 +271,8 @@ program.getOptions = () => {
     removeSelectors: program.removeSelectors,   // удалить селекторы перед скриншотом
     urls: program.urls,                         // адреса для одиночного сканирования
     timeout: program.timeout,                   // таймаут запроса одной страницы
-    disablePlugins: program.disablePlugins
+    disablePlugins: program.disablePlugins,
+    partialReport: program.partialReport,
   };
   return opts;
 }

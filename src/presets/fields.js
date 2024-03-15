@@ -8,6 +8,11 @@ export const fields = [
     groups: ['info'],
   },
   {
+    name: 'error',
+    comment: 'Error',
+    groups: ['info'],
+  },
+  {
     name: 'screenshot',
     comment: 'Screenshot',
     groups: ['info'],

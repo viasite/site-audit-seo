@@ -4,6 +4,7 @@ export default {
   "seo-minimal": [
     'response.url',
     'depth',
+    'result.error',
     'response.status',
     'result.request_time',
     'result.redirected_from',
@@ -20,6 +21,7 @@ export default {
     'result.is_canonical',
     'previousUrl',
     'depth',
+    'result.error',
     'response.status',
     'result.request_time',
     'result.redirected_from',
@@ -67,6 +69,7 @@ export default {
   headers: [
     'response.url',
     'depth',
+    'result.error',
     'response.headers.content-type',
     'response.headers.',
     'response.headers.x-bitrix-composite',
@@ -76,6 +79,7 @@ export default {
   ],
   parse: [
     'response.url',
+    'result.error',
     'result.title',
     'result.h1',
     'result.description',
@@ -96,6 +100,7 @@ export default {
   lighthouse: [
     'response.url',
     'result.title',
+    'result.error',
     'lighthouse.scores.performance',
     'lighthouse.scores.pwa',
     'lighthouse.scores.accessibility',
@@ -112,6 +117,7 @@ export default {
   'lighthouse-all': [
     'response.url',
     'result.title',
+    'result.error',
     'lighthouse.scores.performance',
     'lighthouse.scores.pwa',
     'lighthouse.scores.accessibility',

@@ -75,13 +75,13 @@ async function scrapSite ({baseUrl, options = {}}) {
 
   const parseUrls = async (url) => {
     const urls = [];
-    const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&#\/%=~_|$?!:,.]*\)|[A-Z0-9+&#\/%=~_|$])/ig
+    const regex = /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-ZА-Я0-9+&#\/%=~_|$?!:,.]*\)|[-A-ZА-Я0-9+&#\/%=~_|$?!:,.])*(?:\([-A-ZА-Я0-9+&#\/%=~_|$?!:,.]*\)|[A-ZА-Я0-9+&#\/%=~_|$])/ig
 
     let content;
     /* if (fs.existsSync(url)) { // TODO: url list from file
       content = fs.readFileSync(options.file, 'utf8');
     } */
-    res = await axios.get(url);
+    const res = await axios.get(url);
     content = res.data;
     content = content.replace(/^#.*$/gm, ''); // remove comments
 
@@ -93,6 +93,20 @@ async function scrapSite ({baseUrl, options = {}}) {
 
     const onlyUnique = (value, index, self) => self.indexOf(value) === index;
     return urls.filter(onlyUnique);
+  }
+
+  let itemsPartial = [];
+  const getItemsPartial = () => {
+    if (!options.partialReport) return itemsPartial;
+    if (itemsPartial.length > 0) return itemsPartial;
+
+    // load partial path
+    const partialPath = path.normalize(`${options.partialReport}`);
+    const partialJson = fs.readFileSync(partialPath, 'utf8');
+    const partialItems = JSON.parse(partialJson).items;
+    itemsPartial.push(...partialItems);
+
+    return itemsPartial;
   }
 
   let urls = [];
@@ -109,6 +123,21 @@ async function scrapSite ({baseUrl, options = {}}) {
   const getUrlsRemain = (url) => {
     const index = fullUrls.indexOf(url);
     return index === -1 ? fullUrls : fullUrls.slice(index + 1);
+  }
+
+  if (options.partialReport && !options.urlsRemain) {
+    options.partial = true;
+    options.partNum = 1;
+    // console.log("build urlsRemain from partialReport:");
+    const itemsPartial = getItemsPartial();
+    console.log(`Found previous items: ${itemsPartial.length}`);
+    if (itemsPartial.length > 0) {
+      const itemLast = itemsPartial[itemsPartial.length - 1];
+      options.urlsRemain = getUrlsRemain(itemLast.url);
+      urls = options.urlsRemain;
+      // console.log("itemLast.url:", itemLast.url);
+      // console.log("options.urlsRemain.length:", options.urlsRemain.length);
+    }
   }
 
   // console.log('urls: ', urls);
@@ -344,8 +373,8 @@ async function scrapSite ({baseUrl, options = {}}) {
     onSuccess: result => {
       if (!result.result) return;
 
-      if (result.result.error) {
-        const msg = `${color.red}evaluatePage: Error collect page data: result.result.error${color.reset}`;
+      if (result.result.error && result.response.status) {
+        const msg = `${color.red}${result.response.url}: evaluatePage: Error collect page data: ${result.result.error}${color.reset}`;
         console.error(msg);
       }
       // console.log(`html_size: ${result.result.html_size}`);
@@ -433,7 +462,7 @@ async function scrapSite ({baseUrl, options = {}}) {
               previousUrl: '',
               response: {
                 url: crawler._options.url,
-                status: request.response()?.status(),
+                status: request.response()?.status() || 0,
               },
               redirectChain: [],
               screenshot: null,
@@ -472,15 +501,23 @@ async function scrapSite ({baseUrl, options = {}}) {
       const isDoc = crawler._options.url && options.docsExtensions.some(
         ext => crawler._options.url.includes(`.${ext}`));
       if (isDoc) {
+        const answer = await axios({
+          url: encodeURI(crawler._options.url),
+          method: "HEAD",
+          validateStatus: () => true,
+        });
         return {
           options: {},
           depth: 0,
           previousUrl: '',
           response: {
             url: crawler._options.url,
+            status: answer.status,
           },
           redirectChain: [],
-          result: {},
+          result: {
+            html_size: answer.headers['content-length'] || 0,
+          },
           screenshot: null,
           cookies: [],
           links: [],
@@ -596,7 +633,12 @@ async function scrapSite ({baseUrl, options = {}}) {
 
         result.result.mixed_content_url = mixedContentUrl;
         if (result.response.url) {
-          result.response.url = decodeURI(result.response.url);
+          // url might be malformed
+          try {
+            result.response.url = decodeURI(result.response.url);
+          } catch (e) {
+            // do nothing
+          }
         }
 
         if (result.redirectChain.length > 0) {
@@ -625,12 +667,65 @@ async function scrapSite ({baseUrl, options = {}}) {
         result.content = await page.content();
       }
       catch (e) {
-        console.log('Error while customCrawl');
-        console.log(e.message?.substring(0, 512));
+        const err = e.message?.substring(0, 512);
+        console.log('Error while customCrawl:');
+        // console.log("result:", result);
+        if (!result.result) {
+          result = {
+            options: {},
+            depth: 0,
+            previousUrl: '',
+            response: {
+              url: crawler._options.url,
+              status: 0,
+            },
+            result: {},
+            redirectChain: [],
+            screenshot: null,
+            cookies: [],
+            links: [],
+          }
+        }
+        // if (!result.response) result.response = { ok: true, url: crawler._options.url };
+        // console.log("err:", err);
+        const errText = `${err}`;
+        if (errText.includes('net::ERR_CERT')) { // ERR_CERT_DATE_INVALID, net::ERR_CERT_AUTHORITY_INVALID, net::ERR_CERT_COMMON_NAME_INVALID
+          result.result.error = 'ssl_err';
+          result.response.status = -1;
+        }
+        else if (errText.includes('net::ERR_NAME_NOT_RESOLVED')) {
+          result.result.error = 'dns_err';
+          result.response.status = -1;
+        }
+        else if (errText.includes('Navigation Timeout Exceeded')) {
+          result.result.error = 'timeout';
+          throw e; // for retry
+        }
+        else if (errText.includes('net::ERR_INVALID_RESPONSE')) {
+          result.result.error = 'invalid response';
+          result.response.status = -1;
+        }
+        else if (errText.includes('Execution context was destroyed')) {
+          result.result.error = 'context destroyed';
+        }
+        else if (errText.includes('net::ERR_ABORTED') || errText.includes('net::ERR_CONNECTION_REFUSED')) {
+          result.result.error = 'aborted (blocked)';
+        }
+        else if (errText.includes('net::ERR_EMPTY_RESPONSE')) {
+          result.result.error = 'empty (blocked)';
+        }
+        else if (errText.includes('URI malformed')) result.result.error = 'bad_url'; // not used?
+        else {
+          // console.log(err);
+          console.log("Unknown error, errText:", errText);
+          console.log(e.stack);
+        }
+        // console.log("result:", result);
       }
 
+
       // plugins afterRequest
-      if (result.response) {
+      if (result.response?.status) {
         try {
           socketSend(options.socket, 'ping', 'ping'); // https://github.com/socketio/socket.io/issues/3025
           // log('ping', opts.socket, true);
@@ -672,21 +767,7 @@ async function scrapSite ({baseUrl, options = {}}) {
   let requestedCount = 0;
 
   let isSaving = false;
-  let itemsPartial = [];
 
-  const getItemsPartial = () => {
-    if (!options.partialReports) return itemsPartial;
-    if (itemsPartial.length > 0) return itemsPartial;
-    for (const localPath of options.partialReports) {
-      if (!localPath) continue;
-      const partialPath = path.normalize(`${localPath}`);
-      // load partial path
-      const partialJson = fs.readFileSync(partialPath, 'utf8');
-      const partialItems = JSON.parse(partialJson).items;
-      itemsPartial.push(...partialItems);
-    }
-    return itemsPartial;
-  }
   const saveProgress = async () => {
     if (isSaving) return {};
     isSaving = true;
@@ -768,7 +849,7 @@ async function scrapSite ({baseUrl, options = {}}) {
                   urls: [...fullUrls],
                   cancel: false,
                   urlsRemain: urlsRemain,
-                  partialReports: [localPath],
+                  partialReport: [localPath],
                   partNum: options.partNum + 1,
                   removeCsv: false,
                   partialFirstStartTime: options.partialFirstStartTime || start,
@@ -843,6 +924,7 @@ async function scrapSite ({baseUrl, options = {}}) {
     try {
       console.error(
         `Failed: ${decodeURI(error.options.url)}`);
+      crawler._options.timeout = 30000; // TODO: to config, extend timeout on error
     } catch(e) {
       // possible URIError: URI malformed
       console.error(e);

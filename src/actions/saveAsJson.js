@@ -49,14 +49,38 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
 
   // filter empty redirected items
   console.log("data.items before filter:", data.items.length);
-  data.items = data.items.filter((item, i, self) => {
-    const hasBetter = self.filter((t, i2) => {
-      if (t.redirected_from === item.url) return true;
+  data.items = filterItems(data.items); // TODO: uncomment
 
-      if (i < i2) return false; // exclude previous items
+  // write
+  const raw = JSON.stringify(data);
+  fs.writeFileSync(jsonPath, raw);
+
+  const msg = `Saved ${data.items.length} items` + (itemsPartial.length > 0 ? `, including ${itemsPartial.length} previous items` : '');
+  console.log("saveAsJson:", msg);
+
+  return data;
+}
+
+function filterItems(items) {
+  return items.filter((item, i, self) => {
+    const hasBetter = self.filter((item2, i2) => {
+      if (item2.redirected_from === item.url) {
+        // console.log("i2 excluded 1:", i2);
+        return true;
+      }
+
+      if (i > i2) return false; // exclude previous items
       if (i === i2) return false; // exclude self
-      if (t.url === item.url) return true;
+      if (item2.url === item.url) {
+        // console.log("i2 is better 2:", i2);
+        // console.log("i excluded 2:", i);
+        return true;
+      }
     });
+    /*if (hasBetter.length > 0) {
+      console.log(`${i} has better:`, hasBetter);
+    }*/
+
     return hasBetter.length === 0;
     // return last element of hasBetter
     /*if (hasBetter.length === 0) {
@@ -69,16 +93,7 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
       return !isNotEmpty;
     }*/
   });
-
-  // write
-  const raw = JSON.stringify(data);
-  fs.writeFileSync(jsonPath, raw);
-
-  const msg = `Saved ${data.items.length} items` + (itemsPartial.length > 0 ? `, including ${itemsPartial.length} previous items` : '');
-  console.log("saveAsJson:", msg);
-
-  return data;
-};
+}
 
 function flattenItems(items) {
   // flatten items

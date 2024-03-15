@@ -1,10 +1,13 @@
-const fs = require('fs');
-
+import fs from 'fs';
+import { homedir } from 'os';
 let config = {};
-const homedir = require('os').homedir();
-const configPath = `${homedir}/.site-audit-seo.conf.js`;
+const configPath = `${homedir()}/.site-audit-seo.conf.js`;
 if (fs.existsSync(configPath)) {
-  config = require(configPath);
+  const fileData = await import(configPath);
+  if (fileData) config = fileData.default;
+  // console.log("config:", config);
 }
-
-module.exports = config;
+config = {...config, ...{
+  maxConcurrency: process.env.MAX_CONCURRENCY || 0,
+}}
+export default config;
