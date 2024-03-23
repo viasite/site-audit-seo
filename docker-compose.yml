@@ -19,7 +19,7 @@ services:
     ports:
     - ${SERVER_PORT}:${SERVER_PORT}
     volumes:
-    - .:/app
+    # - .:/app # for debug, you must run npm install for it
     - ./data:/app/data
     - ./data/reports:/app/data/reports
     # - ./data/db-docker.json:/app/data/db.json
