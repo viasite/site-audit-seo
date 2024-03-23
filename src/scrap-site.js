@@ -396,12 +396,14 @@ async function scrapSite ({baseUrl, options = {}}) {
 
       let mixedContentUrl = '';
 
-      /*page.on('requestfinished', async request => {
-        console.log("requestfinished:", request.url());
-        await page.screenshot({
-          path: screenshotPath + sanitize(request.url()) + '.' + screenshotExt,
-        });
-      });*/
+      page.on('requestfinished', async request => {
+        // console.log("requestfinished:", request.url());
+        if (config.featureScreenshot) {
+          await page.screenshot({
+            path: screenshotPath + sanitize(request.url()) + '.' + screenshotExt,
+          });
+        }
+      });
 
       // это событие срабатывает, когда chrome подгружает статику на странице (и саму страницу)
       page.on('request', request => {
@@ -1074,6 +1076,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       } else {
         log('error after scan: ' + e.message.substring(0, 512));
         console.error(e);
+        console.error(e.stacktrace);
       }
     }
   };

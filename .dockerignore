@@ -8,3 +8,5 @@ Dockerfile*
 .git/**
 node_modules
 data/
+/config.js
+/undefined*

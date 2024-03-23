@@ -13,6 +13,9 @@ services:
     environment:
       PORT: ${SERVER_PORT}
       YAKE_SERVER_URL: ${YAKE_SERVER_URL}
+      MAX_CONCURRENCY: ${MAX_CONCURRENCY}
+      ONLY_DOMAINS: ${ONLY_DOMAINS}
+      SCAN_DEFAULT_URL: ${SCAN_DEFAULT_URL}
     ports:
     - ${SERVER_PORT}:${SERVER_PORT}
     volumes:

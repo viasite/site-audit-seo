@@ -14,7 +14,9 @@ const app = express();
 // app.use(cors());
 import bodyParser from "body-parser";
 import http from "http";
+import os from "os";
 const server = http.createServer(app);
+import config from "./config.js";
 
 import { Server } from "socket.io";
 const io = new Server(server, {
@@ -213,7 +215,7 @@ function serverState() {
     socketsList.push(msg);
   }
 
-  return {
+  const conf = {
     running: q.length < maxConcurrency ? q.length : maxConcurrency,
     available: Math.max(0, maxConcurrency - q.length),
     pending: Math.max(0, q.length - maxConcurrency),
@@ -222,13 +224,23 @@ function serverState() {
     pagesTotal: pagesTotal,
     scansTotalAll: stats.scansTotal || 0,
     pagesTotalAll: stats.pagesTotal || 0,
+    serverLoadPercent: getServerLoadPercent(),
     uptime: Math.floor((Date.now() - startedTime) / 1000),
     serverVersion: pjson.version,
     reboots: reboots,
+    featureScreenshot: config.featureScreenshot,
     // sockets: socketsList, // only for debug!
   }
+  if (config.onlyDomains) conf.onlyDomains = config.onlyDomains;
+  return conf;
 }
 
+function getServerLoadPercent() {
+  // return load average / number of CPUs
+  const cpus = os.cpus().length;
+  const load = os.loadavg()[0];
+  return Math.round(load / cpus * 100);
+}
 function sendStats(socket) {
   socketSend(socket, "serverState", serverState());
 }

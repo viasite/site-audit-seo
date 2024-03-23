@@ -9,3 +9,5 @@ data/
 !package-data.json
 !package-lock.json
 *.code-workspace
+/undefined*
+/config.js

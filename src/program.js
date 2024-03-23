@@ -290,7 +290,8 @@ program.outBrief = (options) => {
       comment: '-c threads' +
         (program.concurrency > 1 && program.lighthouse ?
           `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
-          : ''),
+          : '') +
+        (config.maxConcurrency ? `, max: ${config.maxConcurrency}` : ''),
     },
     {
       name: 'Lighthouse',
@@ -349,7 +350,9 @@ program.outBrief = (options) => {
     },
     {
       name: 'Fields',
-      value: Object.keys(fieldsCustom).join(', '),
+      // join fieldsCustom object to string "key (value), key (value)"
+      value: Object.entries(fieldsCustom).map(([key, value]) => `${key} (${value})`).join(', '),
+      //value: fieldsCustom.map((f, name) => `${name} (${f})`),
       comment: '',
     },
   ];
