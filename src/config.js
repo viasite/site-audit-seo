@@ -6,6 +6,7 @@ const envVars = {
   maxConcurrency: process.env.MAX_CONCURRENCY ? parseInt(process.env.MAX_CONCURRENCY) : 0,
   featureScreenshot: !!process.env.FEATURE_SCREENSHOT,
   onlyDomains: process.env.ONLY_DOMAINS? `${process.env.ONLY_DOMAINS}`.split(',').map(d => d.trim()) : false,
+  uploadUrl: process.env.UPLOAD_URL || 'https://functions.yandexcloud.net/d4erepgc4tp37sslk453',
 }
 config = {...envVars, ...config};
 

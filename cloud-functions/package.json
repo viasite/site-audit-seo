@@ -1,0 +1,17 @@
+{
+  "name": "cloud-functions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@yandex-cloud/function-types": "^2.1.1",
+    "@yandex-cloud/serverless-live-debug": "^1.3.0",
+    "aws-sdk": "^2.1584.0",
+    "querystring": "^0.2.1"
+  }
+}

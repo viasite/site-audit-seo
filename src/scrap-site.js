@@ -19,6 +19,7 @@ import sanitize from "sanitize-filename";
 import fieldsPresets from './presets/scraperFields.js';
 import color from './color.js';
 import registry from './registry.js';
+import config from './config.js';
 
 const DEBUG = true; // выключить, если не нужны console.log на каждый запрос (не будет видно прогресс)
 

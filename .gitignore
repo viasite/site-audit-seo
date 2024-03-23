@@ -11,3 +11,4 @@ data/
 *.code-workspace
 /undefined*
 /config.js
+.live-debug
