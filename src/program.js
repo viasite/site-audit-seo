@@ -357,6 +357,16 @@ program.outBrief = (options) => {
     },
   ];
 
+  if (options.partialReport) {
+    brief = [...brief, ...[
+      {
+        name: 'Previous report',
+        value: options.partialReport,
+        comment: '--partial-report data/report/...json',
+      },
+    ]];
+  }
+
   if (options.influxdb) {
     brief = [...brief, ...[
       {
