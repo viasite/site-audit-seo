@@ -6,6 +6,7 @@ export const fields = [
     name: 'url',
     comment: 'URL',
     groups: ['info'],
+    filterType: 'string',
   },
   {
     name: 'error',
