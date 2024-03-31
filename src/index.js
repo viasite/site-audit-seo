@@ -8,6 +8,7 @@ import {exec} from 'child_process';
 
 async function start() {
   program.parse(process.argv);
+  const startTime = Date.now();
 
   if (!program.urls) {
     console.log(`${program.name()} ${program.version()}`);
@@ -33,7 +34,17 @@ async function start() {
       }
 
       if (program.json) {
-        await saveAsJson(csvPath, jsonPath, program.lang, program.preset, false, program.urls[0], args, 0);
+        await saveAsJson({
+          csvPath,
+          jsonPath,
+          lang: program.lang,
+          preset: program.preset,
+          defaultFilter: false,
+          url: program.urls[0],
+          args: process.argv,
+          scanTime: 0,
+          startTime,
+        });
 
         if (program.upload) webPath = await uploadJson(jsonPath);
 
