@@ -198,7 +198,7 @@ function initQueue() {
 function getKeyBySocketId(socketId) {
   for (let sid in sockets) {
     const s = sockets[sid];
-    if (s.opts && s.opts.socket && s.opts.socket.id == socketId) return sid;
+    if (s?.opts?.socket?.id === socketId || sid === socketId) return sid;
   }
 }
 
@@ -208,10 +208,10 @@ function serverState() {
 
   const socketsList = [];
 
+  // for debug
   for (let sid in sockets) {
     const s = sockets[sid];
-    const msg = s.opts && s.opts.socket && s.opts.socket.id != sid ? `${sid} => ${s.opts.socket.id}` : sid;
-    // const msg = `${sid} => ${sockets[sid].opts.socket.id}`;
+    const msg = s?.opts?.socket?.id !== sid ? `${sid} => ${s.socket.id}` : sid;
     socketsList.push(msg);
   }
 
@@ -246,7 +246,7 @@ function sendStats(socket) {
 }
 
 function onSocketConnection(socket) {
-  log("user connected to server", socket, true);
+  log(`user connected to server, connectionId: ${socket.id}`, socket, true);
   connections++;
   // console.log('socket.id: ', socket.id);
   sockets[socket.id] = { socket, opts: {} };
