@@ -107,14 +107,19 @@ Open https://viasite.github.io/site-audit-seo-viewer/.
 
 ## Install
 
-## Install with docker-compose
-``` bash
-git clone https://github.com/viasite/site-audit-seo
-cd site-audit-seo
-git clone https://github.com/viasite/site-audit-seo-viewer data/front
-docker-compose pull # for skip build step
-docker-compose up -d
+## Zero-knowledge install
+Requires Docker.
+
+### Windows: download and run `install-run.bat`.
+Script will clone repository to `%LocalAppData%\Programs\site-audit-seo` and run service on http://localhost:5302.
+
+
+### Linux/MacOS:
 ```
+curl https://raw.githubusercontent.com/viasite/site-audit-seo/master/install-run.sh | bash
+```
+
+Script will clone repository to `$HOME/.local/share/programs/site-audit-seo` and run service on http://localhost:5302.
 
 Service will available on http://localhost:5302
 
@@ -124,7 +129,6 @@ Service will available on http://localhost:5302
 - Yake: `5303`
 
 You can change it in `.env` file or in `docker-compose.yml`.
-
 
 ## Install with NPM:
 ``` bash
@@ -141,6 +145,15 @@ After installing on Ubuntu, you may need to change the owner of the Chrome direc
 Run this (replace `$USER` to your username or run from your user, not from `root`):
 ``` bash
 sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
+```
+
+## Install developer instanse with docker-compose
+``` bash
+git clone https://github.com/viasite/site-audit-seo
+cd site-audit-seo
+git clone https://github.com/viasite/site-audit-seo-viewer data/front
+docker-compose pull # for skip build step
+docker-compose up -d
 ```
 
 Error details [Invalid file descriptor to ICU data received](https://github.com/puppeteer/puppeteer/issues/2519).
