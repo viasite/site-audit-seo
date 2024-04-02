@@ -36,7 +36,7 @@ let disconnectedLog = [];
 
 // resend messages while disconnected
 function sendDisconnected(socket) {
-  if (disconnectedLog.length == 0) return;
+  if (disconnectedLog.length === 0) return;
   const log = [...disconnectedLog];
   disconnectedLog = [];
   for (let item of log) {
@@ -791,7 +791,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       startTime,
       partNum: options.partNum,
     })
-    const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, startTime);
+    const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, startTime, true);
 
     // send result json to socket
     socketSend(options.socket, 'result', {name: jsonName, isProgress: true, count: items.length});
@@ -1022,7 +1022,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       }
 
       if (options.webService) {
-        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, options.partialFirstStartTime);
+        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, options.partialFirstStartTime, true);;
 
         // send result json to socket
         socketSend(options.socket, 'result', {name: jsonName, count: data.items.length});

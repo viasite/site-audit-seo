@@ -49,7 +49,7 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
 
   // filter empty redirected items
   console.log("data.items before filter:", data.items.length);
-  data.items = filterItems(data.items); // TODO: uncomment
+  data.items = filterItems(data.items);
 
   // write
   const raw = JSON.stringify(data);
