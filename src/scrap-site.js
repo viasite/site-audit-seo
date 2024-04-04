@@ -634,6 +634,8 @@ async function scrapSite ({baseUrl, options = {}}) {
           result.screenshot = getScreenshotUrl(result.response.url)
         }
 
+        if (!result.result) result.result = {}; // TODO: find out why result.result is not defined sometimes, possible js error into page
+
         result.result.mixed_content_url = mixedContentUrl;
         if (result.response.url) {
           // url might be malformed
