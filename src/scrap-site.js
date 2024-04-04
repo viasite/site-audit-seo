@@ -250,7 +250,7 @@ async function scrapSite ({baseUrl, options = {}}) {
     exporter,
 
     // url ignore rules
-    preRequest: options => {
+    preRequest(options) {
       // console.log(options.url);
       if (options.url.match(/\.(jpg|jpeg|png|gif)/i)) return false; // картинки
       if (options.url.match(/\?width=\d+&height=\d+/)) return false; // визитки, сотрудники
@@ -264,9 +264,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       // if (options.url.match(/\?(category|age|usage|madein|season|brand)=/)) return false; // bitrix filter
 
       // http scan while first page was https
-      if (!options.urlList && url.parse(options.url).protocol != protocol) return false;
-
-      return true;
+      return !(!options.urlList && url.parse(options.url).protocol !== protocol);
     },
 
     // сюда можно дописывать сборщики данных со страницы
@@ -280,11 +278,14 @@ async function scrapSite ({baseUrl, options = {}}) {
         let domainParts = location.host.split('.');
         const domain2level = domainParts.slice(domainParts.length - 2).
           join('.');
-        const canonical = $('link[rel="canonical"]').attr('href');
+        const canonical = $('link[rel="canonical"]');
+        const canonicalHref = canonical.attr('href');
         const relUrl = window.location.href.replace(`${window.location.protocol}//${window.location.host}`, '');
-        const isCanonical = canonical ?
-          (canonical == decodeURI(window.location.href) ||
-          canonical == decodeURI(relUrl) ? 1 : 0) : '';
+        const isCanonical = canonicalHref ?
+          (canonicalHref === decodeURI(window.location.href) ||
+          canonicalHref === decodeURI(relUrl) ? 1 : 0) : '';
+        const h1 = $('h1');
+        const description = $('meta[name="description"]');
 
         const result = {
           request_time:
@@ -292,12 +293,12 @@ async function scrapSite ({baseUrl, options = {}}) {
             window.performance.timing.requestStart,
           title: $('title').text(),
           page_date: '',
-          h1: $('h1').text().trim(),
-          h1_count: $('h1').length,
+          h1: h1.text().trim(),
+          h1_count: h1.length,
           h2_count: $('h2').length,
           h3_count: $('h3').length,
           h4_count: $('h4').length,
-          canonical_count: $('link[rel="canonical"]').length,
+          canonical_count: canonical.length,
           google_amp: $('link[rel="amphtml"]').length,
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
@@ -321,8 +322,8 @@ async function scrapSite ({baseUrl, options = {}}) {
             domain2level + '"])').length,
           // links_absolute: $('').length,
           description:
-            ($('meta[name="description"]').attr('content') &&
-              $('meta[name="description"]').
+            (description.attr('content') &&
+              description.
                 attr('content').
                 split('\n').
                 join(' ')) ||
@@ -411,7 +412,7 @@ async function scrapSite ({baseUrl, options = {}}) {
         //console.log('request.url(): ', request.url());
 
         // check for mixed content, thanks to https://github.com/busterc/mixed-content-crawler/
-        if (protocol == 'https:' &&
+        if (protocol === 'https:' &&
           ['image', 'stylesheet', 'script'].includes(request.resourceType()) &&
           request.url().match(/^http:/)) {
           request.notHTTPS = true;
@@ -424,11 +425,11 @@ async function scrapSite ({baseUrl, options = {}}) {
         if (isDoc) {
           // досюда как-то доходит
           request.abort();
-        } else if (SKIP_IMAGES && request.resourceType() == 'image') {
+        } else if (SKIP_IMAGES && request.resourceType() === 'image') {
           request.abort();
-        } else if (SKIP_CSS && request.resourceType() == 'stylesheet') {
+        } else if (SKIP_CSS && request.resourceType() === 'stylesheet') {
           request.abort();
-        } else if (SKIP_JS && request.resourceType() == 'script') {
+        } else if (SKIP_JS && request.resourceType() === 'script') {
           request.abort();
         } else {
           request.continue();
@@ -573,7 +574,7 @@ async function scrapSite ({baseUrl, options = {}}) {
             scores: {},
           };
 
-          const fieldConfigs = []; // для генерации конфига полей
+          // const fieldConfigs = []; // for code-generation of presets/fields.js
 
           for (let auditName of audits) {
             if (!data.audits[auditName]) continue;
@@ -585,8 +586,7 @@ async function scrapSite ({baseUrl, options = {}}) {
             if (!data.categories[categoryId]) continue;
 
             // lighthouse.scores
-            lighthouseData.scores[categoryId] = parseInt(
-              data.categories[categoryId].score * 100);
+            lighthouseData.scores[categoryId] = parseInt(data.categories[categoryId].score) * 100;
 
             // all audits
             for (let auditRef of data.categories[categoryId].auditRefs) {
@@ -621,7 +621,7 @@ async function scrapSite ({baseUrl, options = {}}) {
                 fieldConfig.groups.push(groupTitle);
                 // fieldConfig.groups = [groupTitle];
               }
-              fieldConfigs.push(fieldConfig);
+              // fieldConfigs.push(fieldConfig);
             }
           }
 
@@ -748,6 +748,12 @@ async function scrapSite ({baseUrl, options = {}}) {
     }, // /customCrawl
   };
 
+  // for suppress jetbrains warning: function not used
+  if (!defaultOptions.preRequest) return;
+  if (!defaultOptions.evaluatePage) return;
+  if (!defaultOptions.onSuccess) return;
+  if (!defaultOptions.customCrawl) return;
+
   const crawlerOptions = {...defaultOptions, ...options};
 
   if ('screenshot' in crawlerOptions && crawlerOptions.screenshot) {
@@ -802,7 +808,6 @@ async function scrapSite ({baseUrl, options = {}}) {
     return { jsonName, localPath };
   }
 
-  let browserWSEndpoint
   try {
     crawler = await HCCrawler.launch(crawlerOptions);
   } catch (e) {
@@ -814,7 +819,7 @@ async function scrapSite ({baseUrl, options = {}}) {
   let isCancalling = false;
 
   crawler.on('requeststarted', async opts => {
-    const failedEmulated10Percent = requestedCount > 10 && Math.random() < 0.1;
+    // const failedEmulated10Percent = requestedCount > 10 && Math.random() < 0.1;
 
     // catch error after scan
     if (crawler._browser._connection._closed /*|| failedEmulated10Percent*/) {
@@ -834,7 +839,7 @@ async function scrapSite ({baseUrl, options = {}}) {
 
           // save json, pass report to next crawler
           try {
-            const {jsonName, localPath} = await saveProgress();
+            const { localPath} = await saveProgress();
 
             // output next url
             options.urlsRemain = options.urlsRemain || [];
@@ -938,10 +943,10 @@ async function scrapSite ({baseUrl, options = {}}) {
     console.error(`${color.yellow}Disallowed in robots.txt: ${decodeURI(
       options.url)}${color.reset}`);
   });
-  crawler.on('maxdepthreached', opts => {
+  crawler.on('maxdepthreached', () => {
     if (options.maxDepth > 1) console.log(`${color.yellow}Max depth reached${color.reset}`);
   });
-  crawler.on('maxrequestreached', options => {
+  crawler.on('maxrequestreached', () => {
     if (crawler._browser._connection._closed) return; // catch error after scan
     console.log(`\n${color.yellow}Max requests reached${color.reset}`);
     // console.log(`${color.yellow}Please, ignore this error:${color.reset}`);
@@ -1022,7 +1027,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       }
 
       if (options.webService) {
-        const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, options.partialFirstStartTime, true);;
+        const { jsonName } = copyJsonToReports(jsonPath, options.socket.uid, undefined, options.partialFirstStartTime, true);
 
         // send result json to socket
         socketSend(options.socket, 'result', {name: jsonName, count: data.items.length});
@@ -1064,7 +1069,7 @@ async function scrapSite ({baseUrl, options = {}}) {
     try {
       return await finishScan();
     } catch (e) {
-      if (e.code == 'EBUSY') {
+      if (e.code === 'EBUSY') {
         let msg = `${color.red}${xlsxPath} is busy`;
         if (tries > 0) msg += ', please close file in 10 seconds!';
         console.error(msg);
