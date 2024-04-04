@@ -296,7 +296,6 @@ function onSocketConnection(socket) {
     clearInterval(interval);
     connections--;
     log(`user disconnected: ${socket.id}`, socket, true);
-    // delete(sockets[socket.id]); // TODO: remove for restore connection
   });
 }
 

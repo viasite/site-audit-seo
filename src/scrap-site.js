@@ -304,7 +304,7 @@ async function scrapSite ({baseUrl, options = {}}) {
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
           html_size: document.head.innerHTML.length +
-            document.body.innerHTML.length, // TODO: it's doesn't work
+            document.body.innerHTML.length,
           text_ratio_percent: Math.round(
             document.body.innerText.length / document.body.innerHTML.length *
             100),
@@ -533,7 +533,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       let result = {};
       try {
         result = await crawl();
-        // console.log("after crawl(), result.response.status: ", result?.response?.status); // TODO: remove
+        // console.log("after crawl(), result.response.status: ", result?.response?.status);
 
         if (options.lighthouse) {
           const opts = {
@@ -823,7 +823,7 @@ async function scrapSite ({baseUrl, options = {}}) {
 
     // catch error after scan
     if (crawler._browser._connection._closed /*|| failedEmulated10Percent*/) {
-      // log("Browser connection closed (requeststarted)"); // TODO: remove
+      // log("Browser connection closed (requeststarted)");
       // 11.03.2021 12:22 fix: suppress headless-chrome-crawler exceptions after max requests reached
       // but if return it can cause infinite loop
       // return;
