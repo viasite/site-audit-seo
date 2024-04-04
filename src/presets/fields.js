@@ -1,6 +1,7 @@
 import registry from '../registry.js';
 import fieldsLighthouse from './fields-lighthouse.js';
 import fieldsLighthouseEn from './fields-lighthouse-en.js';
+
 export const fields = [
   {
     name: 'url',
@@ -69,12 +70,27 @@ export const fields = [
     comment: 'Код ответа страницы',
     comment_en: 'HTTP answer code',
     validate: {
-      error: '!= 200',
+      warning: '== 0',
+      error: '> 400',
     },
     stat: {
       type: 'enum',
     },
     groups: ['info'],
+    type: 'integer',
+    filterType: 'enum',
+  },
+  {
+    name: 'x_cache',
+    comment: 'X-Cache',
+    comment_en: 'X-Cache',
+    validate: {
+      warning: '< 1',
+    },
+    stat: {
+      type: 'enum',
+    },
+    groups: ['perf'],
     type: 'integer',
     filterType: 'enum',
   },
@@ -498,7 +514,7 @@ for (let lhf of fieldsLighthouse) {
 // plugins fields
 const plugins = registry.getPlugins();
 for (let plugin of plugins) {
-  if (plugin.fields) for(let field of plugin.fields) {
+  if (plugin.fields) for (let field of plugin.fields) {
     if (typeof field === 'string') {
       fields.push({
         name: field,

@@ -535,6 +535,14 @@ async function scrapSite ({baseUrl, options = {}}) {
         result = await crawl();
         // console.log("after crawl(), result.response.status: ", result?.response?.status);
 
+        result.result.x_cache = 0;
+        for (let header in result.response.headers) {
+          if (header.match(/x-cache/) && result.response.headers[header].match(/hit/i)) {
+            result.result.x_cache = 1;
+            break;
+          }
+        }
+
         if (options.lighthouse) {
           const opts = {
             logLevel: 'info',
