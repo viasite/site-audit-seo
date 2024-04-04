@@ -302,13 +302,13 @@ async function scrapSite ({baseUrl, options = {}}) {
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
-          html_size_rendered: document.head.innerHTML.length +
-            document.body.innerHTML.length,
+          html_size: document.head.innerHTML.length +
+            document.body.innerHTML.length, // TODO: it's doesn't work
           text_ratio_percent: Math.round(
             document.body.innerText.length / document.body.innerHTML.length *
             100),
           images: $('img').length,
-          images_without_alt: $('img:not([alt]').length,
+          images_without_alt: $('img:not([alt])').length,
           images_alt_empty: $('img[alt=""]').length,
           images_outer: $(
             'img[src^="http"]:not([src^="/"]):not([src*="' + domain2level +
