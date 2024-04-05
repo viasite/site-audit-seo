@@ -8,35 +8,41 @@ export default async (jsonPath) => {
 
   const uploadName = getJsonName(jsonPath);
 
-  const viewerOrigin = config.viewerOrigin || 'https://site-audit.viasite.ru';
+  const viewerOrigin = config.viewerOrigin || ""; //'https://site-audit.viasite.ru';
   const uploadOrigin = config.uploadOrigin || `${viewerOrigin}`;
-  const uploadUrl = `${uploadOrigin}/upload/`;
+  const uploadUrl = uploadOrigin ? `${uploadOrigin}/upload/` : "";
 
-  console.log(`Uploading to ${uploadUrl}...`);
-  const res = await axios.post(`${uploadUrl}`, {
-    name: uploadName,
-    data: data,
-    upload_origin: uploadOrigin,
-  });
+  let uploadedUrl;
 
-  if (res.status !== 200 || !res.data.url) {
-    console.error('Failed to upload file!');
-    return jsonPath;
+  if (uploadUrl) {
+    console.log(`Uploading to ${uploadUrl}...`);
+    const res = await axios.post(`${uploadUrl}`, {
+      name: uploadName,
+      data: data,
+      upload_origin: uploadOrigin,
+    });
+
+    if (res.status !== 200 || !res.data.url) {
+      console.error('Failed to upload file!');
+      return jsonPath;
+    }
+
+    uploadedUrl = res.data.url;
   }
-
-  let uploadedUrl = res.data.url;
-  try {
-    uploadedUrl = await uploadToCloud(jsonPath);
-  } catch(e) {
-    console.error('Failed to upload to cloud!');
-    console.error(e);
+  else {
+    try {
+      console.log("Uploading to cloud...");
+      uploadedUrl = await uploadToCloud(jsonPath);
+    } catch(e) {
+      console.error('Failed to upload to cloud!');
+      console.error(e);
+    }
   }
 
   return uploadedUrl;
 };
 
 async function uploadToCloud(jsonPath) {
-  console.log("uploadToCloud:", jsonPath);
   const uploadUrl = config.uploadUrl;
   if (!uploadUrl) return;
 

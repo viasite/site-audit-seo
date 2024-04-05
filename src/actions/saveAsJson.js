@@ -53,7 +53,7 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
   }
 
   // filter empty redirected items
-  console.log("data.items before filter:", data.items.length);
+  // console.log("data.items before filter:", data.items.length);
   data.items = filterItems(data.items);
 
   // write
@@ -61,7 +61,7 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
   fs.writeFileSync(jsonPath, raw);
 
   const msg = `Saved ${data.items.length} items` + (itemsPartial.length > 0 ? `, including ${itemsPartial.length} previous items` : '');
-  console.log("saveAsJson:", msg);
+  console.log(msg);
 
   return data;
 }

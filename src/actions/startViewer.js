@@ -31,12 +31,12 @@ export default async (jsonPath, webPath = false) => {
   }
 
   function outLinks(url) {
-    console.log(`JSON file: ${url}`);
+    // console.log(`JSON file: ${url}`);
+    // console.log('');
+    // console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
+    // console.log(`Short link: ${viewerOrigin}/?url=${url}`);
     console.log('');
-    console.log(`Dev viewer: http://localhost:3000/?url=${url}`);
-    console.log(`Short link: ${viewerOrigin}/?url=${url}`);
-    console.log('');
-    console.log(`Online viewer: ${onlineViewLink(url)}`);
+    console.log(`Report link: ${onlineViewLink(url)}`);
     //console.log(`Public viewer: ${onlineViewLink(url.replace(`http://localhost:${port}`, 'https://3001.home.popstas.ru'))}`);
     console.log('');
   }
