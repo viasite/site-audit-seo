@@ -10,3 +10,5 @@ node_modules
 data/
 /config.js
 /undefined*
+/cloud-functions
+/assets/site-audit-demo.gif
