@@ -153,36 +153,51 @@ Error details [Invalid file descriptor to ICU data received](https://github.com/
 ## Command line usage:
 ```
 $ site-audit-seo --help
-Usage: site-audit-seo -u https://example.com --upload
+Usage: site-audit-seo -u https://example.com
 
 Options:
-  -u --urls <urls>             Comma separated url list for scan
-  -p, --preset <preset>        Table preset (minimal, seo, seo-minimal, headers, parse, lighthouse, lighthouse-all) (default: "seo")
-  -e, --exclude <fields>       Comma separated fields to exclude from results
-  -d, --max-depth <depth>      Max scan depth (default: 10)
-  -c, --concurrency <threads>  Threads number (default: by cpu cores)
-  --lighthouse                 Appends base Lighthouse fields to preset
-  --delay <ms>                 Delay between requests (default: 0)
-  -f, --fields <json>          Field in format --field 'title=$("title").text()' (default: [])
-  --no-skip-static             Scan static files
-  --no-limit-domain            Scan not only current domain
-  --docs-extensions            Comma-separated extensions that will be add to table (default: doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip)
-  --follow-xml-sitemap         Follow sitemap.xml (default: false)
-  --ignore-robots-txt          Ignore disallowed in robots.txt (default: false)
-  -m, --max-requests <num>     Limit max pages scan (default: 0)
-  --no-headless                Show browser GUI while scan
-  --no-remove-csv              No delete csv after json generate
-  --out-dir <dir>              Output directory (default: ".")
-  --csv <path>                 Skip scan, only convert existing csv to json
-  --json                       Output results in JSON (default: false)
-  --upload                     Upload JSON to public web (default: false)
-  --no-color                   No console colors
-  --lang <lang>                Language (en, ru, default: system language)
-  --open-file                  Open file after scan (default: yes on Windows and MacOS)
-  --no-open-file               Don't open file after scan
-  --no-console-validate        Don't output validate messages in console
-  -V, --version                output the version number
-  -h, --help                   display help for command
+  -u --urls <urls>                  Comma separated url list for scan
+  -p, --preset <preset>             Table preset (minimal, seo, seo-minimal, headers, parse, lighthouse,
+                                    lighthouse-all) (default: "seo")
+  -t, --timeout <timeout>           Timeout for page request, in ms (default: 10000)
+  -e, --exclude <fields>            Comma separated fields to exclude from results
+  -d, --max-depth <depth>           Max scan depth (default: 10)
+  -c, --concurrency <threads>       Threads number (default: by cpu cores)
+  --lighthouse                      Appends base Lighthouse fields to preset
+  --delay <ms>                      Delay between requests (default: 0)
+  -f, --fields <json>               Field in format --field 'title=$("title").text()' (default: [])
+  --default-filter <defaultFilter>  Default filter when JSON viewed, example: depth>1
+  --no-skip-static                  Scan static files
+  --no-limit-domain                 Scan not only current domain
+  --docs-extensions <ext>           Comma-separated extensions that will be add to table (default:
+                                    doc,docx,xls,xlsx,ppt,pptx,pdf,rar,zip)
+  --follow-xml-sitemap              Follow sitemap.xml (default: false)
+  --ignore-robots-txt               Ignore disallowed in robots.txt (default: false)
+  --url-list                        assume that --url contains url list, will set -d 1 --no-limit-domain
+                                    --ignore-robots-txt (default: false)
+  --remove-selectors <selectors>    CSS selectors for remove before screenshot, comma separated (default:
+                                    ".matter-after,#matter-1,[data-slug]")
+  -m, --max-requests <num>          Limit max pages scan (default: 0)
+  --influxdb-max-send <num>         Limit send to InfluxDB (default: 5)
+  --no-headless                     Show browser GUI while scan
+  --remove-csv                      Delete csv after json generate (default: true)
+  --remove-json                     Delete json after serve (default: true)
+  --no-remove-csv                   No delete csv after generate
+  --no-remove-json                  No delete json after serve
+  --out-dir <dir>                   Output directory (default: "~/site-audit-seo/")
+  --out-name <name>                 Output file name, default: domain
+  --csv <path>                      Skip scan, only convert existing csv to json
+  --json                            Save as JSON (default: true)
+  --no-json                         No save as JSON
+  --upload                          Upload JSON to public web (default: false)
+  --no-color                        No console colors
+  --partial-report <partialReport>
+  --lang <lang>                     Language (en, ru, default: system language)
+  --no-console-validate             Don't output validate messages in console
+  --disable-plugins <plugins>       Comma-separated plugin list (default: [])
+  --screenshot                      Save page screenshot (default: false)
+  -V, --version                     output the version number
+  -h, --help                        display help for command
 ```
 
 
@@ -334,7 +349,7 @@ sudo chown -R $USER:$USER "$(npm prefix -g)/lib/node_modules/site-audit-seo/node
 
 ## Использование
 ```
-site-audit-seo -u https://example.com --upload
+site-audit-seo -u https://example.com
 ```
 
 

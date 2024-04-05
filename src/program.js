@@ -97,10 +97,6 @@ function getDefaultLocale() {
 
 
 program.postParse = async () => {
-  if (program.openFile === undefined) {
-    program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
-  }
-
   // lang
   if (!['en', 'fr', 'de', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
@@ -202,9 +198,9 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('influxdb.maxSendCount', 5)).
   option('--no-headless', `Show browser GUI while scan`,
     !getConfigVal('headless', true)).
-  option('--remove-csv', `No delete csv after json generate`,
+  option('--remove-csv', `Delete csv after json generate`,
     getConfigVal('removeCsv', true)).
-  option('--remove-json', `No delete json after serve`,
+  option('--remove-json', `Delete json after serve`,
     getConfigVal('removeJson', true)).
   option('--no-remove-csv', `No delete csv after generate`).
   option('--no-remove-json', `No delete json after serve`).
@@ -217,19 +213,15 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('--upload', `Upload JSON to public web`,
     getConfigVal('upload', false)).
   option('--no-color', `No console colors`).
-  option('--partial-report <partialReport', ``).
+  option('--partial-report <partialReport>', ``).
   option('--lang <lang>', `Language (en, ru, default: system language)`,
     getConfigVal('lang', undefined)).
-  option('--open-file',
-    `Open file after scan (default: yes on Windows and MacOS)`,
-    getConfigVal('openFile', undefined)).
-  option('--no-open-file', `Don't open file after scan`).
   option('--no-console-validate', `Don't output validate messages in console`).
   option('--disable-plugins <plugins>', `Comma-separated plugin list`, list, []).
   option('--screenshot', `Save page screenshot`, getConfigVal('screenshot', false)).
   name('site-audit-seo').
   version(packageJson.version).
-  usage('-u https://example.com --upload')
+  usage('-u https://example.com')
 
 program.getOptions = () => {
   const opts = {
@@ -250,7 +242,6 @@ program.getOptions = () => {
     outName: program.outName,                   // имя файла
     color: program.color,                       // раскрашивать консоль
     lang: program.lang,                         // язык
-    openFile: program.openFile,                 // открыть файл после сканирования
     fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
     defaultFilter: program.defaultFilter,       //
     removeCsv: program.removeCsv,               // удалять csv после генерации

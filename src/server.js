@@ -113,7 +113,6 @@ async function onScan(url, args, socket) {
   program.color = true;
 
   delete(program.lang);
-  delete(program.openFile);
   program.fields = [];
   delete(program.defaultFilter);
   program.removeCsv = true;
