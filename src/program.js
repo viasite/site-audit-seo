@@ -283,16 +283,6 @@ program.outBrief = (options) => {
       comment: (program.lighthouse ? '' : '--lighthouse')
     },
     {
-      name: 'Screenshot',
-      value: (program.screenshot ? 'yes' : 'no'),
-      comment: (program.screenshot ? '' : '--screenshot')
-    },
-    {
-      name: 'Remove selectors',
-      value: (program.removeSelectors ? program.removeSelectors : 'no'),
-      comment: (program.removeSelectors ? '' : '--remove-selectors .banner')
-    },
-    {
       name: 'Delay',
       value: program.delay,
       comment: '--delay ms',
@@ -327,19 +317,40 @@ program.outBrief = (options) => {
       value: program.lang,
       comment: '--lang [en, fr, de, ru]',
     },
-    {
+    /*{
       name: 'Docs extensions',
       value: program.docsExtensions.join(','),
       comment: '--docs-extensions zip,rar',
-    },
-    {
-      name: 'Fields',
-      // join fieldsCustom object to string "key (value), key (value)"
-      value: Object.entries(fieldsCustom).map(([key, value]) => `${key} (${value})`).join(', '),
-      //value: fieldsCustom.map((f, name) => `${name} (${f})`),
-      comment: '',
-    },
+    },*/
   ];
+
+  if (options.screenshot) {
+    brief = [...brief, ...[
+      {
+        name: 'Screenshot',
+        value: (program.screenshot ? 'yes' : 'no'),
+        comment: (program.screenshot ? '' : '--screenshot')
+      },
+      {
+        name: 'Remove selectors',
+        value: (program.removeSelectors ? program.removeSelectors : 'no'),
+        comment: (program.removeSelectors ? '' : '--remove-selectors .banner')
+      },
+    ]]
+  }
+
+  const fieldsArg = Object.entries(fieldsCustom).map(([key, value]) => `${key} (${value})`).join(', ');
+  if (fieldsArg) {
+    brief = [...brief, ...[
+      {
+        name: 'Fields',
+        // join fieldsCustom object to string "key (value), key (value)"
+        value: fieldsArg,
+        //value: fieldsCustom.map((f, name) => `${name} (${f})`),
+        comment: '',
+      },
+    ]]
+  }
 
   if (options.partialReport) {
     brief = [...brief, ...[
