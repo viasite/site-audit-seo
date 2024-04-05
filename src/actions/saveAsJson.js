@@ -3,7 +3,8 @@ import csv from 'csvtojson';
 import { fields } from '../presets/fields.js';
 import filters from '../presets/filters.js';
 import columns from '../presets/columns.js';
-import packageJson from '../../package.json' assert { type: 'json' };
+import path from "path";
+import {fileURLToPath} from "url";
 
 const defaultField = 'url';
 
@@ -37,6 +38,10 @@ export default async ({csvPath, jsonPath, lang, preset, defaultFilter, url, args
 
   // columns
   data.columns = buildColumns(columns, preset);
+
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const packageJsonPath = path.join(__dirname, '..', '..', 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 
   data.scan = {
     url: url,

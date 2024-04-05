@@ -1,12 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 const systemLocale = getDefaultLocale(); // should be before scrap-site (before lighthouse require)
 import { program } from 'commander';
-import packageJson from '../package.json' assert { type: 'json' };
 import config from './config.js';
 import color from './color.js';
 import os from 'os';
 import expandHomedir from 'expand-home-dir';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageJsonPath = path.join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
 
 const defaultDocs = [
   'doc',
@@ -92,7 +96,6 @@ function getDefaultLocale() {
 }
 
 
-
 program.postParse = async () => {
   if (program.openFile === undefined) {
     program.openFile = ['darwin', 'win32'].includes(os.platform()); // only for win and mac
@@ -159,8 +162,6 @@ program.postParse = async () => {
   program.outDir = expandHomedir(program.outDir);
   createDirIfNotExists(program.outDir);
 }
-
-
 
 
 program.option('-u --urls <urls>', 'Comma separated url list for scan', list).

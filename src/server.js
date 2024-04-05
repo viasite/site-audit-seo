@@ -1,7 +1,6 @@
 import path from 'path';
 import { JSONFilePreset } from 'lowdb/node'
 
-import pjson from '../package.json' assert { type: "json" };
 import scrapSite from "./scrap-site.js";
 // import { scrapSite } from "./scrap-site";
 import registry from "./registry.js";
@@ -17,8 +16,14 @@ import http from "http";
 import os from "os";
 const server = http.createServer(app);
 import config from "./config.js";
-
 import { Server } from "socket.io";
+import {fileURLToPath} from "url";
+import fs from "fs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const packageJsonPath = path.join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -224,7 +229,7 @@ function serverState() {
     pagesTotalAll: stats.pagesTotal || 0,
     serverLoadPercent: getServerLoadPercent(),
     uptime: Math.floor((Date.now() - startedTime) / 1000),
-    serverVersion: pjson.version,
+    serverVersion: packageJson.version,
     reboots: reboots,
     featureScreenshot: config.featureScreenshot,
     // sockets: socketsList, // only for debug!
@@ -350,7 +355,7 @@ function initExpress(app) {
   app.use("/reports", express.static("data/reports"));
 
   app.get("/", async (req, res) => {
-    res.send(`site-audit-seo ${pjson.version} working`);
+    res.send(`site-audit-seo ${packageJson.version} working`);
   });
 
   const port = process.env.PORT || 5301;
