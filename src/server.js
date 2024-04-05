@@ -113,8 +113,6 @@ async function onScan(url, args, socket) {
   delete(program.defaultFilter);
   program.removeCsv = true;
   delete(program.removeJson);
-  delete(program.xlsx);
-  delete(program.gdrive);
   program.json = true;
   delete(program.upload);
   delete(program.consoleValidate);

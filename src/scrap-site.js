@@ -4,7 +4,7 @@ import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 
 import path from 'path';
-import {saveAsXlsx, saveAsJson, copyJsonToReports, uploadJson, publishGoogleDrive, startViewer} from './actions/index.js';
+import {saveAsJson, copyJsonToReports, uploadJson, startViewer} from './actions/index.js';
 import {getUserDir} from './utils.js';
 import axios from 'axios';
 import HCCrawler from '@popstas/headless-chrome-crawler';
@@ -144,7 +144,6 @@ async function scrapSite ({baseUrl, options = {}}) {
   // console.log('urls: ', urls);
   const baseName = sanitize(options.outName || domain);
   const csvPath = path.normalize(`${options.outDir}/${baseName}.csv`);
-  const xlsxPath = path.normalize(`${options.outDir}/${baseName}.xlsx`);
   const jsonPath = path.normalize(`${options.outDir}/${baseName}.json`);
   let screenshotPath;
   const screenshotExt = 'png'; // or jpg
@@ -298,7 +297,6 @@ async function scrapSite ({baseUrl, options = {}}) {
           h2_count: $('h2').length,
           h3_count: $('h3').length,
           h4_count: $('h4').length,
-          canonical_count: canonical.length,
           google_amp: $('link[rel="amphtml"]').length,
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
@@ -329,8 +327,9 @@ async function scrapSite ({baseUrl, options = {}}) {
                 join(' ')) ||
             '',
           keywords: $('meta[name="keywords"]').attr('content'),
-          canonical: canonical,
+          canonical: canonicalHref,
           is_canonical: isCanonical,
+          canonical_count: canonical.length,
           og_title: $('meta[property="og:title"]').attr('content'),
           og_image: $('meta[property="og:image"]').attr('content'),
           schema_types: $.unique($('[itemtype]').
@@ -535,6 +534,7 @@ async function scrapSite ({baseUrl, options = {}}) {
         result = await crawl();
         // console.log("after crawl(), result.response.status: ", result?.response?.status);
 
+        if (!result.result) result.result = {};
         result.result.x_cache = 0;
         for (let header in result.response.headers) {
           if (header.match(/x-cache/) && result.response.headers[header].match(/hit/i)) {
@@ -733,7 +733,7 @@ async function scrapSite ({baseUrl, options = {}}) {
           console.log("Unknown error, errText:", errText);
           console.log(e.stack);
         }
-        // console.log("result:", result);
+        if (result.result.error) console.log(result.result.error);
       }
 
 
@@ -807,7 +807,7 @@ async function scrapSite ({baseUrl, options = {}}) {
       startTime,
       partNum: options.partNum,
     })
-    const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket.uid, undefined, startTime, true);
+    const { jsonName, localPath } = copyJsonToReports(jsonPath, options.socket?.uid, undefined, startTime, true);
 
     // send result json to socket
     socketSend(options.socket, 'result', {name: jsonName, isProgress: true, count: items.length});
@@ -1002,13 +1002,6 @@ async function scrapSite ({baseUrl, options = {}}) {
       outValidationSummary();
     }
 
-    // legacy, xlsx don't needed more
-    if (options.xlsx) {
-      saveAsXlsx(csvPath, xlsxPath);
-      if (options.gdrive) await publishGoogleDrive(xlsxPath);
-      if (options.openFile) exec(`"${xlsxPath}"`);
-    }
-
     if (options.json) {
       const itemsPartial = getItemsPartial();
       const data = await saveAsJson({
@@ -1079,21 +1072,9 @@ async function scrapSite ({baseUrl, options = {}}) {
     try {
       return await finishScan();
     } catch (e) {
-      if (e.code === 'EBUSY') {
-        let msg = `${color.red}${xlsxPath} is busy`;
-        if (tries > 0) msg += ', please close file in 10 seconds!';
-        console.error(msg);
-
-        if (tries > 0) {
-          setTimeout(async () => {
-            await tryFinish(tries - 1);
-          }, 10000);
-        }
-      } else {
-        log('error after scan: ' + e.message.substring(0, 512));
-        console.error(e);
-        console.error(e.stacktrace);
-      }
+      log('error after scan: ' + e.message.substring(0, 512));
+      console.error(e);
+      console.error(e.stacktrace);
     }
   };
 

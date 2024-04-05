@@ -101,9 +101,6 @@ program.postParse = async () => {
   // lang
   if (!['en', 'fr', 'de', 'ru'].includes(program.lang)) program.lang = systemLocale;
 
-  // no open file when no xlsx generate
-  if (!program.xlsx) program.openFile = false;
-
   // --json when --upload
   if (program.upload) program.json = true;
 
@@ -204,19 +201,16 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('influxdb.maxSendCount', 5)).
   option('--no-headless', `Show browser GUI while scan`,
     !getConfigVal('headless', true)).
-  option('--remove-csv', `No delete csv after xlsx generate`,
+  option('--remove-csv', `No delete csv after json generate`,
     getConfigVal('removeCsv', true)).
   option('--remove-json', `No delete json after serve`,
     getConfigVal('removeJson', true)).
-  option('--no-remove-csv', `No delete csv after xlsx generate`).
+  option('--no-remove-csv', `No delete csv after generate`).
   option('--no-remove-json', `No delete json after serve`).
   option('--out-dir <dir>', `Output directory`,
     getConfigVal('outDir', '~/site-audit-seo/')).
   option('--out-name <name>', `Output file name, default: domain`).
-  option('--csv <path>', `Skip scan, only convert csv to xlsx`).
-  option('--xlsx', `Save as XLSX`, getConfigVal('xlsx', false)).
-  option('--gdrive', `Publish sheet to google docs`,
-    getConfigVal('gdrive', false)).
+  option('--csv <path>', `Skip scan, only convert existing csv to json`).
   option('--json', `Save as JSON`, getConfigVal('json', true)).
   option('--no-json', `No save as JSON`, !getConfigVal('json', true)).
   option('--upload', `Upload JSON to public web`,
@@ -258,10 +252,8 @@ program.getOptions = () => {
     openFile: program.openFile,                 // открыть файл после сканирования
     fields: program.fields,                     // дополнительные поля, --fields 'title=$("title").text()'
     defaultFilter: program.defaultFilter,       //
-    removeCsv: program.removeCsv,               // удалять csv после генерации xlsx
+    removeCsv: program.removeCsv,               // удалять csv после генерации
     removeJson: program.removeJson,             // удалять json после поднятия сервера
-    xlsx: program.xlsx,                         // сохранять в XLSX
-    gdrive: program.gdrive,                     // публиковать на google docs
     json: program.json,                         // сохранять json файл
     upload: program.upload,                     // выгружать json на сервер
     consoleValidate: program.consoleValidate,   // выводить данные валидации в консоль
@@ -384,11 +376,6 @@ program.outBrief = (options) => {
         name: 'Headless',
         value: (program.headless ? 'yes' : 'no'),
         comment: (program.headless ? '--no-headless' : ''),
-      },
-      {
-        name: 'Save as XLSX',
-        value: (program.xlsx ? 'yes' : 'no'),
-        comment: (!program.xlsx ? '--xlsx' : ''),
       },
       {
         name: 'Save as JSON',

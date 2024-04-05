@@ -1,6 +1,6 @@
 [![npm](https://img.shields.io/npm/v/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo) [![npm](https://img.shields.io/npm/dt/site-audit-seo)](https://www.npmjs.com/package/site-audit-seo)
 
-Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv, xlsx, Google Drive.
+Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv.
 
 Web view report - [site-audit-seo-viewer](https://viasite.github.io/site-audit-seo-viewer/).
 
@@ -31,14 +31,6 @@ Open https://viasite.github.io/site-audit-seo-viewer/.
 - Does not load images, css, js (configurable)
 - Each site is saved to a file with a domain name in `~/site-audit-seo/`
 - Some URLs are ignored ([`preRequest` in `src/scrap-site.js`](src/scrap-site.js#L98))
-
-### XLSX features
-- The first row and the first column are fixed
-- Column width and auto cell height are configured for easy viewing
-- URL, title, description and some other fields are limited in width
-- Title is right-aligned to reveal the common part
-- Validation of some columns (status, request time, description length)
-- Export xlsx to Google Drive and print URL
 
 ### Web viewer features:
 - Fixed table header and url column
@@ -179,11 +171,9 @@ Options:
   --ignore-robots-txt          Ignore disallowed in robots.txt (default: false)
   -m, --max-requests <num>     Limit max pages scan (default: 0)
   --no-headless                Show browser GUI while scan
-  --no-remove-csv              No delete csv after xlsx generate
+  --no-remove-csv              No delete csv after json generate
   --out-dir <dir>              Output directory (default: ".")
-  --csv <path>                 Skip scan, only convert csv to xlsx
-  --xlsx                       Save as XLSX (default: false)
-  --gdrive                     Publish sheet to google docs (default: false)
+  --csv <path>                 Skip scan, only convert existing csv to json
   --json                       Output results in JSON (default: false)
   --upload                     Upload JSON to public web (default: false)
   --no-color                   No console colors
@@ -283,7 +273,6 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 1. Sometimes it writes identical pages to csv. This happens in 2 cases:
 1.1. Redirect from another page to this (solved by setting `skipRequestedRedirect: true`, hardcoded).
 1.2. Simultaneous request of the same page in parallel threads.
-2. Sometimes a number appears instead of the URL, it occurs at the stage of converting csv to xlsx, don't know why.
 
 
 ## Free audit tools alternatives
@@ -307,7 +296,7 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 - [Gerapy](https://github.com/Gerapy/Gerapy) - distributed Crawler Management Framework Based on Scrapy, Scrapyd, Django and Vue.js
 
 ## Русский
-Сканирование одного или несколько сайтов в файлы csv и xlsx.
+Сканирование одного или несколько сайтов в json файл с веб-интерфейсом.
 
 ## Особенности:
 - Обходит весь сайт, собирает ссылки на страницы и документы
@@ -320,14 +309,6 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 - Некоторые URL игнорируются ([`preRequest` в `src/scrap-site.js`](src/scrap-site.js#L112))
 - Можно прогнать каждую страницу по Lighthouse (см. ниже)
 - Сканирование произвольного списка URL, `--url-list`
-
-### Особенности XLSX:
-- Первый ряд и первая колонка закрепляются
-- Ширина колонок и автоматическая высота ячеек настроены для удобного просмотра
-- URL, title, description и некоторые другие поля ограничены по ширине
-- Title выравнивается по правому краю для выявления общей части
-- Валидация некоторых колонок (status, request time, description length)
-- Загрузка xlsx на Google Drive и вывод ссылки
 
 ## Установка:
 ``` bash
@@ -385,7 +366,6 @@ site-audit-seo -u https://example.com --lighthouse
 1. Иногда пишет в csv одинаковые страницы. Это бывает в 2 случаях:
 1.1. Редирект с другой страницы на эту (решается установкой `skipRequestedRedirect: true`, сделано).
 1.2. Одновременный запрос одной и той же страницы в параллельных потоках.
-2. Иногда вместо URL появляется цифра, происходит на этапе конвертации csv в xlsx, не знаю почему.
 
 
 ## TODO:

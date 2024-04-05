@@ -1,7 +1,7 @@
 {
   "name": "site-audit-seo",
   "version": "5.1.5",
-  "description": "Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv, xlsx, Google Drive.",
+  "description": "Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv.",
   "main": "src/index.js",
   "type": "module",
   "repository": {
@@ -25,7 +25,6 @@
   "license": "ISC",
   "dependencies": {
     "@popstas/headless-chrome-crawler": "^1.8.4",
-    "@popstas/xlsx-style": "^0.8.21",
     "axios": "^1.6.8",
     "body-parser": "^1.19.0",
     "chrome-launcher": "^1.1.0",
@@ -33,15 +32,13 @@
     "csvtojson": "^2.0.10",
     "expand-home-dir": "0.0.3",
     "express": "^4.19.2",
-    "googleapis": "^59.0.0",
     "influx": "^5.6.3",
     "lighthouse": "^11.6.0",
     "lodash": "^4.17.21",
     "lowdb": "^7.0.1",
     "queue": "^6.0.1",
     "sanitize-filename": "^1.6.3",
-    "socket.io": "^4.7.4",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+    "socket.io": "^4.7.4"
   },
   "keywords": [
     "audit",
@@ -49,7 +46,6 @@
     "scraper",
     "puppeteer",
     "seo",
-    "cli",
-    "xlsx"
+    "cli"
   ]
 }

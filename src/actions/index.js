@@ -2,9 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 export {default as copyJsonToReports} from './copyJsonToReports.js';
-export {default as publishGoogleDrive} from './publishGoogleDrive.js';
 export {default as saveAsJson} from './saveAsJson.js';
-export {default as saveAsXlsx} from './saveAsXlsx.js';
 export {default as startViewer} from './startViewer.js';
 export {default as uploadJson} from './uploadJson.js';
 
