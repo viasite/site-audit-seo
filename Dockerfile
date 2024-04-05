@@ -18,7 +18,7 @@ RUN apt-get update \
     libxtst6 \
     && rm -rf /var/lib/apt/lists/*
 
-# ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-"false"}
+ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=${PUPPETEER_SKIP_CHROMIUM_DOWNLOAD:-"true"}
 # ARG PUPPETEER_EXECUTABLE_PATH=/node_modules/puppeteer/.local-chromium/linux-782078/chrome-linux/chrome
 
 # RUN apk update && \
@@ -35,7 +35,7 @@ COPY package*.json ./
 RUN chown -R node:node /app
 USER node
 
-RUN npm install
+RUN npm install --omit=dev
 COPY . .
 # RUN npm install -g site-audit-seo --unsafe-perm=true && \
     # chown -R "$(id -u):$(id -g)" "$(npm prefix -g)/lib/node_modules/site-audit-seo/node_modules/puppeteer/.local-chromium/"
@@ -44,6 +44,9 @@ COPY . .
 # VOLUME ["/app/data/reports"]
 EXPOSE 5301
 ENV PORT=5301
+ENV NODE_ENV production
+ENV PUPPETEER_EXECUTABLE_PATH=/opt/google/chrome/chrome
+ENV CHROME_PATH=/opt/google/chrome/chrome
 
 CMD  ["npm", "run", "server"]
 # CMD  ["ls", "-l", "/app"]
