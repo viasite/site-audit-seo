@@ -70,7 +70,8 @@ export const fields = [
     comment: 'Код ответа страницы',
     comment_en: 'HTTP answer code',
     validate: {
-      warning: '== 0',
+      // warning: '== 0',
+      warning: '< 1',
       error: '> 400',
     },
     stat: {
