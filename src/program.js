@@ -121,7 +121,7 @@ program.postParse = async () => {
 
   // c = 2, when lighthouse or screenshot -> c = 1
   if (program.concurrency === undefined) {
-    program.concurrency = getConfigVal('concurrency', os.cpus().length);
+    program.concurrency = getConfigVal('concurrency', Math.min(10, os.cpus().length));
     if (config.maxConcurrency && program.concurrency > config.maxConcurrency) {
       program.concurrency = config.maxConcurrency;
     }
@@ -172,7 +172,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
   option('-d, --max-depth <depth>', 'Max scan depth',
     getConfigVal('maxDepth', 10)).
   option('-c, --concurrency <threads>',
-    'Threads number (default: by cpu cores)').
+    `Threads number (default: ${Math.min(10, os.cpus().length)})`).
   option('--lighthouse', 'Appends base Lighthouse fields to preset').
   option('--delay <ms>', 'Delay between requests', parseInt, 0).
   option('-f, --fields <json>',
