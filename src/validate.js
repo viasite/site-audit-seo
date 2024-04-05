@@ -1,4 +1,4 @@
-import at from 'lodash';
+import _ from 'lodash';
 
 const lighthouseValidateScore = {
   success: (v) => v >= 90,
@@ -78,7 +78,8 @@ export const validateResults = (results, fields) => {
   const validate = {};
   for (let fName of fields) {
     // get value
-    const colVal = at(results, fName)[0];
+    const wrapper = _.at(results, fName);
+    const colVal = _.first(wrapper);
     const colName = fName.replace('result.', '').replace('response.', '');
     let msg;
 
