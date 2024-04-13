@@ -32,6 +32,8 @@ let SKIP_JS = true;
 const finishTries = 5;
 const saveAfterEvery = 100; // saveProgress after each N requests
 
+let isMaxRequested = false;
+
 let disconnectedLog = [];
 
 // resend messages while disconnected
@@ -682,7 +684,11 @@ async function scrapSite ({baseUrl, options = {}}) {
       }
       catch (e) {
         const err = e.message?.substring(0, 512);
-        console.log('Error while customCrawl:');
+        if (isCancalling || isMaxRequested) {
+          // Scan is cancelled, suppress errors
+          return;
+        }
+        log(`Error while scan ${crawler._options.url}`);
         // console.log("result:", result);
         if (!result.result) {
           result = {
@@ -703,6 +709,7 @@ async function scrapSite ({baseUrl, options = {}}) {
         // if (!result.response) result.response = { ok: true, url: crawler._options.url };
         // console.log("err:", err);
         const errText = `${err}`;
+        let isRetry = false;
         if (errText.includes('net::ERR_CERT')) { // ERR_CERT_DATE_INVALID, net::ERR_CERT_AUTHORITY_INVALID, net::ERR_CERT_COMMON_NAME_INVALID
           result.result.error = 'ssl_err';
           result.response.status = -1;
@@ -713,7 +720,12 @@ async function scrapSite ({baseUrl, options = {}}) {
         }
         else if (errText.includes('Navigation Timeout Exceeded')) {
           result.result.error = 'timeout';
-          throw e; // for retry
+          crawler._options.timeout = 30000;
+          isRetry = true;
+        }
+        else if (errText.includes('browser has disconnected')) {
+          result.result.error = 'browser_err';
+          isRetry = true;
         }
         else if (errText.includes('net::ERR_INVALID_RESPONSE')) {
           result.result.error = 'invalid response';
@@ -731,10 +743,13 @@ async function scrapSite ({baseUrl, options = {}}) {
         else if (errText.includes('URI malformed')) result.result.error = 'bad_url'; // not used?
         else {
           // console.log(err);
-          console.log("Unknown error, errText:", errText);
+          log("Unknown error, errText:", errText);
           console.log(e.stack);
         }
-        if (result.result.error) console.log(result.result.error);
+        // console.log("result.result.error:", result.result.error);
+        // console.log("errText:", errText);
+        if (result.result.error) log(`${result.result.error}${isRetry ? ', retry' : ''}`);
+        if (isRetry) throw e; // for retry
       }
 
 
@@ -876,7 +891,7 @@ async function scrapSite ({baseUrl, options = {}}) {
               };
 
               // console.log("newOptions:", newOptions);
-              module.exports({baseUrl: baseUrl, options: newOptions});
+              scrapSite({baseUrl: baseUrl, options: newOptions});
             }, seconds * 1000);
           } catch (e) {
             console.log(e);
@@ -960,6 +975,7 @@ async function scrapSite ({baseUrl, options = {}}) {
   crawler.on('maxrequestreached', () => {
     if (crawler._browser._connection._closed) return; // catch error after scan
     console.log(`\n${color.yellow}Max requests reached${color.reset}`);
+    isMaxRequested = true;
     // console.log(`${color.yellow}Please, ignore this error:${color.reset}`);
   });
 
