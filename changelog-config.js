@@ -1,6 +1,6 @@
 'use strict';
-// TODO: 
-module.exports = {
+// TODO:
+export default {
     // parserOpts: parserOpts,
     writerOpts: {
         // reverse: true,
