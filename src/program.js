@@ -166,7 +166,7 @@ program.option('-u --urls <urls>', 'Comma separated url list for scan', list).
     getConfigVal('preset', 'seo')).
   option('-t, --timeout <timeout>',
     'Timeout for page request, in ms',
-    getConfigVal('timeout', 10000)).
+    getConfigVal('timeout', 20000)).
   option('-e, --exclude <fields>',
     'Comma separated fields to exclude from results', list).
   option('-d, --max-depth <depth>', 'Max scan depth',

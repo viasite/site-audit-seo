@@ -245,6 +245,7 @@ async function scrapSite ({baseUrl, options = {}}) {
     skipRequestedRedirect: true, // all redirects marks as visited
     depthPriority: false, // without it find not all pages
     retryCount: 1,
+    retryDelay: 5000,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'], // puppeteer freezes without it
     exporter,
 
@@ -546,7 +547,7 @@ async function scrapSite ({baseUrl, options = {}}) {
         if (options.lighthouse) {
           const opts = {
             logLevel: 'info',
-            maxWaitForLoad: 10000,
+            maxWaitForLoad: 30000,
             // extends: 'lighthouse:default',
             /*onlyAudits: [
               'first-meaningful-paint',
