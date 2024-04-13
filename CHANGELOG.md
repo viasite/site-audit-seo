@@ -1,3 +1,42 @@
+# [6.0.0](https://github.com/viasite/site-audit-seo/compare/v5.1.5...v6.0.0) (2024-04-13)
+
+
+### Bug Fixes
+
+* --timeout default 10 -> 20 sec, reduce retryDelay 10 -> 5 sec, lighthouse maxWaitForLoad 10 -> 30 sec ([c7a829f](https://github.com/viasite/site-audit-seo/commit/c7a829ff0b578615ac621ccea6f4016be23d24a8))
+* add failed requests to table, like http 204 ([61844de](https://github.com/viasite/site-audit-seo/commit/61844dee2c58e2087e7bad7264f9ee9bdb759280))
+* add filterType to url field ([a41307a](https://github.com/viasite/site-audit-seo/commit/a41307a64f83dac728f8e3d113ca702ee334299a))
+* add language "de" ([6e0166e](https://github.com/viasite/site-audit-seo/commit/6e0166e0dbd7d9f24da31c08a7f5f502b0e46be4))
+* add partialReport to brief ([3c68849](https://github.com/viasite/site-audit-seo/commit/3c68849e760edf27577c9ac8a56f95963c696eeb))
+* better cancelling, error logging, fix rescan for remain urls ([273ae86](https://github.com/viasite/site-audit-seo/commit/273ae86de6c69cb22439fffd4518ff4162c3e0e9))
+* better scan start/stop indication ([b0697be](https://github.com/viasite/site-audit-seo/commit/b0697be116711c09c14cf799cc3acc4da5902c95))
+* correct the treatment of 300x status codes as errors ([d11ad67](https://github.com/viasite/site-audit-seo/commit/d11ad67696519bd71165335718c64a3e7367d33f))
+* disable uploading to custom server by default, upload to cloud instead unless viewerOrigin is defined ([3ddbb79](https://github.com/viasite/site-audit-seo/commit/3ddbb79b3d47228e3c19d44e1a2c954c0614f81b))
+* don't create two reports when saveProgress report exists ([ad1dcb3](https://github.com/viasite/site-audit-seo/commit/ad1dcb3cf7211544e6a62dd876a363b6aa530bc2))
+* fix console validate after lodash upgrade ([52cd7e7](https://github.com/viasite/site-audit-seo/commit/52cd7e790afb7583f65dab5e8cce52a42e6f73d8))
+* fix restore connection by first socket id ([d5f6e71](https://github.com/viasite/site-audit-seo/commit/d5f6e71cf4ccd846cddd282b1c3d779817ce1745))
+* fix scan error when result.result is not defined ([8074521](https://github.com/viasite/site-audit-seo/commit/8074521e96763aaefcc249292d4406fdb227d630))
+* fix url pass to saveAsJson ([024dfdc](https://github.com/viasite/site-audit-seo/commit/024dfdc5f4b27f2d27dd10f9fea7838a00d6ec0b))
+* html_size, images_without_alt was empty ([910986c](https://github.com/viasite/site-audit-seo/commit/910986c2b582aabec6d5255ea96148c17de3b2c8))
+* limit default concurrency to 10 ([e3de101](https://github.com/viasite/site-audit-seo/commit/e3de101e40c48c7cd7df3983ae0fd1800499bb2e))
+* remove debug project dir mount, add empty data/reports dir ([f938f9e](https://github.com/viasite/site-audit-seo/commit/f938f9e6262639807b5969292e8695addbd96d44))
+* remove minor arguments from brief ([799bdbc](https://github.com/viasite/site-audit-seo/commit/799bdbca1bff276acc8bd16f99167e9a735e3f5c))
+* respect disablePlugins from config ([856244a](https://github.com/viasite/site-audit-seo/commit/856244a7979e2178f2fff02f1f0ad32d0aa7d806))
+* update environment variables ([faa8be9](https://github.com/viasite/site-audit-seo/commit/faa8be964b9431bfe8088c6dcec2a847438e19d3))
+
+
+### Features
+
+* add inline table filters for enum fields ([d697ff6](https://github.com/viasite/site-audit-seo/commit/d697ff6b3736948091b773cebab23e4707d304f5))
+* add x_cache field ([e34a355](https://github.com/viasite/site-audit-seo/commit/e34a3555d2161a7595fb697f49497f7d0c676b86))
+* featureScreenshot, onlyDomains, ./config.js, serverLoadPercent, maxConcurrency, node 14 -> 18 ([181f6ae](https://github.com/viasite/site-audit-seo/commit/181f6ae0bc31dcc7ad0301193f93f3dff3aa21fd))
+* incremental saving of scan progress, add result.error, better page load error detection, scan document exist ([69894c0](https://github.com/viasite/site-audit-seo/commit/69894c0de46e502b51b20da0fb5d060eb7e0d2d6))
+* persist report name, save progress every 100 urls, continue scan for urlList, filter item duplicates, add fields redirects, redirected_from, add preset seo-minimal, run plugins only if plugin fields in preset, reduce --timeout 30s -> 10s, add --screenshot, support comments in url list, less crashes ([9598b19](https://github.com/viasite/site-audit-seo/commit/9598b19b92c7994c7c0d9d70b39552cd2e778d57))
+* upload reports to yandex cloud ([30a79bc](https://github.com/viasite/site-audit-seo/commit/30a79bcbb11e10a39af2ebfea8a0c20ff94730f7))
+* zero-knowledge install ([57965a7](https://github.com/viasite/site-audit-seo/commit/57965a75b6541936bd5784f6531561c00396dc77))
+
+
+
 ## [5.1.5](https://github.com/viasite/site-audit-seo/compare/v5.1.4...v5.1.5) (2021-06-23)
 
 
