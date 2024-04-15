@@ -304,7 +304,7 @@ async function scrapSite ({baseUrl, options = {}}) {
           dom_size: document.getElementsByTagName('*').length,
           head_size: document.head.innerHTML.length,
           body_size: document.body.innerHTML.length,
-          html_size: document.head.innerHTML.length +
+          html_size_rendered: document.head.innerHTML.length +
             document.body.innerHTML.length,
           text_ratio_percent: Math.round(
             document.body.innerText.length / document.body.innerHTML.length *
@@ -381,7 +381,6 @@ async function scrapSite ({baseUrl, options = {}}) {
         const msg = `${color.red}${result.response.url}: evaluatePage: Error collect page data: ${result.result.error}${color.reset}`;
         console.error(msg);
       }
-      // console.log(`html_size: ${result.result.html_size}`);
     },
 
     customCrawl: async (page, crawl, crawler) => {
@@ -479,6 +478,15 @@ async function scrapSite ({baseUrl, options = {}}) {
             lastSuccessUrl = crawler._options.url;
           }
         }
+      });
+
+      // count html size before render scripts
+      let pageSize = 0;
+      page.on('response', response => {
+        if (response.url() !== crawler._options.url) return;
+        response.buffer().then(buffer => {
+          pageSize += buffer.length
+        })
       });
 
       /*page.on('requestfinished', async request => {
@@ -681,6 +689,7 @@ async function scrapSite ({baseUrl, options = {}}) {
         // You can access the page object after requests
         // TODO: skip depending of fields preset
         result.content = await page.content();
+        result.result.html_size = pageSize;
       }
       catch (e) {
         const err = e.message?.substring(0, 512);

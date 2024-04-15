@@ -12,6 +12,7 @@ export default {
       'error',
       'dom_size',
       'html_size',
+      'html_size_rendered',
       'is_canonical',
       'canonical_count',
       'google_amp',

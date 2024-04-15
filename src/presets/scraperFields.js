@@ -52,6 +52,7 @@ export default {
     'result.text_ratio_percent',
     'result.dom_size',
     'result.html_size',
+    'result.html_size_rendered',
 
     'readability_length',
     'readability_words',
