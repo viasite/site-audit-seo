@@ -2,19 +2,19 @@
 
 Web service and CLI tool for SEO site audit: crawl site, lighthouse all pages, view public reports in browser. Also output to console, json, csv.
 
-Web view report - [site-audit-seo-viewer](https://viasite.github.io/site-audit-seo-viewer/).
+Web view report - [json-viewer](https://json-viewer.popstas.pro/).
 
 Demo:
-- [Default report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default.json)
-- [Lighthouse report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-lighthouse.json)
-- [Default + Basic Lighthouse report](https://viasite.github.io/site-audit-seo-viewer/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default-plus-lighthouse.json)
+- [Default report](https://json-viewer.popstas.pro/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default.json)
+- [Lighthouse report](https://json-viewer.popstas.pro/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-lighthouse.json)
+- [Default + Basic Lighthouse report](https://json-viewer.popstas.pro/?url=https://site-audit.viasite.ru/reports/blog.popstas.ru-default-plus-lighthouse.json)
 
 Русское описание [ниже](#русский)
 
 ![site-audit-demo](assets/site-audit-demo.gif)
 
 ## Using without install
-Open https://viasite.github.io/site-audit-seo-viewer/.
+Open https://json-viewer.popstas.pro/.
 
 ## Features:
 - Crawls the entire site, collects links to pages and documents
