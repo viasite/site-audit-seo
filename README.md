@@ -14,7 +14,7 @@ Demo:
 ![site-audit-demo](assets/site-audit-demo.gif)
 
 ## Using without install
-Open https://json-viewer.popstas.pro/.
+Open https://json-viewer.popstas.pro/. Public server allow to scan up to 100 pages at once.
 
 ## Features:
 - Crawls the entire site, collects links to pages and documents

@@ -60,7 +60,7 @@ db.update(({stats}) => {
   stats.reboots = reboots;
 });
 
-const maxConcurrency = 2;
+const maxConcurrency = 2; // TODO: rename to maxConcurrentScans
 let scansTotal = 0;
 let pagesTotal = 0;
 let connections = 0;
@@ -231,6 +231,8 @@ function serverState() {
     serverVersion: packageJson.version,
     reboots: reboots,
     featureScreenshot: config.featureScreenshot,
+    maxConcurrency: config.maxConcurrency,
+    maxRequests: config.maxRequests,
     // sockets: socketsList, // only for debug!
   }
   if (config.onlyDomains) conf.onlyDomains = config.onlyDomains;
@@ -268,6 +270,7 @@ function onSocketConnection(socket) {
       !socket.uid || socket.uid.includes("anon")
         ? "anonymous user: " + auth.uid
         : "user authenticated: " + auth.email;
+    sendStats(socket);
     log(msg, socket, true);
 
     // restore last connection

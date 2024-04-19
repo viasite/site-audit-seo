@@ -126,6 +126,11 @@ program.postParse = async () => {
       program.concurrency = config.maxConcurrency;
     }
   }
+
+  if (config.maxRequests && (!program.maxRequests || program.maxRequests > config.maxRequests)) {
+    program.maxRequests = config.maxRequests;
+  }
+
   if (program.lighthouse) {
     program.concurrency = 1;
   }
@@ -275,7 +280,7 @@ program.outBrief = (options) => {
         (program.concurrency > 1 && program.lighthouse ?
           `, ${color.yellow}recommended to set -c 1 when using lighthouse${color.reset}`
           : '') +
-        (config.maxConcurrency ? `, max: ${config.maxConcurrency}` : ''),
+        (config.maxConcurrency ? `, server max: ${config.maxConcurrency}` : ''),
     },
     {
       name: 'Lighthouse',
@@ -310,7 +315,7 @@ program.outBrief = (options) => {
     {
       name: 'Max requests',
       value: program.maxRequests ? program.maxRequests : 'unlimited',
-      comment: '-m 123',
+      comment: '-m 123' + (config.maxRequests ? `, server max: ${config.maxRequests}` : ''),
     },
     {
       name: 'Language',
