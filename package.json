@@ -23,7 +23,7 @@
     "site-audit-seo": "./src/index.js"
   },
   "author": "Stanislav Popov",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@popstas/headless-chrome-crawler": "^1.8.4",
     "axios": "^1.6.8",
