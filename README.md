@@ -309,6 +309,7 @@ Based on [headless-chrome-crawler](https://github.com/yujiosaka/headless-chrome-
 - [website-scraper](https://www.npmjs.com/package/website-scraper) - opensource, CLI, download site to local directory
 - [website-scraper-puppeteer](https://www.npmjs.com/package/website-scraper-puppeteer) - same but puppeteer based
 - [Gerapy](https://github.com/Gerapy/Gerapy) - distributed Crawler Management Framework Based on Scrapy, Scrapyd, Django and Vue.js
+- [DAXRM Rank Tracker](https://www.daxrm.com/integrations/rank-tracker/) - Real-time Google & Bing SEO Rank tracking
 
 ## Русский
 Сканирование одного или несколько сайтов в json файл с веб-интерфейсом.
