@@ -1,3 +1,18 @@
+## [6.0.1](https://github.com/viasite/site-audit-seo/compare/v6.0.0...v6.0.1) (2025-06-24)
+
+
+### Bug Fixes
+
+* update viewer link ([bd5f083](https://github.com/viasite/site-audit-seo/commit/bd5f083cd548059950a126c228cb7aa958e1e687))
+
+
+### Features
+
+* html_size now calculate size before js render ([a02733a](https://github.com/viasite/site-audit-seo/commit/a02733aebbad357afe68aa3f2bf42b7e09ce8a7c))
+* maxRequests hard limit, for public server ([3e00db6](https://github.com/viasite/site-audit-seo/commit/3e00db6e9dcbd912e91fae8d57f5097da8bcddd2))
+
+
+
 # [6.0.0](https://github.com/viasite/site-audit-seo/compare/v5.1.5...v6.0.0) (2024-04-13)
 
 
@@ -47,8 +62,8 @@
 
 ### Features
 
-* **scan:** better disconnect survive, resend logs while disconnected with client ([19717df](https://github.com/viasite/site-audit-seo/commit/19717dfcaef9a4cd4fe4fc6d3ad6677be5462226))
 * change default columns: add readability, remove useless links and headers counters ([492c363](https://github.com/viasite/site-audit-seo/commit/492c363cdf80dbea11ef077dbdb75ec4435a948f))
+* **scan:** better disconnect survive, resend logs while disconnected with client ([19717df](https://github.com/viasite/site-audit-seo/commit/19717dfcaef9a4cd4fe4fc6d3ad6677be5462226))
 
 
 
@@ -99,20 +114,20 @@
 ### Bug Fixes
 
 * add h1 field to metatags group ([bea02da](https://github.com/viasite/site-audit-seo/commit/bea02dabfa77dbd51db34265256c7b5fc57bf736))
+* add package-data.json to git ([e5fef0b](https://github.com/viasite/site-audit-seo/commit/e5fef0b70dd685630a6791bf3fb49c1023965e83))
 * arg --disable-plugins: set default [] ([9fcf266](https://github.com/viasite/site-audit-seo/commit/9fcf26628007061535f08ae7b02d5279929e5c06))
 * fix command line mode ([dad7d54](https://github.com/viasite/site-audit-seo/commit/dad7d541ba69d57cd526a06f9054d0b66bbc05db))
-* **scan:** page_date when itemprop="datePublished"[content] ([91ee04e](https://github.com/viasite/site-audit-seo/commit/91ee04e6cbc72913b0c7de79e3410792ca2d552e))
-* add package-data.json to git ([e5fef0b](https://github.com/viasite/site-audit-seo/commit/e5fef0b70dd685630a6791bf3fb49c1023965e83))
 * page scan retryCount 3 -> 1 (faster, same result) ([fbf0619](https://github.com/viasite/site-audit-seo/commit/fbf06198bfbaac859c2da15f99e54a457d63a7b0))
+* **scan:** page_date when itemprop="datePublished"[content] ([91ee04e](https://github.com/viasite/site-audit-seo/commit/91ee04e6cbc72913b0c7de79e3410792ca2d552e))
 * suppress headless-chrome-crawler exceptions after max requests reached ([ac374b3](https://github.com/viasite/site-audit-seo/commit/ac374b3313886ba04978b529188d7bf05e556aa0))
 
 
 ### Features
 
+* --disable-plugins command line argument ([3a483c3](https://github.com/viasite/site-audit-seo/commit/3a483c3fb1b6b6ba53017d6e833b03f1abfe472d))
 * **json:** save scan options for rescan ([0d5fd47](https://github.com/viasite/site-audit-seo/commit/0d5fd4791a0b81524e2f39f7bad2bf426fb25749))
 * **presets:** add column preset "content" ([236574d](https://github.com/viasite/site-audit-seo/commit/236574d4eaa1a74769acb4c86c93fd2d1d36822f))
 * **scan:** new field: page_date (from microdata) ([f8eecca](https://github.com/viasite/site-audit-seo/commit/f8eeccaab1559a3ed9a8efeef12568d94d2b95cc))
-* --disable-plugins command line argument ([3a483c3](https://github.com/viasite/site-audit-seo/commit/3a483c3fb1b6b6ba53017d6e833b03f1abfe472d))
 
 
 
@@ -125,17 +140,17 @@
 
 ### Bug Fixes
 
-* **registry:** fix crash when no package.json or site-audit-seo section in user node_modules ([e3e7319](https://github.com/viasite/site-audit-seo/commit/e3e7319a0c082ca02348a0a58498e6fc7e2003a0))
 * add google_amp to metatags group ([21e2e21](https://github.com/viasite/site-audit-seo/commit/21e2e217507595e8dc57d935ee98ae5324c79d65))
 * exec plugins for CLI tool ([af7256c](https://github.com/viasite/site-audit-seo/commit/af7256c157bb6de6657b9e798849d9e8122f623d))
+* **registry:** fix crash when no package.json or site-audit-seo section in user node_modules ([e3e7319](https://github.com/viasite/site-audit-seo/commit/e3e7319a0c082ca02348a0a58498e6fc7e2003a0))
 
 
 ### Features
 
 * cancel command ([3db580b](https://github.com/viasite/site-audit-seo/commit/3db580b1055f2261f1488b385fa061bad698652e))
+* **core:** plugin system for actions after scan ([ac49bb3](https://github.com/viasite/site-audit-seo/commit/ac49bb34786329d7391dda39c683e4827277989d))
 * plugin types: afterRequest, afterScan ([e7ba5f7](https://github.com/viasite/site-audit-seo/commit/e7ba5f7e7365721de29c70c08ce747ee3c0e6989))
 * restore connection with running scan job ([5cc36fa](https://github.com/viasite/site-audit-seo/commit/5cc36faf38e2bbb6be442ca18be6f0b967680db5))
-* **core:** plugin system for actions after scan ([ac49bb3](https://github.com/viasite/site-audit-seo/commit/ac49bb34786329d7391dda39c683e4827277989d))
 
 
 
@@ -144,9 +159,9 @@
 
 ### Bug Fixes
 
+* fixed cross scans program values for main settings, fix send 'minimal' to InfluxDB ([fbc2ff5](https://github.com/viasite/site-audit-seo/commit/fbc2ff5844e4796630aaec04543ae6129e3c9eb2))
 * **scrap:** don't fail page when error in user --field ([74a6ecb](https://github.com/viasite/site-audit-seo/commit/74a6ecb2ed0bd66b9db7b7b27ee9b44949dfe218))
 * **server:** remove all previous program values ([36cca7d](https://github.com/viasite/site-audit-seo/commit/36cca7d953a378837ee07a4cc4ee83c3d50d8081))
-* fixed cross scans program values for main settings, fix send 'minimal' to InfluxDB ([fbc2ff5](https://github.com/viasite/site-audit-seo/commit/fbc2ff5844e4796630aaec04543ae6129e3c9eb2))
 
 
 ### Features
@@ -169,18 +184,18 @@
 
 ### Bug Fixes
 
-* **scrap:** fix --url-list and url with url list ([f9f729e](https://github.com/viasite/site-audit-seo/commit/f9f729e15abfcef488a9235ee999d169bae89143))
 * don't show "Pending" when no queue ([d19299a](https://github.com/viasite/site-audit-seo/commit/d19299af875bac2eb78b481dace1e635bde40769))
 * remove parallel lighthouse when --urls scan ([ea77a79](https://github.com/viasite/site-audit-seo/commit/ea77a790677bc3bee0291dfed7b26c49a69b2c9f))
-* show active --follow-xml-sitemap in brief ([bbefbd9](https://github.com/viasite/site-audit-seo/commit/bbefbd943330a1620f53c301197f19e0124bc864))
 * **scan:** url field can used as name for --urls scan ([e115c59](https://github.com/viasite/site-audit-seo/commit/e115c59780cbe404f098ac7a2b457760049e3feb))
+* **scrap:** fix --url-list and url with url list ([f9f729e](https://github.com/viasite/site-audit-seo/commit/f9f729e15abfcef488a9235ee999d169bae89143))
+* show active --follow-xml-sitemap in brief ([bbefbd9](https://github.com/viasite/site-audit-seo/commit/bbefbd943330a1620f53c301197f19e0124bc864))
 
 
 ### Features
 
 * --influxdb-max-send, working in CLI, config influxdb.maxSendCount ([b09b54e](https://github.com/viasite/site-audit-seo/commit/b09b54e21835668252b67b1bbccbad81db4b17d5))
-* support scan single urls, --urls page1,page2 (without spaces!) ([b6b86de](https://github.com/viasite/site-audit-seo/commit/b6b86de7a3f7e9b2907d652ee9261e065ed666a6))
 * **scan:** out time in log ([ce1567c](https://github.com/viasite/site-audit-seo/commit/ce1567cc9951108999817469c42a85f6b08382f0))
+* support scan single urls, --urls page1,page2 (without spaces!) ([b6b86de](https://github.com/viasite/site-audit-seo/commit/b6b86de7a3f7e9b2907d652ee9261e065ed666a6))
 
 
 
@@ -197,11 +212,11 @@
 
 ### Features
 
+* add brief before scan for web interface ([bd97cfa](https://github.com/viasite/site-audit-seo/commit/bd97cfa20dbcdd1133c00e417b5630e448f08435))
 * save reports to user directories ([783214e](https://github.com/viasite/site-audit-seo/commit/783214ee62be19c910ea8f712cbda2c8071fceb0))
 * **server:** Google auth, scans queue ([8bd342f](https://github.com/viasite/site-audit-seo/commit/8bd342f8f81278f6ee2b17fd11efeb6a1249e8e8)), closes [#6](https://github.com/viasite/site-audit-seo/issues/6)
 * **server:** scansTotal ([e0e4739](https://github.com/viasite/site-audit-seo/commit/e0e4739b635819156fa27184b1f031866495df41))
 * **server:** send to InfluxDB ([4ebd31f](https://github.com/viasite/site-audit-seo/commit/4ebd31f4a5df9b803cedb15069acaf607243c938)), closes [#9](https://github.com/viasite/site-audit-seo/issues/9)
-* add brief before scan for web interface ([bd97cfa](https://github.com/viasite/site-audit-seo/commit/bd97cfa20dbcdd1133c00e417b5630e448f08435))
 * working docker-compose ([e9917db](https://github.com/viasite/site-audit-seo/commit/e9917dbec25aea844081b2414233e6b6c6851c30))
 
 
@@ -247,11 +262,11 @@
 
 ### Bug Fixes
 
-* **filters:** remove filters H1 != 1, Status != 200 ([dab86a2](https://github.com/viasite/site-audit-seo/commit/dab86a2569264d0f0ada83ea823a4775131a8ee9))
 * --fields was broken, fixed ([23d19c6](https://github.com/viasite/site-audit-seo/commit/23d19c67154b6ca086a864b985fd0c7e408e8b5e))
+* **filters:** remove filters H1 != 1, Status != 200 ([dab86a2](https://github.com/viasite/site-audit-seo/commit/dab86a2569264d0f0ada83ea823a4775131a8ee9))
+* out total scan time in minutes ([d2a787d](https://github.com/viasite/site-audit-seo/commit/d2a787d1f79a64cd2cf9cfe3b5a4fe5eb2146061))
 * output error when request failed ([ebfbd6e](https://github.com/viasite/site-audit-seo/commit/ebfbd6e7dfee628d613cff10c0ab520c701a63b4))
 * **validation:** lighthouse_interactive validation ([3756324](https://github.com/viasite/site-audit-seo/commit/3756324774e90fd3bd799ece2f455bc51c0751e7))
-* out total scan time in minutes ([d2a787d](https://github.com/viasite/site-audit-seo/commit/d2a787d1f79a64cd2cf9cfe3b5a4fe5eb2146061))
 
 
 ### Features
