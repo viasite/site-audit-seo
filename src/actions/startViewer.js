@@ -9,7 +9,7 @@ export default async (jsonPath, webPath = false) => {
   const jsonUrl = webPath || `http://localhost:${port}/data.json`;
   const jsonRaw = fs.readFileSync(jsonPath);
 
-  const viewerOrigin = config.viewerOrigin || 'https://site-audit.viasite.ru';
+  const viewerOrigin = config.viewerOrigin || 'https://json-viewer.popstas.pro';
   // const uploadOrigin = config.uploadOrigin || 'https://site-audit.viasite.ru';
   app.get('/', function(req, res, next) {
     res.redirect(302, onlineViewLink(jsonUrl));
@@ -27,7 +27,8 @@ export default async (jsonPath, webPath = false) => {
   });
 
   function onlineViewLink(url) {
-    return `https://viasite.github.io/site-audit-seo-viewer/?url=${url}`;
+    const origin = config.viewerOrigin || 'https://json-viewer.popstas.pro';
+    return `${origin}/?url=${url}`;
   }
 
   function outLinks(url) {
